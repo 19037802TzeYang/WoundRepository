@@ -1,0 +1,24 @@
+﻿@model hostrepository.Models.User
+@{
+    Layout = "~/Views/Shared/_CompanyLayoutplaceholder.cshtml";
+}
+<div class="container">
+    <form  method="post" class="form-signin">
+        
+
+        <h2 class="form-signin-heading">Registeration</h2>
+        <p>Username [email]:</p>
+        <label for="username" class="sr-only">Email address</label>
+
+        <input id="username" name="username" class="form-control" placeholder="Email address" autofocus="">
+        <p>Password:</p>
+        <label for="password" class="sr-only">Password</label>
+        <input type="password" id="password" name="password" class="form-control" placeholder="password">
+
+        <p>Role [1 Admin , 2 Annotator , 3 Doctor]:</p>
+        <label for="user_type_id" class="sr-only">Role ID</label>
+        <input id="user_type_id" name="user_type_id" class="form-control" placeholder="user_type_id">
+
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
+    </form>
+</div>

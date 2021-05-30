@@ -17,7 +17,10 @@ namespace WoundImgRepo.Controllers
             return View("Index", list);
         }
         #endregion
-
+        public IActionResult Create()
+        {
+            return View();
+        }
         #region Details(int id)
         [AllowAnonymous]
         public IActionResult Details(int id)

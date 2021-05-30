@@ -1,101 +1,48 @@
-﻿@model Trip
+﻿<div class="container">
+    <h1>Original file:</h1>
+    <form action="/action_page.php">
+        <input type="file" id="Original" name="Originak">
 
-<form method="post"
-      asp-controller="Wound"
-      asp-action="Create"
-      enctype="multipart/form-data"
-      >
 
-   <div class="form-group row">
-      <div class="offset-sm-2 col-sm-5">
-         <h2>New Trip Highlight</h2>
-      </div>
-   </div>
+        <h1>Image version:</h1>
+        <input type="file" id="Image_ver" name="Image_ver">
 
-   <div class="form-group row">
-      <label class="control-label col-sm-2" asp-for="Title">Title :</label>
-      <div class="col-sm-5">
-         <input asp-for="Title" class="form-control" />
-      </div>
-      <div class="col-sm-3">
-         <span asp-validation-for="Title" class="text-danger"></span>
-      </div>
-   </div>
+        <h3>Image version</h3>
+        <select id="version">
+            <option>- XX -</option>
+            <option>- XX -</option>
+            <option>- XX -</option>
+        </select>
 
-   <div class="form-group row">
-      <label class="control-label col-sm-2" asp-for="City">City :</label>
-      <div class="col-sm-5">
-         <input asp-for="City" class="form-control" />
-      </div>
-      <div class="col-sm-3">
-         <span asp-validation-for="City" class="text-danger"></span>
-      </div>
-   </div>
 
-   <div class="form-group row">
-      <label class="control-label col-sm-2" asp-for="TripDate">Trip Date :</label>
-      <div class="col-sm-5">
-         <input asp-for="TripDate" class="form-control" placeholder="YYYY-MM-DD" />
-      </div>
-      <div class="col-sm-3">
-         <span asp-validation-for="TripDate" class="text-danger"></span>
-      </div>
-   </div>
+        <h1>Original mask</h1>
+        <input type="file" id="mask" name="mask">
 
-   <div class="form-group row">
-      <label class="control-label col-sm-2" asp-for="Duration">Length (in Days) :</label>
-      <div class="col-sm-5">
-         <input asp-for="Duration" class="form-control" />
-      </div>
-      <div class="col-sm-3">
-         <span asp-validation-for="Duration" class="text-danger"></span>
-      </div>
-   </div>
+        <div>
+            <label>Enter wound name: </label>
+            <input type="text" id="Wound_name">
+        </div>
+        <div>
+            <label>select wound type: </label>
+            <select id="wound_type">
+                <option>- XX -</option>
+                <option>- XX -</option>
+                <option>- XX -</option>
+            </select>
 
-   <div class="form-group row">
-      <label class="control-label col-sm-2" asp-for="Spending">Total Cost :</label>
-      <div class="col-sm-5">
-         <input asp-for="Spending" class="form-control" />
-      </div>
-      <div class="col-sm-3">
-         <span asp-validation-for="Spending" class="text-danger"></span>
-      </div>
-   </div>
-
-   <div class="form-group row">
-      <label class="control-label col-sm-2" asp-for="Story">Detailed Story :</label>
-      <div class="col-sm-5">
-         <textarea asp-for="Story" rows="8" cols="20" class="form-control"></textarea>
-      </div>
-      <div class="col-sm-3">
-         <span asp-validation-for="Story" class="text-danger"></span>
-      </div>
-   </div>
-
-   <div class="form-group row">
-      <label class="control-label col-sm-2" asp-for="Photo">Photo :</label>
-      <div class="col-sm-5">
-         <input type="file" asp-for="Photo" class="form-control" />
-      </div>
-      <div class="col-sm-3">
-         <span asp-validation-for="Photo" class="text-danger"></span>
-      </div>
-   </div>
-
-   <div class="form-group row">
-      <div class="offset-sm-2 col-sm-5">
-         <input type="submit" value="Submit" class="btn btn-primary" />
-      </div>
-   </div>
-
-   @if (ViewData["Message"] != null)
-   {
-      <div class="form-group row">
-         <div class="offset-sm-2 col-sm-5">
-            <div class="alert alert-@ViewData["MsgType"]">
-               @ViewData["Message"]
+            <div>
+                <label>Enter wound Location: </label>
+                <input type="text" id="Wound_Location">
             </div>
-         </div>
-      </div>
-   }
-</form>
+
+        </div>
+
+        <input type="submit">
+    </form>
+    @if (ViewData["Message"] != null)
+    {
+        <div class="alert-@ViewData["MsgType"]">
+            @ViewData["Message"]
+        </div>
+    }
+</div>

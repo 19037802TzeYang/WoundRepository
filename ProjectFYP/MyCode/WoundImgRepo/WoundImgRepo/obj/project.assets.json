@@ -453,19 +453,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\19037802\\.nuget\\packages\\": {}
+    "C:\\Users\\19041265\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\19037802\\source\\repos\\ProjectFYP\\MyCode\\WoundImgRepo\\WoundImgRepo\\WoundImgRepo.csproj",
+      "projectUniqueName": "C:\\Users\\19041265\\Source\\Repos\\WoundRepository\\ProjectFYP\\MyCode\\WoundImgRepo\\WoundImgRepo\\WoundImgRepo.csproj",
       "projectName": "WoundImgRepo",
-      "projectPath": "C:\\Users\\19037802\\source\\repos\\ProjectFYP\\MyCode\\WoundImgRepo\\WoundImgRepo\\WoundImgRepo.csproj",
-      "packagesPath": "C:\\Users\\19037802\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\19037802\\source\\repos\\ProjectFYP\\MyCode\\WoundImgRepo\\WoundImgRepo\\obj\\",
+      "projectPath": "C:\\Users\\19041265\\Source\\Repos\\WoundRepository\\ProjectFYP\\MyCode\\WoundImgRepo\\WoundImgRepo\\WoundImgRepo.csproj",
+      "packagesPath": "C:\\Users\\19041265\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\19041265\\Source\\Repos\\WoundRepository\\ProjectFYP\\MyCode\\WoundImgRepo\\WoundImgRepo\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\19037802\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\19041265\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
