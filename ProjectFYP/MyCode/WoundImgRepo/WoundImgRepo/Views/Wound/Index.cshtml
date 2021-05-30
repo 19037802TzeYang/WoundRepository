@@ -1,0 +1,59 @@
+﻿@model List<Trip>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-@TempData["MsgType"]">
+        @TempData["Message"]
+    </div>
+}
+<style>
+    img {
+        width: 200px;
+        height: 200px;
+        object-fit: cover;
+    }
+    .card {
+        margin-bottom: 10px;
+    }
+</style>
+<h2>Wounds</h2>
+
+<div class="row">
+    @foreach (Trip row in Model)
+    {
+        <div class="col-sm-4">
+            <div class="card">
+                <a asp-controller="Wound" asp-action="Details" asp-route-id="@row.Id">
+                    <img src="/photos/@row.Picture" class="card-img-top" />
+                </a>
+                <div class="card-body">
+                    <div class="card-title">
+                        @row.Title
+                    </div>
+                    <div>
+                        <small>
+                            <a asp-controller="Wound"
+                               asp-action="Details"
+                               asp-route-id="@row.Id">
+                                View
+                            </a> |
+                            <a asp-controller="Wound"
+                               asp-action="Update"
+                               asp-route-id="@row.Id">
+                                Edit
+                            </a> |
+                            <a asp-controller="Wound"
+                               asp-action="Delete"
+                               asp-route-id="@row.Id"
+                               onclick="return confirm('Delete Trip [@row.Title]')">
+                                Delete
+                            </a>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
