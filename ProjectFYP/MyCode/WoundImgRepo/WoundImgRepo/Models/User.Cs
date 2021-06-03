@@ -6,19 +6,18 @@ using System.Linq;
 using System.Web;
 
 
-namespace hostrepository.Models
+namespace WoundImgRepo.Models
 {
     public class User
     {
        
             public int user_id { get; set; }
-            //Username is email addresses
+           
+
             [Required]
-            [EmailAddress(ErrorMessage = "Usernames must be valid email address")]
             public string username { get; set; }
 
             [Required]
-            
             [MinLength(8, ErrorMessage = "This password is too short")]
             public string password { get; set; }
 
