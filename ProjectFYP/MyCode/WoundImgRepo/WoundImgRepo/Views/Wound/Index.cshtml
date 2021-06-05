@@ -1,6 +1,12 @@
-﻿
+﻿@model List<Wound>
 @{
     Layout = "_Wound";
+}
+@if (TempData["Msg"] != null)
+{
+    <div class="alert alert-@TempData["MsgType"]">
+        @TempData["Msg"]
+    </div>
 }
 
 @section MoreScripts {
@@ -20,15 +26,7 @@
         });
     </script>
 }
-@model List<Trip>
 
-
-@if (TempData["Message"] != null)
-{
-    <div class="alert alert-@TempData["MsgType"]">
-        @TempData["Message"]
-    </div>
-}
 <style>
     img {
         width: 200px;
@@ -38,34 +36,46 @@
 </style>
 
 <h2>Wounds</h2>
-<div>
-    <table id="jsWoundsTable" class="table table-bordered table-condensed table-hover table-striped" >
-      <thead>
-        <tr>
-            <th scope="col" width="20%">Id</th>
-            <th scope="col" width="20%">Name</th>
-            <th scope="col" width="20%">Original Image</th>
-            <th scope="col" width="20%">Latest Annotation</th>
-            <th scope="col" width="20%">Original Mask</th>
-            <th scope="col" width="20%">Details</th>
-            <th scope="col" width="20%">Edit / Delete</th>
-        </tr>
-      </thead>
-      <tbody>
-        @foreach (Trip t in Model)
+<table id="jsWoundsTable" class="table table-bordered table-condensed table-hover table-striped">
+    <tr>
+        <th scope="col" width="20%">User Id</th>
+        <th scope="col" width="20%">Name</th>
+        <th scope="col" width="20%">Wound Stage</th>
+        <th scope="col" width="20%">Remarks</th>
+        <th scope="col" width="20%">Wound Category Id</th>
+        <th scope="col" width="20%">Wound Location Id</th>
+        <th scope="col" width="20%">Original Wound Image</th>
+        <th scope="col" width="20%">Annotation Image</th>
+        <th scope="col" width="20%">Mask Image</th>
+        <th scope="col" width="20%">Tissue Id</th>
+        <th scope="col" width="20%">Version Id</th>
+        <th scope="col" width="20%">Image Id</th>
+        <th scope="col" width="20%">User Id</th>
+        <th scope="col" width="20%">Edit / Delete</th>
+    </tr>
+    <tbody>
+        @foreach (Wound w in Model)
         {
             <tr scope="row">
-                <td width="20%">@t.Id</td>
-                <td width="20%">@t.Title</td>
-                <td width="20%"><img src="/photos/@t.Picture"></td>
-                <td width="20%"><img src="/photos/@t.Picture"></td>
-                <td width="20%"><img src="/photos/@t.Picture"></td>
+                <td width="20%">@w.user_id</td>
+                <td width="20%">@w.name</td>
+                <td width="20%">@w.wound_stage</td>
+                <td width="20%">@w.remarks</td>
+                <td width="20%">@w.wound_category_id</td>
+                <td width="20%">@w.wound_location_id</td>
+                <td width="20%"><img></td>
+                <td width="20%"><img></td>
+                <td width="20%"><img></td>
+                <td width="20%">@w.tissue_id</td>
+                <td width="20%">@w.version_id</td>
+                <td width="20%">@w.image_id</td>
+                <td width="20%">@w.user_id</td>
                 <td width="20%"><a asp-controller="Wound" asp-action="Details">Details</a></td>
                 <td width="20%"><a asp-controller="Wound" asp-action="Edit">Edit</a> |  <a asp-controller="Wound" asp-action="Delete">Delete</a></td>
             </tr>
         }
-      </tbody>
-    </table>
-</div>
+    </tbody>
+</table>
+
 
 
