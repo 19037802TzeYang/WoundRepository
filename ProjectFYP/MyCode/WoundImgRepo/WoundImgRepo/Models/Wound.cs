@@ -7,7 +7,7 @@ namespace WoundImgRepo.Models
 {
     public class Wound
     {
-        public int id { get; set; }
+        public int wound_id { get; set; }
         public string name { get; set; }
         public string wound_stage { get; set; }
         public string remarks { get; set; }
