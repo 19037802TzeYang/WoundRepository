@@ -1,4 +1,4 @@
-﻿using WoundImgRepo.Models;
+using WoundImgRepo.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
@@ -60,18 +60,35 @@ namespace WoundImgRepo.Controllers
             else
             {
                 //string of SQL
-      //          string LOGIN_SQL =
-      //@"SELECT user_id FROM [user] 
-      //      WHERE username] = '{0}' 
-      //        AND [password] = HASHBYTES('SHA1', '{1}')";
+                //          string LOGIN_SQL =
+                //@"SELECT user_id FROM [user] 
+                //      WHERE username] = '{0}' 
+                //        AND [password] = HASHBYTES('SHA1', '{1}')";
 
 
                 //String userN = username;
                 //string psswrd = password;
 
-                //testing string wif nothing
-                string LOGINSQL =@"SELECT * FROM [user]";
+                string INSERTSQL = @"INSERT INTO user(user_id, username, email, password, user_role, last_login) VALUES " +
+                   "(1, 'Benny', 'benny@gmail,com', HASHBYTES('SHA1', 'adminpw'), 'Admin', 'null')";
 
+                //testing string wif nothing
+                string LOGINSQL = "SELECT * FROM [user]";
+
+               
+
+                int rowsAffected = DBUtl.ExecSQL(INSERTSQL);
+                //testing if insert works
+                if (rowsAffected == 1)
+                {
+                    return View("~/Views/Login/Index1dssd.cshtml");
+                }
+                else
+                {
+                    ViewData["Message"] = "insert not working m8.";
+                    ViewData["MsgType"] = "warning";
+                    return View("~/Views/Login/Index.cshtml");
+                }
 
                 //testing
                 //DataTable match = DBUtl.GetTable(LOGIN_SQL, userN, psswrd);
@@ -83,7 +100,7 @@ namespace WoundImgRepo.Controllers
                 //convert results into string
                 
 
-
+                
 
                 //check if it is null 
                 if (matcht.Rows.Count>0 )
@@ -113,3 +130,4 @@ namespace WoundImgRepo.Controllers
         }
     }
 }
+
