@@ -17,13 +17,16 @@ namespace WoundImgRepo.Models
             [Required]
             public string username { get; set; }
 
+        [Required(ErrorMessage = "Email field cannot be empty")]
+        public string email { get; set; }
+
             [Required]
             [MinLength(8, ErrorMessage = "This password is too short")]
             public string password { get; set; }
 
             [Required]
-            [Range(1, 3, ErrorMessage= "Id should be 1 to 3 ")]
-            public int user_type_id { get; set; }
+            [RegularExpression("(Doctor|Annotator|Admin)", ErrorMessage = "Select option")]
+            public String user_role { get; set; }
         
     }
 }

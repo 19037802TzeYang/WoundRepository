@@ -18,18 +18,19 @@ namespace hostrepository.Controllers
 
         // final check if the user should be permitted
         [HttpPost]
-        public ActionResult Index(string username, string password)
+        public ActionResult Index(string username, string password , string email , String user_role)
         {
-            if (!string.IsNullOrEmpty(username) || !string.IsNullOrEmpty(password))
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(email) || String.IsNullOrEmpty(user_role))
             {
-                ViewBag.Failed = true;
+                ViewData["Message"] = user_role;
+                ViewData["MsgType"] = "warning";
                 return View();
             }
             else
             {
-                ViewBag.Failed = false;
-                //ensure to put in the transition page
-                return RedirectToAction("#", "#");
+                ViewData["Message"] = user_role;
+                ViewData["MsgType"] = "warning";
+                return View();
             }
 
         }
