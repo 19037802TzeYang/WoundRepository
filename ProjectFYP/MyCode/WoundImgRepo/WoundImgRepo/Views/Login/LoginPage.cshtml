@@ -4,17 +4,17 @@
       method="post">
 
     <h2>Please Sign In</h2>
+      
     <div class="col-sm-5">
-
-        <!-- Homepage - This is for LogInUser Index-->
+        <!--Homepage - This is for LogInUser Index-->
         @*email fill in*@
         <div class="form-group row">
 
         </div>
         <div class="form-group row">
             <label asp-for="Username" class="control-label">Username: </label>
-            <label asp-for="Username" for="username" class="sr-only">username</label>
-            <input asp-for="Username" id="username" class="form-control" placeholder="Username" autofocus="">
+            <label asp-for="Username" for="Username" class="sr-only">username</label>
+            <input asp-for="Username" id="Username" class="form-control" placeholder="Username" autofocus="">
             <span asp-validation-for="Username" class="text-danger"></span>
         </div>
 
@@ -22,8 +22,8 @@
         @*password fill in*@
         <div class="form-group row">
             <label asp-for="Password" class="control-label">password: </label>
-            <label asp-for="Password" for="password" class="sr-only">password</label>
-            <input asp-for="Password" id="password" class="form-control" placeholder="password" autofocus="">
+            <label asp-for="Password" for="Password" class="sr-only">password</label>
+            <input asp-for="Password" id="Password" class="form-control" placeholder="password" autofocus="">
             <span asp-validation-for="Password" class="text-danger"></span>
         </div>
 
