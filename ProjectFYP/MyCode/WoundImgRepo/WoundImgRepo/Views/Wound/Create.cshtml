@@ -1,83 +1,98 @@
-﻿@model Image
+﻿@model CombineClass
 
-<div class="container">
-    <form asp-controller="Wound" asp-action="Create" method="post" enctype="multipart/form-data">
-        <div class="form-group">
-            <label class="col-3" asp-for="Photo">Original Wound Image:</label>
-            <div class="col-5">
-                <input type="file" asp-for="Photo" multiple>
-            </div>
-        </div>
+<script>
+    $(document).ready(function () {
+        $('.custom-file-input').on("change", function () {
+            var fileLabel = $(this).next('.custom-file-label');
+            var files = $(this)[0].files;
+            if (files.length > 1) {
+                fileLabel.html(files.length + ' files selected');
+            }
+            else if (files.length == 1) {
+                fileLabel.html(files[0].name);
+            }
+        })
+    })
+</script>
 
-        <div class="form-group">
-            <label class="col-3" asp-for="Photo">Annotation Image:</label>
-            <div class="col-5">
-                <input type="file" asp-for="Photo" multiple>
-            </div>
+<form asp-controller="Wound" asp-action="Create" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label class="col-3" asp-for="image.Photo">Original Wound Image:</label>
+        <div class="col-5">
+            <input type="file" asp-for="image.Photo">
         </div>
+    </div>
 
-        <div class="form-group">
-            <label class="col-3" asp-for="Photo">Mask Image:</label>
-            <div class="col-5">
-                <input type="file" asp-for="Photo" multiple>
-            </div>
+    <div class="form-group">
+        <label class="col-3" asp-for="annotationimage.Photo">Annotation Image:</label>
+        <div class="col-5">
+            <input type="file" asp-for="annotationimage.Photo" multiple>
         </div>
+    </div>
 
-        <div class="form-group">
-            <label class="col-3" asp-for="name">Wound Name: </label>
-            <div class="col-5">
-                <input class="form-control" asp-for="name">
-            </div>
+    <div class="form-group">
+        <label class="col-3" asp-for="maskimage.Photo">Mask Image:</label>
+        <div class="col-5">
+            <input type="file" asp-for="maskimage.Photo" multiple>
         </div>
+    </div>
 
-        <div class="form-group">
-            <label class="col-3">Wound Stage: </label>
-            <div class="col-5">
-                <input class="form-control">
-            </div>
+    <div class="form-group">
+        <label class="col-3" asp-for="wound.name">Wound Name: </label>
+        <div class="col-5">
+            <input class="form-control" asp-for="wound.name">
         </div>
+    </div>
 
-        <div class="form-group">
-            <label class="col-3">Remarks: </label>
-            <div class="col-5">
-                <input class="form-control">
-            </div>
+    <div class="form-group">
+        <label class="col-3" asp-for="wound.name">Wound Stage: </label>
+        <div class="col-5">
+            <input class="form-control" asp-for="wound.wound_stage">
         </div>
+    </div>
 
-        <div class="form-group">
-            <label class="col-3">Wound Category: </label>
-            <div class="col-5">
-                <input class="form-control">
-            </div>
+    <div class="form-group">
+        <label class="col-3" asp-for="wound.remarks">Remarks: </label>
+        <div class="col-5">
+            <input class="form-control" asp-for="wound.remarks">
         </div>
+    </div>
 
-        <div class="form-group">
-            <label class="col-3">Wound Location: </label>
-            <div class="col-5">
-                <input class="form-control">
-            </div>
+    <div class="form-group">
+        <label class="col-3" asp-for="woundc.name">Wound Category: </label>
+        <div class="col-5">
+            <input class="form-control" asp-for="woundc.name">
         </div>
+    </div>
 
-        <div class="form-group">
-            <label class="col-3">Wound Tissue: </label>
-            <div class="col-5">
-                <input class="form-control">
-            </div>
+    <div class="form-group">
+        <label class="col-3" asp-for="woundl.name">Wound Location: </label>
+        <div class="col-5">
+            <input class="form-control" asp-for="woundl.name">
         </div>
+    </div>
 
-        <div class="form-group">
-            <label class="col-3">Image Version</label>
-            <div class="col-5">
-                <select class="form-control" asp-items="@((SelectList)ViewData["versions"])">
-                    <option value="">-SELECT-</option>
-                </select>
-            </div>
+    <div class="form-group">
+        <label class="col-3" asp-for="tissue.name">Wound Tissue: </label>
+        <div class="col-5">
+            <input class="form-control" asp-for="tissue.name">
         </div>
+    </div>
 
-        <div class="form-group">
-            <div class="col-5">
-                <input class="btn btn-primary" type="submit" value="Create">
-            </div>
+    <div class="form-group">
+        <label class="col-3">Image Version</label>
+        <div class="col-5">
+            <select class="form-control" asp-items="@((SelectList)ViewData["versions"])" asp-for="woundv.name">
+                <option value="">-SELECT-</option>
+            </select>
         </div>
-    </form>
-</div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-5">
+            <input class="btn btn-primary" type="submit" value="Create">
+        </div>
+    </div>
+</form>
+
+

@@ -1,4 +1,18 @@
-﻿@model List<Image>
+﻿@model CombineClass2
+
+<style>
+    .column {
+        float: left;
+        width: 33.33%;
+        padding: 5px;
+    }
+
+    .row::after {
+        content: "";
+        clear: both;
+        display: table;
+    }
+</style>
 
 <h2>Wound Records</h2>
 @if (TempData["Msg"] != null)
@@ -8,34 +22,42 @@
     </div>
 }
 <div class="row">
-    @foreach (Image row in Model)
-    {
-        <div class="col-sm-4">
-            <div class="card">
-                <a asp-controller="Wound" asp-action="Details" asp-route-id="@row.image_id">
-                    <img src="/photos/@row.img_file" class="card-img-top" />
-                </a>
-                <div class="card-body">
-                    <div class="card-title">
-                        @row.name
-                    </div>
-                    <div>
-                        <small>
-                            <a asp-controller="Wound"
-                               asp-action="Update"
-                               asp-route-id="@row.image_id">
-                                Edit
-                            </a> |
-                            <a asp-controller="Wound"
-                               asp-action="Delete"
-                               asp-route-id="@row.image_id"
-                               onclick="return confirm('Delete Wound [@row.name]')">
-                                Delete
-                            </a>
-                        </small>
-                    </div>
+        <div class="column">
+            <img src="/photos/@Model.imagefile" class="card-img-top" style="width:100%" />
+        </div>
+        @foreach (AnnotationImage ai in Model.AnnotationImages)
+        {
+            <div class="column">
+                <img src="~/photos/@ai.annotationimagefile" style="width:100%" />
+            </div>
+            <div class="column">
+                <img src="~/photos/@ai.maskimagefile" style="width:100%" />
+            </div>
+        }
+        <div class="card">
+            <div class="card-body">
+                <h6 class="card-title">@Model.woundname</h6>
+                <p>@Model.woundname</p>
+                <p>@Model.woundname</p>
+                <p>@Model.woundcategoryname</p>
+                <p>@Model.woundlocation</p>
+                <p>@Model.tissuename</p>
+                <p>@Model.woundversionname</p>
+                <div>
+                    <small>
+                        <a asp-controller="Wound"
+                           asp-action="Update"
+                           asp-route-id="@Model.imageid">
+                            Edit
+                        </a> |
+                        <a asp-controller="Wound"
+                           asp-action="Delete"
+                           asp-route-id="@Model.imageid"
+                           onclick="return confirm('Delete Wound [Model.woundname]')">
+                            Delete
+                        </a>
+                    </small>
                 </div>
             </div>
         </div>
-    }
 </div>

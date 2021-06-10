@@ -70,7 +70,7 @@
                 <td width="20%">@w.version_id</td>
                 <td width="20%">@w.image_id</td>
                 <td width="20%">@w.user_id</td>
-                <td width="20%"><a asp-controller="Wound" asp-action="Details">Details</a></td>
+                <td width="20%"><a asp-controller="Wound" asp-action="Details" asp-route-id="@w.wound_id">Details</a></td>
                 <td width="20%"><a asp-controller="Wound" asp-action="Edit">Edit</a> |  <a asp-controller="Wound" asp-action="Delete">Delete</a></td>
             </tr>
         }
