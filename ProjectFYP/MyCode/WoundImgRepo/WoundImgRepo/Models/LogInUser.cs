@@ -9,17 +9,17 @@ namespace WoundImgRepo.Models
 {
     public class LogInUser
     {
-       
-            public int user_id { get; set; }
-           
-            [Required]
-            public string username { get; set; }
 
-            [Required]
-            public string password { get; set; }
+        //public int user_id { get; set; }
 
-          
-            public bool RememberMe { get; set; }
+        [Required(ErrorMessage = "Please enter Username")]
+        public string Username { get; set; }
+
+        [Required(ErrorMessage = "Please enter Password")]
+        [DataType(DataType.Password)]
+        public string Password { get; set; }
+        
+        public bool RememberMe { get; set; }
 
     }
 }

@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\19037802\\Source\\Repos\\WoundRepository\\ProjectFYP\\MyCode\\WoundImgRepo\\WoundImgRepo\\WoundImgRepo.csproj": {}
+    "C:\\Users\\19044593\\source\\repos\\WoundRepository\\ProjectFYP\\MyCode\\WoundImgRepo\\WoundImgRepo\\WoundImgRepo.csproj": {}
   },
   "projects": {
-    "C:\\Users\\19037802\\Source\\Repos\\WoundRepository\\ProjectFYP\\MyCode\\WoundImgRepo\\WoundImgRepo\\WoundImgRepo.csproj": {
+    "C:\\Users\\19044593\\source\\repos\\WoundRepository\\ProjectFYP\\MyCode\\WoundImgRepo\\WoundImgRepo\\WoundImgRepo.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\19037802\\Source\\Repos\\WoundRepository\\ProjectFYP\\MyCode\\WoundImgRepo\\WoundImgRepo\\WoundImgRepo.csproj",
+        "projectUniqueName": "C:\\Users\\19044593\\source\\repos\\WoundRepository\\ProjectFYP\\MyCode\\WoundImgRepo\\WoundImgRepo\\WoundImgRepo.csproj",
         "projectName": "WoundImgRepo",
-        "projectPath": "C:\\Users\\19037802\\Source\\Repos\\WoundRepository\\ProjectFYP\\MyCode\\WoundImgRepo\\WoundImgRepo\\WoundImgRepo.csproj",
-        "packagesPath": "C:\\Users\\19037802\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\19037802\\Source\\Repos\\WoundRepository\\ProjectFYP\\MyCode\\WoundImgRepo\\WoundImgRepo\\obj\\",
+        "projectPath": "C:\\Users\\19044593\\source\\repos\\WoundRepository\\ProjectFYP\\MyCode\\WoundImgRepo\\WoundImgRepo\\WoundImgRepo.csproj",
+        "packagesPath": "C:\\Users\\19044593\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\19044593\\source\\repos\\WoundRepository\\ProjectFYP\\MyCode\\WoundImgRepo\\WoundImgRepo\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\19037802\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\19044593\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
