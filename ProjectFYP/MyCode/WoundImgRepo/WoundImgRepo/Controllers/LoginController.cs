@@ -16,7 +16,7 @@ namespace WoundImgRepo.Controllers
     public class LoginController : Controller
     {
 
-      
+
 
         //returns page
 
@@ -35,7 +35,7 @@ namespace WoundImgRepo.Controllers
         {
 
 
-        
+
             // detects if all fields are filled
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
@@ -47,14 +47,14 @@ namespace WoundImgRepo.Controllers
 
 
 
-     
+
 
             // If all is filled , Then
             else
             {
                 //string of SQL
-                         string LOGIN_SQL =
-                @"SELECT user_id FROM [user] 
+                string LOGIN_SQL =
+       @"SELECT user_id FROM useracc 
                       WHERE username = '{0}' 
                         AND password = HASHBYTES('SHA1', '{1}')";
 
@@ -62,24 +62,17 @@ namespace WoundImgRepo.Controllers
                 String userN = username;
                 string psswrd = password;
 
-                
-
-               
-
-               
-
-              
 
                 //testing
                 DataTable match = DBUtl.GetTable(LOGIN_SQL, userN, psswrd);
 
 
-                
 
-                
+
+
 
                 //check if it is null 
-                if (match.Rows.Count>0 )
+                if (match.Rows.Count > 0)
                 {
 
                     //return the view of the home page if fields are correct
@@ -89,7 +82,7 @@ namespace WoundImgRepo.Controllers
                 }
                 else
                 {//if the fields are incorrect
-                    ViewData["Message"] = "Incorrect fields detected ,try again.";
+                    ViewData["Message"] = "Incorrect inputs detected ,try again.";
                     ViewData["MsgType"] = "warning";
                     return View("~/Views/Login/Index.cshtml");
 
@@ -99,7 +92,7 @@ namespace WoundImgRepo.Controllers
 
                 }
 
-             
+
             }
 
 
