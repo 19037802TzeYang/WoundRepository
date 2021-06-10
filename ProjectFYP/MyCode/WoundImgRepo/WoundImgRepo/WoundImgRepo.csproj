@@ -6,16 +6,20 @@
 
   <ItemGroup>
     <Compile Remove="App_Data\**" />
+    <Compile Remove="Views\Account\**" />
+    <Compile Remove="Views\Admin\**" />
     <Content Remove="App_Data\**" />
+    <Content Remove="Views\Account\**" />
+    <Content Remove="Views\Admin\**" />
     <EmbeddedResource Remove="App_Data\**" />
+    <EmbeddedResource Remove="Views\Account\**" />
+    <EmbeddedResource Remove="Views\Admin\**" />
     <None Remove="App_Data\**" />
+    <None Remove="Views\Account\**" />
+    <None Remove="Views\Admin\**" />
   </ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="System.Data.SqlClient" Version="4.7.0" />
-	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="Views\Account\" />
-	  <Folder Include="Views\Admin\" />
 	</ItemGroup>
 
 </Project>

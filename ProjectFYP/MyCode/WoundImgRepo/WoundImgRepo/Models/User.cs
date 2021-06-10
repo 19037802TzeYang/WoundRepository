@@ -5,20 +5,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-
 namespace WoundImgRepo.Models
 {
+    // This is for registration
     public class User
     {
-
+        /*
+         * BEWARE USERID IS FOR DATABASE
         [Required(ErrorMessage = "Please enter User ID")]
         [Remote(action: "VerifyUserID", controller: "Account")]
         public string UserId { get; set; }
-
+        */
         [Required]
         public string Username { get; set; }
 
-        [Required(ErrorMessage = "Email field cannot be empty")]
+        [Required(ErrorMessage = "Please enter Email")]
+        [EmailAddress(ErrorMessage = "Invalid Email")]
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Please enter Password")]

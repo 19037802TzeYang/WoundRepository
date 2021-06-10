@@ -7,6 +7,7 @@ using System.Web;
 
 namespace WoundImgRepo.Models
 {
+    // This is for login
     public class LogInUser
     {
 
