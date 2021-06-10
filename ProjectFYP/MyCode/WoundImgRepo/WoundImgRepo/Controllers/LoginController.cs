@@ -9,52 +9,61 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
+
+
 namespace WoundImgRepo.Controllers
 {
     public class LoginController : Controller
     {
 
+
+
         //returns page
 
-        public IActionResult Index()
+        public IActionResult LoginPage()
         {
-            return View("~/Views/Login/Index.cshtml");
+            return View("~/Views/Login/LoginPage.cshtml");
         }
 
-        public IActionResult Index1dssd()
-        {
-            return View("~/Views/Login/Index1dssd.cshtml");
-        }
-        // check if the user should be permitted
+    
         [HttpPost]
-        public IActionResult Index(string username, string password)
+        public IActionResult LoginPage(string Username, string Password)
         {
 
             // detects if all fields are filled
-            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+            if (string.IsNullOrEmpty(Username) || string.IsNullOrEmpty(Password))
             {
                 ViewData["Message"] = "Not all fields are detected";
                 ViewData["MsgType"] = "warning";
-                return View("~/Views/Login/Index.cshtml");
+                return View("~/Views/Login/LoginPage.cshtml");
 
             }
+
+
+
+
 
             // If all is filled , Then
             else
             {
                 //string of SQL
                 string LOGIN_SQL =
-                      @"SELECT user_id FROM useracc 
+       @"SELECT user_id FROM useracc 
                       WHERE username = '{0}' 
                         AND password = HASHBYTES('SHA1', '{1}')";
 
 
-                String userN = username;
-                string psswrd = password;
+                String userN = Username;
+                string psswrd = Password;
 
 
                 //testing
                 DataTable match = DBUtl.GetTable(LOGIN_SQL, userN, psswrd);
+
+
+
+
+
 
                 //check if it is null 
                 if (match.Rows.Count > 0)
@@ -63,13 +72,13 @@ namespace WoundImgRepo.Controllers
                     //return the view of the home page if fields are correct
                     return RedirectToAction("Index", "wound");
 
+
                 }
                 else
                 {//if the fields are incorrect
                     ViewData["Message"] = "Incorrect inputs detected ,try again.";
                     ViewData["MsgType"] = "warning";
-                    return View("~/Views/Login/Index.cshtml");
-
+                    return View("~/Views/Login/LoginPage.cshtml");
                 }
 
 
