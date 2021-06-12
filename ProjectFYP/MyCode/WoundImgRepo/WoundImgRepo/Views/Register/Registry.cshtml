@@ -11,7 +11,7 @@
         </div>
         <div class="form-group row">
             <label asp-for="Username" class="control-label">Username: </label>
-            <label asp-for="Username" for="Username" class="sr-only">username</label>
+            <label asp-for="Username" for="Username" class="sr-only">Username</label>
             <input asp-for="Username" id="Username" class="form-control" placeholder="Username" autofocus="">
             <span asp-validation-for="Username" class="text-danger"></span>
         </div>
@@ -20,7 +20,7 @@
 
         @*password fill in*@
         <div class="form-group row">
-            <label asp-for="UserPw" class="control-label">password (Include numbers and a capital letter): </label>
+            <label asp-for="UserPw" class="control-label">Password (Include numbers and a capital letter): </label>
             <label asp-for="UserPw" for="UserPw" class="sr-only">Password </label>
             <input asp-for="UserPw" id="UserPw" class="form-control" placeholder="min 5 char." autofocus="">
             <span asp-validation-for="UserPw" class="text-danger"></span>
@@ -36,8 +36,8 @@
 
         @*email*@
         <div class="form-group row">
-            <label asp-for="Email" class="control-label">email: </label>
-            <label asp-for="Email" for="Email" class="sr-only">email</label>
+            <label asp-for="Email" class="control-label">Email Address: </label>
+            <label asp-for="Email" for="Email" class="sr-only">Email</label>
             <input asp-for="Email" type="email" id="Email" class="form-control" placeholder="email" autofocus="">
             <span asp-validation-for="Email" class="text-danger"></span>
         </div>
@@ -71,5 +71,5 @@
         }
 
     </div>
-    <input type="submit" class="btn btn-primary" value=Registry" />
+    <input type="submit" class="btn btn-primary" value="Register" />
 </form>
