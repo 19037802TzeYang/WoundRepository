@@ -1,6 +1,11 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\ProjectFYP",
+    "\\ProjectFYP\\Databases",
+    "\\ProjectFYP\\MyCode",
+    "\\ProjectFYP\\MyCode\\WoundImgRepo"
   ],
+  "SelectedNode": "\\ProjectFYP\\MyCode\\WoundImgRepo\\WoundImgRepo.sln",
   "PreviewInSolutionExplorer": false
 }

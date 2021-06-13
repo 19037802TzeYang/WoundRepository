@@ -1,4 +1,4 @@
-﻿using WoundImgRepo.Models;
+using WoundImgRepo.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
@@ -16,100 +16,76 @@ namespace WoundImgRepo.Controllers
     public class LoginController : Controller
     {
 
-      
+
 
         //returns page
 
-        public IActionResult Index()
+        public IActionResult LoginPage()
         {
-            return View("~/Views/Login/Index.cshtml");
+            return View("~/Views/Login/LoginPage.cshtml");
         }
 
-        public IActionResult Index1dssd()
-        {
-            return View("~/Views/Login/Index1dssd.cshtml");
-        }
-        // check if the user should be permitted
+    
         [HttpPost]
-        public IActionResult Index(string username, string password)
+        public IActionResult LoginPage(string Username, string Password)
         {
 
-            // detects if password is filled
-            if (string.IsNullOrEmpty(username))
+            // detects if all fields are filled
+            if (string.IsNullOrEmpty(Username) || string.IsNullOrEmpty(Password))
             {
-                ViewData["Message"] = "No username detected";
+                ViewData["Message"] = "Not all fields are detected";
                 ViewData["MsgType"] = "warning";
+                return View("~/Views/Login/LoginPage.cshtml");
 
-
-
-                return View("~/Views/Login/Index.cshtml");
-
-            }
-            //detects if username is filled
-            else if (string.IsNullOrEmpty(password))
-            {
-                ViewData["Message"] = "No password detected";
-                ViewData["MsgType"] = "warning";
-
-                return View("~/Views/Login/Index.cshtml");
             }
 
 
 
 
+
+            // If all is filled , Then
             else
             {
                 //string of SQL
-      //          string LOGIN_SQL =
-      //@"SELECT user_id FROM [user] 
-      //      WHERE username] = '{0}' 
-      //        AND [password] = HASHBYTES('SHA1', '{1}')";
+                string LOGIN_SQL =
+       @"SELECT user_id FROM useracc 
+                      WHERE username = '{0}' 
+                        AND password = HASHBYTES('SHA1', '{1}')";
 
 
-                //String userN = username;
-                //string psswrd = password;
-
-                //testing string wif nothing
-                string LOGINSQL =@"SELECT * FROM [user]";
+                String userN = Username;
+                string psswrd = Password;
 
 
                 //testing
-                //DataTable match = DBUtl.GetTable(LOGIN_SQL, userN, psswrd);
+                DataTable match = DBUtl.GetTable(LOGIN_SQL, userN, psswrd);
 
 
-                //testing the GetTable
-                DataTable matcht = DBUtl.GetTable(LOGINSQL);
 
-                //convert results into string
-                
 
 
 
                 //check if it is null 
-                if (matcht.Rows.Count>0 )
+                if (match.Rows.Count > 0)
                 {
 
                     //return the view of the home page if fields are correct
-                    return View("~/Views/Login/Index1dssd.cshtml");
+                    return RedirectToAction("Index", "wound");
 
 
                 }
                 else
                 {//if the fields are incorrect
-                    ViewData["Message"] = "Incorrect fields detected ,try again.";
+                    ViewData["Message"] = "Incorrect inputs detected ,try again.";
                     ViewData["MsgType"] = "warning";
-                    return View("~/Views/Login/Index.cshtml");
-
-
-
-
-
+                    return View("~/Views/Login/LoginPage.cshtml");
                 }
 
-                return View(); //delete after completed
+
             }
 
 
         }
     }
 }
+

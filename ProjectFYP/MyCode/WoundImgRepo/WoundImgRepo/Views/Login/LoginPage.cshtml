@@ -1,0 +1,54 @@
+@model WoundImgRepo.Models.LogInUser
+
+<form 
+      method="post">
+
+    <h2>Please Sign In</h2>
+      
+    <div class="col-sm-5">
+        <!--Homepage - This is for LogInUser Index-->
+        @*email fill in*@
+        <div class="form-group row">
+
+        </div>
+        <div class="form-group row">
+            <label asp-for="Username" class="control-label">Username: </label>
+            <label asp-for="Username" for="Username" class="sr-only">username</label>
+            <input asp-for="Username" id="Username" class="form-control" placeholder="Username" autofocus="">
+            <span asp-validation-for="Username" class="text-danger"></span>
+        </div>
+
+
+        @*password fill in*@
+        <div class="form-group row">
+            <label asp-for="Password" class="control-label">password: </label>
+            <label asp-for="Password" for="Password" class="sr-only">password</label>
+            <input asp-for="Password" id="Password" class="form-control" placeholder="password" autofocus="">
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+
+        @*remember-me checkbox*@
+        <div class="form-group row">
+            <div class="form-check">
+                <input asp-for="RememberMe" class="form-check-input" />
+                <label asp-for="RememberMe" class="form-check-label">
+                    Remember Me
+                </label>
+            </div>
+        </div>
+
+
+        @*print error message*@
+
+        @if (ViewData["Message"] != null)
+        {
+            <div class="form-group row">
+                <div class="alert alert-@ViewData["MsgType"]">
+                    <text>@ViewData["Message"]</text>
+                </div>
+            </div>
+        }
+
+    </div>
+    <input type="submit" class="btn btn-primary" value="Login" />
+    </form>
