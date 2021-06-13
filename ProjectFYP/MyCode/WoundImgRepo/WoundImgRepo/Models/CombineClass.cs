@@ -14,20 +14,22 @@ namespace WoundImgRepo.Models
         public Tissue tissue { get; set; }
         public WVersion woundv { get; set; }
         public Image image { get; set; }
-        public Image annotationimage { get; set; }
-        public Image maskimage { get; set; }
+        public List<IFormFile> annotationimages { get; set; }
+        public List<IFormFile> maskimages { get; set; }
     }
 
-    //refer to columns from selectSql table created
-    public class CombineClass2
+    //get/set data from database
+    public class PatientRecord
     {
         public string woundname { get; set; }
+        public string woundstage { get; set; }
+        public string remarks { get; set; }
         public string woundcategoryname { get; set; }
         public string woundlocation { get; set; }
         public string woundversionname { get; set; }
         public string tissuename { get; set; }
         public string imagefile { get; set; }
         public int imageid { get; set; }
-        public List<AnnotationImage> AnnotationImages { get; set; }
+        public List<AnnotationMaskImage> annotationMaskImage { get; set; }
     }
 }

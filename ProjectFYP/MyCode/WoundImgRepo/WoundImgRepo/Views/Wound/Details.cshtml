@@ -1,20 +1,5 @@
-﻿@model CombineClass2
+﻿@model PatientRecord
 
-<style>
-    .column {
-        float: left;
-        width: 33.33%;
-        padding: 5px;
-    }
-
-    .row::after {
-        content: "";
-        clear: both;
-        display: table;
-    }
-</style>
-
-<h2>Wound Records</h2>
 @if (TempData["Msg"] != null)
 {
     <div class="alert alert-@TempData["MsgType"]">
@@ -22,42 +7,66 @@
     </div>
 }
 <div class="row">
-        <div class="column">
-            <img src="/photos/@Model.imagefile" class="card-img-top" style="width:100%" />
-        </div>
-        @foreach (AnnotationImage ai in Model.AnnotationImages)
-        {
-            <div class="column">
-                <img src="~/photos/@ai.annotationimagefile" style="width:100%" />
-            </div>
-            <div class="column">
-                <img src="~/photos/@ai.maskimagefile" style="width:100%" />
-            </div>
-        }
-        <div class="card">
-            <div class="card-body">
-                <h6 class="card-title">@Model.woundname</h6>
-                <p>@Model.woundname</p>
-                <p>@Model.woundname</p>
-                <p>@Model.woundcategoryname</p>
-                <p>@Model.woundlocation</p>
-                <p>@Model.tissuename</p>
-                <p>@Model.woundversionname</p>
-                <div>
-                    <small>
-                        <a asp-controller="Wound"
-                           asp-action="Update"
-                           asp-route-id="@Model.imageid">
-                            Edit
-                        </a> |
-                        <a asp-controller="Wound"
-                           asp-action="Delete"
-                           asp-route-id="@Model.imageid"
-                           onclick="return confirm('Delete Wound [Model.woundname]')">
-                            Delete
-                        </a>
-                    </small>
-                </div>
-            </div>
-        </div>
+    <h2>Wound Records</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Wounds</th>
+                <th>Annotations</th>
+                <th>Masks</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{ int woundImgCount = 0; }
+            @foreach (AnnotationMaskImage ai in Model.annotationMaskImage)
+            {
+                woundImgCount += 1;
+                <tr>
+                    @if (woundImgCount == 1)
+                    {
+                        <td class="border">
+                            <img src="/photos/@Model.imagefile" style="width:100%" />
+                        </td>
+                    }
+                    else
+                    {
+                        <td></td>
+                    }
+                    <td class="border">
+                        <img src="~/photos/@ai.annotationimagefile" style="width:100%" />
+                    </td>
+                    <td class="border">
+                        <img src="~/photos/@ai.maskimagefile" style="width:100%" />
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+    <div class="col-sm-4">
+        <p>Wound Name: @Model.woundname</p>
+        <p>Wound Stage: @Model.woundstage</p>
+        <p>Remarks: @Model.remarks</p>
+        <p>Wound Category: @Model.woundcategoryname</p>
+        <p>Wound Location: @Model.woundlocation</p>
+        <p>Tissue: @Model.tissuename</p>
+        <p>Version: @Model.woundversionname</p>
+        <p>
+            <a asp-controller="Wound"
+               asp-action="Update"
+               asp-route-id="@Model.imageid">
+                Edit
+            </a> |
+            <a asp-controller="Wound"
+               asp-action="Delete"
+               asp-route-id="@Model.imageid"
+               onclick="return confirm('Delete Wound [Model.woundname]')">
+                Delete
+            </a>
+        </p>
+    </div>
 </div>
+
+
+
+
