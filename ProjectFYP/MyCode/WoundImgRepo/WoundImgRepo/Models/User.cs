@@ -1,9 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.ComponentModel.DataAnnotations;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WoundImgRepo.Models
 {
@@ -24,10 +21,12 @@ namespace WoundImgRepo.Models
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Please enter Password")]
-        [StringLength(20, MinimumLength = 5, ErrorMessage = "Password must be 5 characters or more")]
+        [StringLength(20, MinimumLength = 5, ErrorMessage = "Password must be 5-20 characters")]
+        [DataType(DataType.Password)]
         public string UserPw { get; set; }
 
         [Compare("UserPw", ErrorMessage = "Passwords do not match")]
+        [DataType(DataType.Password)]
         public string UserPw2 { get; set; }
 
         [Required]

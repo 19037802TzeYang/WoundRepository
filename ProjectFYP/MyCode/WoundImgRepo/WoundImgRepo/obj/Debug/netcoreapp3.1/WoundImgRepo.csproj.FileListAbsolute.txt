@@ -219,11 +219,8 @@ C:\Users\19044593\source\repos\WoundRepository\ProjectFYP\MyCode\WoundImgRepo\Wo
 C:\Users\19044593\source\repos\WoundRepository\ProjectFYP\MyCode\WoundImgRepo\WoundImgRepo\obj\Debug\netcoreapp3.1\WoundImgRepo.TagHelpers.input.cache
 C:\Users\19044593\source\repos\WoundRepository\ProjectFYP\MyCode\WoundImgRepo\WoundImgRepo\obj\Debug\netcoreapp3.1\WoundImgRepo.TagHelpers.output.cache
 C:\Users\19044593\source\repos\WoundRepository\ProjectFYP\MyCode\WoundImgRepo\WoundImgRepo\obj\Debug\netcoreapp3.1\WoundImgRepo.RazorCoreGenerate.cache
-C:\Users\19044593\source\repos\WoundRepository\ProjectFYP\MyCode\WoundImgRepo\WoundImgRepo\obj\Debug\netcoreapp3.1\Razor\Views\Login\Index.cshtml.g.cs
-C:\Users\19044593\source\repos\WoundRepository\ProjectFYP\MyCode\WoundImgRepo\WoundImgRepo\obj\Debug\netcoreapp3.1\Razor\Views\Login\Index1dssd.cshtml.g.cs
 C:\Users\19044593\source\repos\WoundRepository\ProjectFYP\MyCode\WoundImgRepo\WoundImgRepo\obj\Debug\netcoreapp3.1\Razor\Views\Shared\Admin.cshtml.g.cs
 C:\Users\19044593\source\repos\WoundRepository\ProjectFYP\MyCode\WoundImgRepo\WoundImgRepo\obj\Debug\netcoreapp3.1\Razor\Views\Shared\Guest.cshtml.g.cs
-C:\Users\19044593\source\repos\WoundRepository\ProjectFYP\MyCode\WoundImgRepo\WoundImgRepo\obj\Debug\netcoreapp3.1\Razor\Views\Shared\User.cshtml.g.cs
 C:\Users\19044593\source\repos\WoundRepository\ProjectFYP\MyCode\WoundImgRepo\WoundImgRepo\obj\Debug\netcoreapp3.1\Razor\Views\Shared\_Layout.cshtml.g.cs
 C:\Users\19044593\source\repos\WoundRepository\ProjectFYP\MyCode\WoundImgRepo\WoundImgRepo\obj\Debug\netcoreapp3.1\Razor\Views\Shared\_Wound.cshtml.g.cs
 C:\Users\19044593\source\repos\WoundRepository\ProjectFYP\MyCode\WoundImgRepo\WoundImgRepo\obj\Debug\netcoreapp3.1\Razor\Views\Wound\Create.cshtml.g.cs
@@ -242,6 +239,8 @@ C:\Users\19044593\source\repos\WoundRepository\ProjectFYP\MyCode\WoundImgRepo\Wo
 C:\Users\19044593\source\repos\WoundRepository\ProjectFYP\MyCode\WoundImgRepo\WoundImgRepo\obj\Debug\netcoreapp3.1\WoundImgRepo.pdb
 C:\Users\19044593\source\repos\WoundRepository\ProjectFYP\MyCode\WoundImgRepo\WoundImgRepo\obj\Debug\netcoreapp3.1\WoundImgRepo.genruntimeconfig.cache
 C:\Users\19044593\source\repos\WoundRepository\ProjectFYP\MyCode\WoundImgRepo\WoundImgRepo\obj\Debug\netcoreapp3.1\WoundImgRepo.csprojAssemblyReference.cache
-C:\Users\19044593\source\repos\WoundRepository\ProjectFYP\MyCode\WoundImgRepo\WoundImgRepo\obj\Debug\netcoreapp3.1\Razor\Views\Register\CreateUser.cshtml.g.cs
 C:\Users\19041265\Source\Repos\WoundRepository\ProjectFYP\MyCode\WoundImgRepo\WoundImgRepo\obj\Debug\netcoreapp3.1\Razor\Views\Login\LoginPage.cshtml.g.cs
 C:\Users\19041265\Source\Repos\WoundRepository\ProjectFYP\MyCode\WoundImgRepo\WoundImgRepo\obj\Debug\netcoreapp3.1\Razor\Views\Register\Registry.cshtml.g.cs
+C:\Users\19044593\source\repos\WoundRepository\ProjectFYP\MyCode\WoundImgRepo\WoundImgRepo\obj\Debug\netcoreapp3.1\Razor\Views\Login\LoginPage.cshtml.g.cs
+C:\Users\19044593\source\repos\WoundRepository\ProjectFYP\MyCode\WoundImgRepo\WoundImgRepo\obj\Debug\netcoreapp3.1\Razor\Views\Register\Registry.cshtml.g.cs
+C:\Users\19044593\source\repos\WoundRepository\ProjectFYP\MyCode\WoundImgRepo\WoundImgRepo\obj\Debug\netcoreapp3.1\Razor\Views\Shared\Doctor.cshtml.g.cs
