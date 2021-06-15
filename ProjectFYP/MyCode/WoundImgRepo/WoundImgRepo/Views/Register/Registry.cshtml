@@ -1,4 +1,4 @@
-@model WoundImgRepo.Models.User
+@model User;
 
 <form asp-controller="Register" asp-action="Registry" method="post">
 
@@ -20,52 +20,52 @@
 
         @*password fill in*@
         <div class="form-group row">
-            <label asp-for="UserPw" class="control-label">Password (Include numbers and a capital letter): </label>
+            <label asp-for="UserPw" class="control-label">Password: </label>
             <label asp-for="UserPw" for="UserPw" class="sr-only">Password </label>
-            <input asp-for="UserPw" id="UserPw" class="form-control" placeholder="min 5 char." autofocus="">
+            <input asp-for="UserPw" id="UserPw" class="form-control" placeholder="Password" autofocus="">
             <span asp-validation-for="UserPw" class="text-danger"></span>
         </div>
 
         @*password checker*@
         <div class="form-group row">
-            <label asp-for="UserPw2" class="control-label">Re enter password: </label>
+            <label asp-for="UserPw2" class="control-label">Confirm Password: </label>
             <label asp-for="UserPw2" for="UserPw2" class="sr-only">Password </label>
-            <input asp-for="UserPw2" id="UserPw2" class="form-control" placeholder="Repeated password" autofocus="">
+            <input asp-for="UserPw2" id="UserPw2" class="form-control" placeholder="Confirm Password" autofocus="">
             <span asp-validation-for="UserPw2" class="text-danger"></span>
         </div>
 
         @*email*@
         <div class="form-group row">
-            <label asp-for="Email" class="control-label">Email Address: </label>
+            <label asp-for="Email" class="control-label">Email: </label>
             <label asp-for="Email" for="Email" class="sr-only">Email</label>
-            <input asp-for="Email" type="email" id="Email" class="form-control" placeholder="email" autofocus="">
+            <input asp-for="Email" type="email" id="Email" class="form-control" placeholder="Email" autofocus="">
             <span asp-validation-for="Email" class="text-danger"></span>
         </div>
 
 
-        @*Select list*@
-        <div class="form-group row">
-            <label asp-for="UserRole" class="control-label">User Role</label>
-            <div class="col-5">
-                <select class="form-control" asp-for="UserRole" id="UserRole">
-                    <option value=null>-SELECT-</option>
-                    <option value="Doctor">Doctor</option>
-                    <option value="Admin">Admin</option>
-                    <option value="Annotator">Annotator</option>
-                </select>
+        @*Select list *@
+            <div class="form-group row">
+                <label asp-for="UserRole" class="control-label">User Role</label>
+                <div class="col-5">
+                    <select class="form-control" asp-for="UserRole" id="UserRole">
+                        <option value=null>-SELECT-</option>
+                        <option value="Doctor">Doctor</option>
+                        <option value="Admin">Admin</option>
+                        <option value="Annotator">Annotator</option>
+                    </select>
+                </div>
+
+                <span asp-validation-for="UserRole" class="text-danger"></span>
             </div>
 
-            <span asp-validation-for="UserRole" class="text-danger"></span>
-        </div>
-
-
         @*print error message*@
-
         @if (ViewData["Message"] != null)
         {
             <div class="form-group row">
-                <div class="alert alert-@ViewData["MsgType"]">
-                    <text>@ViewData["Message"]</text>
+                <div class="offset-sm-2 col-sm-6">
+                    <div class="alert alert-@ViewData["MsgType"]">
+                        <text>@ViewData["Message"]</text>
+                    </div>
                 </div>
             </div>
         }
