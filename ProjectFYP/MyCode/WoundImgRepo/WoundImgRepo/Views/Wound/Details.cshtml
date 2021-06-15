@@ -1,4 +1,4 @@
-﻿@model PatientRecord
+﻿@model WoundRecord
 
 @if (TempData["Msg"] != null)
 {
@@ -46,15 +46,15 @@
     <div class="col-sm-4">
         <p>Wound Name: @Model.woundname</p>
         <p>Wound Stage: @Model.woundstage</p>
-        <p>Remarks: @Model.remarks</p>
+        <p>Remarks: @Model.woundremarks</p>
         <p>Wound Category: @Model.woundcategoryname</p>
-        <p>Wound Location: @Model.woundlocation</p>
+        <p>Wound Location: @Model.woundlocationname</p>
         <p>Tissue: @Model.tissuename</p>
-        <p>Version: @Model.woundversionname</p>
+        <p>Version: @Model.versionname</p>
         <p>
             <a asp-controller="Wound"
                asp-action="Update"
-               asp-route-id="@Model.imageid">
+               asp-route-id="@Model.woundid">
                 Edit
             </a> |
             <a asp-controller="Wound"

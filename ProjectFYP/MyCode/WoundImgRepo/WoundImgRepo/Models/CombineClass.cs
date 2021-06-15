@@ -19,14 +19,15 @@ namespace WoundImgRepo.Models
     }
 
     //get/set data from database
-    public class PatientRecord
+    public class WoundRecord
     {
+        public int woundid { get; set; }
         public string woundname { get; set; }
         public string woundstage { get; set; }
-        public string remarks { get; set; }
+        public string woundremarks { get; set; }
         public string woundcategoryname { get; set; }
-        public string woundlocation { get; set; }
-        public string woundversionname { get; set; }
+        public string woundlocationname { get; set; }
+        public string versionname { get; set; }
         public string tissuename { get; set; }
         public string imagefile { get; set; }
         public int imageid { get; set; }

@@ -24,9 +24,9 @@ namespace WoundImgRepo.Controllers
         #region Details()
         public IActionResult Details(int id)
         {
-            string selectWoundSql = @"SELECT w.name as woundname, w.wound_stage as woundstage, w.remarks as remarks, 
-                                     wc.name as woundcategoryname,wl.name as woundlocation, t.name as tissuename, 
-                                     v.name as woundversionname, i.img_file as imagefile, i.image_id as imageid
+            string selectWoundSql = @"SELECT w.wound_id as woundid, w.name as woundname, w.wound_stage as woundstage, w.remarks as woundremarks, 
+                                     wc.name as woundcategoryname, wl.name as woundlocationname, t.name as tissuename, 
+                                     v.name as versionname, i.img_file as imagefile, i.image_id as imageid
                                      FROM wound w
                                      INNER JOIN image i ON i.image_id = w.image_id
                                      INNER JOIN wound_category wc ON wc.wound_category_id = w.wound_category_id
@@ -34,11 +34,11 @@ namespace WoundImgRepo.Controllers
                                      INNER JOIN tissue t ON t.tissue_id = w.tissue_id
                                      INNER JOIN version v ON v.version_id = w.version_id
                                      WHERE wound_id={0}";
-            List<PatientRecord> recordFound = DBUtl.GetList<PatientRecord>(selectWoundSql, id);
+            List<WoundRecord> recordFound = DBUtl.GetList<WoundRecord>(selectWoundSql, id);
 
             if (recordFound.Count == 1)
             {
-                PatientRecord patientRecord = recordFound[0];
+                WoundRecord woundRecord = recordFound[0];
                 string selectAnnotationSql = @"SELECT i.img_file as annotationimagefile, im.img_file as maskimagefile
                                                FROM annotation an
                                                INNER JOIN image i ON an.annotation_image_id = i.image_id
@@ -46,9 +46,9 @@ namespace WoundImgRepo.Controllers
                                                INNER JOIN wound w ON an.wound_id = w.wound_id
                                                WHERE w.wound_id={0}";
                 List<AnnotationMaskImage> annotationMaskImageList = DBUtl.GetList<AnnotationMaskImage>(selectAnnotationSql, id);
-                patientRecord.annotationMaskImage = new List<AnnotationMaskImage>();
-                patientRecord.annotationMaskImage.AddRange(annotationMaskImageList);
-                return View(patientRecord);
+                woundRecord.annotationMaskImage = new List<AnnotationMaskImage>();
+                woundRecord.annotationMaskImage.AddRange(annotationMaskImageList);
+                return View(woundRecord);
             }
             else
             {
@@ -62,8 +62,21 @@ namespace WoundImgRepo.Controllers
         #region Create()
         public IActionResult Create()
         {
-            var versions = DBUtl.GetList("SELECT version_id, name FROM version ORDER BY name");
-            ViewData["versions"] = new SelectList(versions, "version_id", "name");
+            List<SelectListItem> versions = new List<SelectListItem>() {
+                new SelectListItem {
+                    Text = "Version 1.16", Value = "v1.16"
+                },
+                new SelectListItem {
+                    Text = "Version 1.17", Value = "v1.17"
+                },
+                new SelectListItem {
+                    Text = "Version 1.18", Value = "v1.18"
+                },
+                new SelectListItem {
+                    Text = "Version 2.0", Value = "v2.0"
+                }
+            };
+            ViewData["versions"] = new SelectList(versions, "Text", "Value");
             return View();
         }
 
@@ -165,6 +178,39 @@ namespace WoundImgRepo.Controllers
                     return View("Create");
                 }
             }
+        }
+        #endregion
+
+        #region Update()
+        public IActionResult Update(int id)
+        {
+            string selectWoundSql = @"SELECT wound_id as woundid, w.name as woundname, w.wound_stage as woundstage, w.remarks as woundremarks, 
+                                     wc.name as woundcategoryname, wl.name as woundlocationname, t.name as tissuename, 
+                                     v.name as versionname, i.img_file as imagefile, i.image_id as imageid
+                                     FROM wound w
+                                     INNER JOIN image i ON i.image_id = w.image_id
+                                     INNER JOIN wound_category wc ON wc.wound_category_id = w.wound_category_id
+                                     INNER JOIN wound_location wl ON wl.wound_location_id = w.wound_location_id
+                                     INNER JOIN tissue t ON t.tissue_id = w.tissue_id
+                                     INNER JOIN version v ON v.version_id = w.version_id
+                                     WHERE wound_id={0}";
+            List<WoundRecord> recordFound = DBUtl.GetList<WoundRecord>(selectWoundSql, id);
+            if (recordFound.Count == 1)
+            {
+                return View();
+            }
+            else
+            {
+                TempData["Message"] = "Patient Record does not exist";
+                TempData["MsgType"] = "warning";
+                return RedirectToAction("Details");
+            }
+        }
+
+        [HttpPost]
+        public IActionResult Update()
+        {
+            return RedirectToAction();
         }
         #endregion
 
