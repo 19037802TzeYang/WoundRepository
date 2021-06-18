@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace WoundImgRepo.Models
 {
@@ -14,7 +15,9 @@ namespace WoundImgRepo.Models
         public Tissue tissue { get; set; }
         public WVersion woundv { get; set; }
         public Image image { get; set; }
+        [Required(ErrorMessage ="Annotation images are required!")]
         public List<IFormFile> annotationimages { get; set; }
+        [Required(ErrorMessage = "Mask images are required!")]
         public List<IFormFile> maskimages { get; set; }
     }
 
