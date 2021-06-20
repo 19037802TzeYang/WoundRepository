@@ -14,8 +14,8 @@ namespace WoundImgRepo.Models
         public Tissue tissue { get; set; }
         public WVersion woundv { get; set; }
         public Image image { get; set; }
-        public List<IFormFile> annotationimages { get; set; }
-        public List<IFormFile> maskimages { get; set; }
+        public IFormFile annotationimage { get; set; }
+        public IFormFile maskimage { get; set; }
     }
 
     //get/set data from database
@@ -31,6 +31,8 @@ namespace WoundImgRepo.Models
         public string tissuename { get; set; }
         public string imagefile { get; set; }
         public int imageid { get; set; }
+        public IFormFile annotationimage { get; set; }
+        public IFormFile maskimage { get; set; }
         public List<AnnotationMaskImage> annotationMaskImage { get; set; }
     }
 }

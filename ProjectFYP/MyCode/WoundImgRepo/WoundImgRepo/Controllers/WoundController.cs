@@ -25,15 +25,15 @@ namespace WoundImgRepo.Controllers
         public IActionResult Details(int id)
         {
             string selectWoundSql = @"SELECT w.wound_id as woundid, w.name as woundname, w.wound_stage as woundstage, w.remarks as woundremarks, 
-                                     wc.name as woundcategoryname, wl.name as woundlocationname, t.name as tissuename, 
-                                     v.name as versionname, i.img_file as imagefile, i.image_id as imageid
-                                     FROM wound w
-                                     INNER JOIN image i ON i.image_id = w.image_id
-                                     INNER JOIN wound_category wc ON wc.wound_category_id = w.wound_category_id
-                                     INNER JOIN wound_location wl ON wl.wound_location_id = w.wound_location_id
-                                     INNER JOIN tissue t ON t.tissue_id = w.tissue_id
-                                     INNER JOIN version v ON v.version_id = w.version_id
-                                     WHERE wound_id={0}";
+                                      wc.name as woundcategoryname, wl.name as woundlocationname, t.name as tissuename, 
+                                      v.name as versionname, i.img_file as imagefile, i.image_id as imageid
+                                      FROM wound w
+                                      INNER JOIN image i ON i.image_id = w.image_id
+                                      INNER JOIN wound_category wc ON wc.wound_category_id = w.wound_category_id
+                                      INNER JOIN wound_location wl ON wl.wound_location_id = w.wound_location_id
+                                      INNER JOIN tissue t ON t.tissue_id = w.tissue_id
+                                      INNER JOIN version v ON v.version_id = w.version_id
+                                      WHERE wound_id={0}";
             List<WoundRecord> recordFound = DBUtl.GetList<WoundRecord>(selectWoundSql, id);
 
             if (recordFound.Count == 1)
@@ -52,7 +52,7 @@ namespace WoundImgRepo.Controllers
             }
             else
             {
-                TempData["Msg"] = "Patient record does not exist";
+                TempData["Msg"] = "Wound record does not exist";
                 TempData["MsgType"] = "warning";
                 return RedirectToAction("Index");
             }
@@ -98,22 +98,16 @@ namespace WoundImgRepo.Controllers
                 int imageRowsAffected = DBUtl.ExecSQL(imageSql, cc.wound.name, "Original Wound Image", picfilename);
                 Image img = DBUtl.GetList<Image>("SELECT image_id FROM image ORDER BY image_id DESC")[0];
                 
-                cc.annotationimages.ForEach(p =>
-                {
-                    string anpicfilename = DoPhotoUpload(p);
-                    string animageSql = @"INSERT INTO image(name, type, img_file)
-                                          VALUES('{0}','{1}','{2}')";
-                    int animageRowsAffected = DBUtl.ExecSQL(animageSql, cc.wound.name, "Annotation Image", anpicfilename);
-                });
+                string anpicfilename = DoPhotoUpload(cc.annotationimage);
+                string animageSql = @"INSERT INTO image(name, type, img_file)
+                                      VALUES('{0}','{1}','{2}')";
+                int animageRowsAffected = DBUtl.ExecSQL(animageSql, cc.wound.name, "Annotation Image", anpicfilename);
                 var anImg = DBUtl.GetList<Image>("SELECT image_id FROM image WHERE name='" + cc.wound.name + "'AND type='Annotation Image'");
 
-                cc.maskimages.ForEach(p =>
-                {
-                    string maskpicfilename = DoPhotoUpload(p);
-                    string maskimageSql = @"INSERT INTO image(name, type, img_file)
-                                            VALUES('{0}','{1}','{2}')";
-                    int maskimageRowsAffected = DBUtl.ExecSQL(maskimageSql, cc.wound.name, "Mask Image", maskpicfilename);
-                });
+                string maskpicfilename = DoPhotoUpload(cc.maskimage);
+                string maskimageSql = @"INSERT INTO image(name, type, img_file)
+                                        VALUES('{0}','{1}','{2}')";
+                int maskimageRowsAffected = DBUtl.ExecSQL(maskimageSql, cc.wound.name, "Mask Image", maskpicfilename); 
                 var maskImg = DBUtl.GetList<Image>("SELECT image_id FROM image WHERE name='" + cc.wound.name + "'AND type='Mask Image'");
 
                 //wound_category table
@@ -176,6 +170,61 @@ namespace WoundImgRepo.Controllers
                     TempData["Msg"] = DBUtl.DB_Message;
                     TempData["MsgType"] = "danger";
                     return View("Create");
+                }
+            }
+        }
+        #endregion
+
+        #region UpdateAnnotationMaskImage()
+        [HttpPost]
+        public IActionResult UpdateAnnotationMaskImage(WoundRecord wr)
+        {
+            if (!ModelState.IsValid)
+            {
+                ViewData["Msg"] = "Invalid Input";
+                ViewData["MsgType"] = "warning";
+                return RedirectToAction("Details", new { id = wr.woundid });
+            }
+            else
+            {
+                //image table
+                string anpicfilename = DoPhotoUpload(wr.annotationimage);
+                string animageSql = @"INSERT INTO image(name, type, img_file)
+                                      VALUES('{0}','{1}','{2}')";
+                int animageRowsAffected = DBUtl.ExecSQL(animageSql, wr.woundname, "Annotation Image", anpicfilename);
+                var anImg = DBUtl.GetList<Image>("SELECT image_id FROM image WHERE name='" + wr.woundname + "'AND type='Annotation Image' AND img_file='" + anpicfilename + "'");
+
+                string maskpicfilename = DoPhotoUpload(wr.maskimage);
+                string maskimageSql = @"INSERT INTO image(name, type, img_file)
+                                        VALUES('{0}','{1}','{2}')";
+                int maskimageRowsAffected = DBUtl.ExecSQL(maskimageSql, wr.woundname, "Mask Image", maskpicfilename);
+                var maskImg = DBUtl.GetList<Image>("SELECT image_id FROM image WHERE name='" + wr.woundname + "'AND type='Mask Image' AND img_file='" + maskpicfilename + "'");
+
+                //annotation table
+                int anRowsAffected = 0;
+                int imgCount = 0;
+                if (anImg.Count == maskImg.Count)
+                {
+                    anImg.ForEach(img =>
+                    {
+                        string anSql = @"INSERT INTO annotation(mask_image_id, wound_id, annotation_image_id)
+                                         VALUES({0},{1},{2})";
+                        anRowsAffected = DBUtl.ExecSQL(anSql, maskImg[imgCount].image_id, wr.woundid, img.image_id);
+                        imgCount += 1;
+                    });
+                }
+
+                if (animageRowsAffected == 1 && maskimageRowsAffected == 1)
+                {
+                    TempData["Msg"] = "Images updated successfully";
+                    TempData["MsgType"] = "success";
+                    return RedirectToAction("Details", new { id = wr.woundid });
+                }
+                else
+                {
+                    TempData["Msg"] = DBUtl.DB_Message;
+                    TempData["MsgType"] = "danger";
+                    return RedirectToAction("Details", new { id = wr.woundid });
                 }
             }
         }

@@ -1,8 +1,8 @@
 ﻿@model CombineClass
 <form asp-controller="Wound" asp-action="Create" method="post" enctype="multipart/form-data">
-    <div class="form-group row">
+    <div class="form-group row mt-4 mb-4">
         <div class="col-sm-6">
-            <h2>Create Wound</h2><br>
+            <h2>Create Wound</h2>
         </div>
     </div>
 
@@ -14,16 +14,16 @@
     </div>
 
     <div class="form-group row">
-        <label class="col-sm-2" asp-for="annotationimages">Annotation Image:</label>
+        <label class="col-sm-2" asp-for="annotationimage">Annotation Image:</label>
         <div class="col-sm-4">
-            <input type="file" asp-for="annotationimages" multiple>
+            <input type="file" asp-for="annotationimage">
         </div>
     </div>
 
     <div class="form-group row">
-        <label class="col-sm-2" asp-for="maskimages">Mask Image:</label>
+        <label class="col-sm-2" asp-for="maskimage">Mask Image:</label>
         <div class="col-sm-4">
-            <input type="file" asp-for="maskimages" multiple>
+            <input type="file" asp-for="maskimage">
         </div>
     </div>
 
