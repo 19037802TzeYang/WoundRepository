@@ -25,7 +25,7 @@ namespace WoundImgRepo.Controllers
             return View("~/Views/Login/LoginPage.cshtml");
         }
 
-    
+        // checks if login page has everything filled up
         [HttpPost]
         public IActionResult LoginPage(string Username, string Password)
         {
@@ -38,9 +38,6 @@ namespace WoundImgRepo.Controllers
                 return View("~/Views/Login/LoginPage.cshtml");
 
             }
-
-
-
 
 
             // If all is filled , Then
@@ -61,13 +58,11 @@ namespace WoundImgRepo.Controllers
                 DataTable match = DBUtl.GetTable(LOGIN_SQL, userN, psswrd);
 
 
-
-
-
-
                 //check if it is null 
                 if (match.Rows.Count > 0)
                 {
+                    ViewData["Message"] = "inputs succeeded.";
+                    ViewData["MsgType"] = "warning";
 
                     //return the view of the home page if fields are correct
                     return RedirectToAction("Index", "wound");
@@ -86,6 +81,11 @@ namespace WoundImgRepo.Controllers
 
 
         }
+
+
+
+
+
     }
 }
 
