@@ -15,6 +15,7 @@ using System.Collections;
 using System.Data;
 using System.Text.RegularExpressions;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace hostrepository.Controllers
 {
@@ -45,17 +46,17 @@ namespace hostrepository.Controllers
 
         // final check if the user should be permitted
         [HttpPost]
-        public ActionResult Registry(string Username, string UserPw , string UserPw2, string Email , String UserRole)
+        public ActionResult Registry(string username, string password, string UserPw2, string email, String user_role)
 
 
         {
 
-          
-            if (string.IsNullOrEmpty(Username) || string.IsNullOrEmpty(UserPw) || string.IsNullOrEmpty(UserPw2)  || string.IsNullOrEmpty(Email) || String.IsNullOrEmpty(UserRole))
+
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(UserPw2) || string.IsNullOrEmpty(email) || String.IsNullOrEmpty(user_role))
             {
 
                 //stores in password 1
-               
+
 
                 ViewData["Message"] = "One or more fields are missing";
                 ViewData["MsgType"] = "warning";
@@ -64,7 +65,7 @@ namespace hostrepository.Controllers
             else
             {
                 //password checker for hackable passwords
-                if (badPasswords.Contains(UserPw) || UserPw.Length<5)
+                if (badPasswords.Contains(password) || password.Length < 5)
                 {
                     ViewData["Message"] = "main Password too weak.";
                     ViewData["MsgType"] = "warning";
@@ -72,20 +73,20 @@ namespace hostrepository.Controllers
                 }
 
                 // compare passwords
-                if ( UserPw.Equals(UserPw2) != true || UserPw2.Length < 5)
+                if (password.Equals(UserPw2) != true || UserPw2.Length < 5)
                 {
-                    ViewData["Message"] = UserPw;
+                    ViewData["Message"] = "second password : error detected! ";
                     ViewData["MsgType"] = "warning";
                     return View();
                 }
 
 
 
-                Regex list_of_caps = new Regex(@"[A-Z]" );
+                Regex list_of_caps = new Regex(@"[A-Z]");
 
                 //check if at least 1 character is in uppercase
-                MatchCollection matches = list_of_caps.Matches(UserPw);
-                if (matches.Count ==0)
+                MatchCollection matches = list_of_caps.Matches(password);
+                if (matches.Count == 0)
                 {
                     ViewData["Message"] = "Password Has no capital";
                     ViewData["MsgType"] = "warning";
@@ -95,68 +96,89 @@ namespace hostrepository.Controllers
                 Regex numbercheck = new Regex(@"[1-9]");
 
                 //check if at least 1 character is in uppercase
-                MatchCollection matchnum = numbercheck.Matches(UserPw);
+                MatchCollection matchnum = numbercheck.Matches(password);
                 if (matchnum.Count == 0)
                 {
                     ViewData["Message"] = "Password Has no numbers";
                     ViewData["MsgType"] = "warning";
                     return View();
                 }
+
+
+
+
+
+
+
+
+                //check if email addressed is in use
                 string emailcheck_SQL =
                @"SELECT user_id FROM useracc 
-                      WHERE email = '{0}'";
+                      WHERE username = '{0}'";
 
-               DataTable matchmail = DBUtl.GetTable(emailcheck_SQL, Email);
+                DataTable matchname = DBUtl.GetTable(emailcheck_SQL, username);
 
-           
-                //check if email addressed is in use
-                if (matchmail.Rows.Count == 1)
+
+              
+                if (matchname.Rows.Count == 1)
                 {
-                    ViewData["Message"] = "Re-occuring email addressed detected ! ";
+                    ViewData["Message"] = "User currently exist , try using another name ";
                     ViewData["MsgType"] = "warning";
+                    return View("~/Views/Register/Registry.cshtml");
                 }
+                
 
-                //sets the ID
 
-                int newregi = 1;
+                //check if insert is done
+                 string INSERT = @"INSERT INTO useracc( username, email, password, user_role) 
+                VALUES ( '{0}', '{1}', HASHBYTES('SHA1', '{2}'), '{3}')";
+                 int rowsAffected = DBUtl.ExecSQL(INSERT, username, email, password, user_role);
 
-                string checkID_SQL =
-               @"SELECT user_id FROM useracc 
-                      WHERE user_id = '{0}'";
-
-                DataTable match = DBUtl.GetTable(checkID_SQL, newregi);
-                // check if a new ID is acceptable , if not +1 (ngl but we need to string this down by A LOT)
-                while (match.Rows.Count == 1)
+                if (rowsAffected == 1)
                 {
-                 
-                    newregi +=1; //sets up the ID)
-                    match = DBUtl.GetTable(checkID_SQL, newregi);
-
+                    //replace dis wif ur homepage
+                    TempData["Message"] = "Successful Registration !";
+                    ViewData["MsgType"] = "success";
+                    return RedirectToAction("Userlist");
                 }
-
-                string INSERT = @"INSERT INTO useracc(user_id, username, email, password, user_role) VALUES
-                                        ('{0}' , '{1}' , '{2}' , HASHBYTES('SHA1', '{3}'), '{4}'";
-
-                int rowsAffected = DBUtl.ExecSQL(INSERT, newregi, Username, Email, UserPw, UserRole);
-
-
-                //insert test
-                if (rowsAffected == 0)
+                else
                 {
-                    ViewData["Message "] = "doesn't work";
+                    TempData["Message"] = "not workin";
                     ViewData["MsgType"] = "warning";
                     return View();
                 }
 
-                //replace dis wif ur homepage
-                ViewData["Message"] = "ye m8";
-                ViewData["MsgType"] = "warning";
-                return View();
             }
+        }
 
+       
+        //gets back userlist
+        public IActionResult Userlist()
+        {
+            List<User> List = DBUtl.GetList<User>("SELECT * FROM useracc");
+            return View(List);
         }
 
 
+        public IActionResult Delete(string username)
+        {
+           
+            {
+                string delete = "DELETE FROM useracc WHERE username='{0}'";
+                int res = DBUtl.ExecSQL(delete, username);
+                if (res == 1)
+                {
+                    TempData["Message"] = "User Record Deleted";
+                    TempData["MsgType"] = "success";
+                }
+                else
+                {
+                    TempData["Message"] = DBUtl.DB_Message;
+                    TempData["MsgType"] = "danger";
+                }
+            }
+            return RedirectToAction("Userlist");
+        }
 
     }
 }

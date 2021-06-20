@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -7,18 +7,23 @@ namespace WoundImgRepo.Models
     // This is for registration
     public class User
     {
-        /*
-         * BEWARE USERID IS FOR DATABASE
+     
+         //BEWARE USERID IS FOR DATABASE
         [Required(ErrorMessage = "Please enter User ID")]
-        [Remote(action: "VerifyUserID", controller: "Account")]
-        public string UserId { get; set; }
-        */
+     
+        public string user_id { get; set; }
+   
         [Required]
-        public string Username { get; set; }
+        public string username { get; set; }
 
         [Required(ErrorMessage = "Please enter Email")]
         [EmailAddress(ErrorMessage = "Invalid Email")]
-        public string Email { get; set; }
+        public string email { get; set; }
+
+        [Required(ErrorMessage = "Please enter Password")]
+        [StringLength(20, MinimumLength = 5, ErrorMessage = "Password must be 5-20 characters")]
+        [DataType(DataType.Password)]
+        public string password { get; set; }
 
         [Required(ErrorMessage = "Please enter Password")]
         [StringLength(20, MinimumLength = 5, ErrorMessage = "Password must be 5-20 characters")]
@@ -31,8 +36,9 @@ namespace WoundImgRepo.Models
 
         [Required]
         [RegularExpression("(Doctor|Annotator|Admin)", ErrorMessage = "Select option")]
-        public string UserRole { get; set; }
+        public string user_role { get; set; }
 
-        public DateTime LastLogin { get; set; }
+        public DateTime last_Login { get; set; }
     }
 }
+

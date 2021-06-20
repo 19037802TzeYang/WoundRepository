@@ -10,20 +10,20 @@
 
         </div>
         <div class="form-group row">
-            <label asp-for="Username" class="control-label">Username: </label>
-            <label asp-for="Username" for="Username" class="sr-only">Username</label>
-            <input asp-for="Username" id="Username" class="form-control" placeholder="Username" autofocus="">
-            <span asp-validation-for="Username" class="text-danger"></span>
+            <label asp-for="username" class="control-label">Username: </label>
+            <label asp-for="username" for="username" class="sr-only">Username</label>
+            <input asp-for="username" id="username" class="form-control" placeholder="Username" autofocus="">
+            <span asp-validation-for="username" class="text-danger"></span>
         </div>
 
 
 
         @*password fill in*@
         <div class="form-group row">
-            <label asp-for="UserPw" class="control-label">Password: </label>
-            <label asp-for="UserPw" for="UserPw" class="sr-only">Password </label>
-            <input asp-for="UserPw" id="UserPw" class="form-control" placeholder="Password" autofocus="">
-            <span asp-validation-for="UserPw" class="text-danger"></span>
+            <label asp-for="password" class="control-label">Password: </label>
+            <label asp-for="password" for="password" class="sr-only">Password </label>
+            <input asp-for="password" id="password" class="form-control" placeholder="Password" autofocus="">
+            <span asp-validation-for="password" class="text-danger"></span>
         </div>
 
         @*password checker*@
@@ -36,40 +36,50 @@
 
         @*email*@
         <div class="form-group row">
-            <label asp-for="Email" class="control-label">Email: </label>
-            <label asp-for="Email" for="Email" class="sr-only">Email</label>
-            <input asp-for="Email" type="email" id="Email" class="form-control" placeholder="Email" autofocus="">
-            <span asp-validation-for="Email" class="text-danger"></span>
+            <label asp-for="email" class="control-label">Email: </label>
+            <label asp-for="email" for="email" class="sr-only">Email</label>
+            <input asp-for="email" type="email" id="email" class="form-control" placeholder="Email" autofocus="">
+            <span asp-validation-for="email" class="text-danger"></span>
         </div>
 
 
         @*Select list *@
-            <div class="form-group row">
-                <label asp-for="UserRole" class="control-label">User Role</label>
-                <div class="col-5">
-                    <select class="form-control" asp-for="UserRole" id="UserRole">
-                        <option value=null>-SELECT-</option>
-                        <option value="Doctor">Doctor</option>
-                        <option value="Admin">Admin</option>
-                        <option value="Annotator">Annotator</option>
-                    </select>
-                </div>
+    <div class="form-group row">
+        <label class="control-label col-sm-\2">User Role : </label>
+        <div class="col-sm-5">
+            <div class="form-check form-check-inline">
+                <input type="radio" class="form-check-input" id="rb1"
+                       asp-for="user_role" value="Doctor" checked />
+                <label class="form-check-label" for="rb1">Doctor</label>
 
-                <span asp-validation-for="UserRole" class="text-danger"></span>
+            </div>
+            <div class="form-check form-check-inline">
+                <input type="radio" class="form-check-input" id="rb2"
+                       asp-for="user_role" value="Annotator" />
+                <label class="form-check-label" for="rb2">Annotator</label>
+
             </div>
 
-        @*print error message*@
-        @if (ViewData["Message"] != null)
-        {
-            <div class="form-group row">
-                <div class="offset-sm-2 col-sm-6">
-                    <div class="alert alert-@ViewData["MsgType"]">
-                        <text>@ViewData["Message"]</text>
+            <div class="form-check form-check-inline">
+                <input type="radio" class="form-check-input" id="rb3"
+                       asp-for="user_role" value="Admin" />
+                <label class="form-check-label" for="rb3">Admin</label>
+            </div>
+            </div>
+        </div>
+
+            @*print error message*@
+            @if (ViewData["Message"] != null)
+            {
+                <div class="form-group row">
+                    <div class="offset-sm-2 col-sm-6">
+                        <div class="alert alert-@ViewData["MsgType"]">
+                            <text>@ViewData["Message"]</text>
+                        </div>
                     </div>
                 </div>
-            </div>
-        }
+            }
 
-    </div>
-    <input type="submit" class="btn btn-primary" value="Register" />
+        </div>
+        <input type="submit" class="btn btn-primary" value="Register" />
 </form>
