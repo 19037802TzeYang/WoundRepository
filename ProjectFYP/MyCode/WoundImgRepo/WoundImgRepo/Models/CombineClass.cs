@@ -34,6 +34,8 @@ namespace WoundImgRepo.Models
         public string tissuename { get; set; }
         public string imagefile { get; set; }
         public int imageid { get; set; }
+
+        public string createdBy { get; set; }
         public List<AnnotationMaskImage> annotationMaskImage { get; set; }
     }
 }
