@@ -2,4 +2,9 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/ProjectFYP/Databases/FYPDB.ldf
+ProjectFYP/MyCode/WoundImgRepo/WoundImgRepo/obj/
+ProjectFYP/MyCode/WoundImgRepo/WoundImgRepo/bin/
+ProjectFYP/MyCode/WoundImgRepo/.vs/
+ProjectFYP/Databases/
+
+
