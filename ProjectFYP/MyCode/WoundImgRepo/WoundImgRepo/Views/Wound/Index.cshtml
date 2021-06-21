@@ -1,4 +1,4 @@
-﻿@model List<Wound>
+﻿@model List<WoundRecord>
 @{
     Layout = "_Wound";
 }
@@ -21,7 +21,7 @@
                 searching: true,
                 info: true,
                 lengthChange: true,
-                pageLength: 2
+                pageLength: 5
             });
         });
     </script>
@@ -42,35 +42,33 @@
         <th scope="col" width="20%">Name</th>
         <th scope="col" width="20%">Wound Stage</th>
         <th scope="col" width="20%">Remarks</th>
-        <th scope="col" width="20%">Wound Category Id</th>
-        <th scope="col" width="20%">Wound Location Id</th>
+        <th scope="col" width="20%">Wound Category</th>
+        <th scope="col" width="20%">Wound Location</th>
         <th scope="col" width="20%">Original Wound Image</th>
-        <th scope="col" width="20%">Annotation Image</th>
-        <th scope="col" width="20%">Mask Image</th>
-        <th scope="col" width="20%">Tissue Id</th>
-        <th scope="col" width="20%">Version Id</th>
+        
+        <th scope="col" width="20%">Tissue</th>
+        <th scope="col" width="20%">Version</th>
         <th scope="col" width="20%">Image Id</th>
         <th scope="col" width="20%">User Id</th>
         <th scope="col" width="20%">Edit / Delete</th>
     </tr>
     <tbody>
-        @foreach (Wound w in Model)
+        @foreach (WoundRecord w in Model)
         {
             <tr scope="row">
-                <td width="20%">@w.user_id</td>
-                <td width="20%">@w.name</td>
-                <td width="20%">@w.wound_stage</td>
-                <td width="20%">@w.remarks</td>
-                <td width="20%">@w.wound_category_id</td>
-                <td width="20%">@w.wound_location_id</td>
-                <td width="20%"><img></td>
-                <td width="20%"><img></td>
-                <td width="20%"><img></td>
-                <td width="20%">@w.tissue_id</td>
-                <td width="20%">@w.version_id</td>
-                <td width="20%">@w.image_id</td>
-                <td width="20%">@w.user_id</td>
-                <td width="20%"><a asp-controller="Wound" asp-action="Details" asp-route-id="@w.wound_id">Details</a></td>
+                <td width="20%">@w.woundid</td>
+                <td width="20%">@w.woundname</td>
+                <td width="20%">@w.woundstage</td>
+                <td width="20%">@w.woundremarks</td>
+                <td width="20%">@w.woundcategoryname</td>
+                <td width="20%">@w.woundlocationname</td>
+                <td width="20%"><img src="~/photos/@w.imagefile"></td>
+                
+                <td width="20%">@w.tissuename</td>
+                <td width="20%">@w.versionname</td>
+                <td width="20%">@w.imageid</td>
+                <td width="20%">@w.woundid</td>
+                <td width="20%"><a asp-controller="Wound" asp-action="Details" asp-route-id="@w.woundid">Details</a></td>
                 <td width="20%"><a asp-controller="Wound" asp-action="Edit">Edit</a> |  <a asp-controller="Wound" asp-action="Delete">Delete</a></td>
             </tr>
         }
