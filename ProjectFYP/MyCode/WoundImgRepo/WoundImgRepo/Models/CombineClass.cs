@@ -15,15 +15,10 @@ namespace WoundImgRepo.Models
         public Tissue tissue { get; set; }
         public WVersion woundv { get; set; }
         public Image image { get; set; }
-<<<<<<< HEAD
         public IFormFile annotationimage { get; set; }
         public IFormFile maskimage { get; set; }
-=======
-        [Required(ErrorMessage ="Annotation images are required!")]
         public List<IFormFile> annotationimages { get; set; }
-        [Required(ErrorMessage = "Mask images are required!")]
         public List<IFormFile> maskimages { get; set; }
->>>>>>> b3429f8ced17bf6834f81844aeda92cb75b00086
     }
 
     //get/set data from database
@@ -39,13 +34,8 @@ namespace WoundImgRepo.Models
         public string tissuename { get; set; }
         public string imagefile { get; set; }
         public int imageid { get; set; }
-<<<<<<< HEAD
         public IFormFile annotationimage { get; set; }
         public IFormFile maskimage { get; set; }
-=======
-
-        public string createdBy { get; set; }
->>>>>>> b3429f8ced17bf6834f81844aeda92cb75b00086
         public List<AnnotationMaskImage> annotationMaskImage { get; set; }
     }
 }
