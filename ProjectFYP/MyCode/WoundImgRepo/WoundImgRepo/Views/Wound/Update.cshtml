@@ -1,73 +1,78 @@
-﻿<div class="container">
+﻿@model CombineClass
+<form asp-controller="Wound" asp-action="Update" method="post" enctype="multipart/form-data">
     <div class="row">
-        <form asp-controller="Wound" asp-action="Update" method="post" enctype="multipart/form-data">
-            <div class="form-group row">
-                <div class="col-sm-6">
-                    <h2>Update Wound</h2><br>
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <img src="/photos/" style="width:100%;height:500px;width:50%" />
-            </div>
-
-
-            <div class="form-group row">
-                <label class="col-sm-2">Wound Name: </label>
-                <div class="col-sm-4">
-                    <input class="form-control">
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <label class="col-sm-2">Wound Stage: </label>
-                <div class="col-sm-4">
-                    <input class="form-control">
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <label class="col-sm-2">Remarks: </label>
-                <div class="col-sm-4">
-                    <input class="form-control">
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <label class="col-sm-2">Wound Category: </label>
-                <div class="col-sm-4">
-                    <input class="form-control">
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <label class="col-sm-2">Wound Location: </label>
-                <div class="col-sm-4">
-                    <input class="form-control">
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <label class="col-sm-2">Wound Tissue: </label>
-                <div class="col-sm-4">
-                    <input class="form-control">
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <label class="col-sm-2">Image Version</label>
-                <div class="col-sm-4">
-                    <select class="form-control">
-                        <option value="">-SELECT-</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <div class="offset-sm-2 col-sm-4">
-                    <input class="btn btn-primary" type="submit" value="Update">
-                </div>
-            </div>
-        </form>
+        <div class="offset-sm-2 col-sm-4">
+            <h2 class="mt-4">Edit Wound</h2><br>
+        </div>
     </div>
-</div>
+
+    <div class="form-group row">
+        <div class="offset-sm-2 col-sm-4">
+            <div class="border">
+                <img src="/photos/@Model.image.img_file" class="img-fluid" alt="Responsive image" style="width:100%; height:auto;" />
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-2" asp-for="wound.name">Wound Name: </label>
+        <div class="col-sm-4">
+            <input class="form-control" asp-for="wound.name">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-2" asp-for="wound.wound_stage">Wound Stage: </label>
+        <div class="col-sm-4">
+            <input class="form-control" asp-for="wound.wound_stage">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-2" asp-for="wound.remarks">Remarks: </label>
+        <div class="col-sm-4">
+            <input class="form-control" asp-for="wound.remarks">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-2" asp-for="woundc.name">Wound Category: </label>
+        <div class="col-sm-4">
+            <input type="hidden" asp-for="woundc.wound_category_id" />
+            <input class="form-control" asp-for="woundc.name">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-2" asp-for="woundl.name">Wound Location: </label>
+        <div class="col-sm-4">
+            <input type="hidden" asp-for="woundl.wound_location_id" />
+            <input class="form-control" asp-for="woundl.name">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-2" asp-for="tissue.name">Wound Tissue: </label>
+        <div class="col-sm-4">
+            <input type="hidden" asp-for="tissue.tissue_id" />
+            <input class="form-control" asp-for="tissue.name">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-2">Image Version</label>
+        <div class="col-sm-4">
+            <input type="hidden" asp-for="woundv.version_id" />
+            <select class="form-control" asp-items="@((SelectList)ViewData["versions"])" asp-for="woundv.name">
+                <option value="">-SELECT-</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <div class="offset-sm-2 col-sm-4">
+            <input class="btn btn-primary" type="submit" value="Update">
+        </div>
+    </div>
+</form>
+

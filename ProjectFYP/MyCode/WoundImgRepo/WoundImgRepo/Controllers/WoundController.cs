@@ -97,7 +97,7 @@ namespace WoundImgRepo.Controllers
                                     VALUES('{0}','{1}','{2}')";
                 int imageRowsAffected = DBUtl.ExecSQL(imageSql, cc.wound.name, "Original Wound Image", picfilename);
                 Image img = DBUtl.GetList<Image>("SELECT image_id FROM image ORDER BY image_id DESC")[0];
-                
+
                 string anpicfilename = DoPhotoUpload(cc.annotationimage);
                 string animageSql = @"INSERT INTO image(name, type, img_file)
                                       VALUES('{0}','{1}','{2}')";
@@ -107,7 +107,7 @@ namespace WoundImgRepo.Controllers
                 string maskpicfilename = DoPhotoUpload(cc.maskimage);
                 string maskimageSql = @"INSERT INTO image(name, type, img_file)
                                         VALUES('{0}','{1}','{2}')";
-                int maskimageRowsAffected = DBUtl.ExecSQL(maskimageSql, cc.wound.name, "Mask Image", maskpicfilename); 
+                int maskimageRowsAffected = DBUtl.ExecSQL(maskimageSql, cc.wound.name, "Mask Image", maskpicfilename);
                 var maskImg = DBUtl.GetList<Image>("SELECT image_id FROM image WHERE name='" + cc.wound.name + "'AND type='Mask Image'");
 
                 //wound_category table
@@ -123,9 +123,9 @@ namespace WoundImgRepo.Controllers
                 WoundLocation wl = DBUtl.GetList<WoundLocation>("SELECT wound_location_id FROM wound_location ORDER BY wound_location_id DESC")[0];
 
                 //tissue table
-                string tLSql = @"INSERT INTO tissue(name)
-                                 VALUES('{0}')";
-                int tRowsAffected = DBUtl.ExecSQL(tLSql, cc.tissue.name);
+                string tSql = @"INSERT INTO tissue(name)
+                                VALUES('{0}')";
+                int tRowsAffected = DBUtl.ExecSQL(tSql, cc.tissue.name);
                 Tissue t = DBUtl.GetList<Tissue>("SELECT tissue_id FROM Tissue ORDER BY tissue_id DESC")[0];
 
                 //version table
@@ -234,32 +234,112 @@ namespace WoundImgRepo.Controllers
         public IActionResult Update(int id)
         {
             string selectWoundSql = @"SELECT wound_id as woundid, w.name as woundname, w.wound_stage as woundstage, w.remarks as woundremarks, 
-                                     wc.name as woundcategoryname, wl.name as woundlocationname, t.name as tissuename, 
-                                     v.name as versionname, i.img_file as imagefile, i.image_id as imageid
-                                     FROM wound w
-                                     INNER JOIN image i ON i.image_id = w.image_id
-                                     INNER JOIN wound_category wc ON wc.wound_category_id = w.wound_category_id
-                                     INNER JOIN wound_location wl ON wl.wound_location_id = w.wound_location_id
-                                     INNER JOIN tissue t ON t.tissue_id = w.tissue_id
-                                     INNER JOIN version v ON v.version_id = w.version_id
-                                     WHERE wound_id={0}";
+                                      wc.name as woundcategoryname, wl.name as woundlocationname, t.name as tissuename, 
+                                      v.name as versionname, i.img_file as imagefile, i.image_id as imageid
+                                      FROM wound w
+                                      INNER JOIN image i ON i.image_id = w.image_id
+                                      INNER JOIN wound_category wc ON wc.wound_category_id = w.wound_category_id
+                                      INNER JOIN wound_location wl ON wl.wound_location_id = w.wound_location_id
+                                      INNER JOIN tissue t ON t.tissue_id = w.tissue_id
+                                      INNER JOIN version v ON v.version_id = w.version_id
+                                      WHERE wound_id={0}";
             List<WoundRecord> recordFound = DBUtl.GetList<WoundRecord>(selectWoundSql, id);
             if (recordFound.Count == 1)
             {
-                return View();
+                WoundRecord woundRecord = recordFound[0];
+                var wound = DBUtl.GetList<Wound>($"SELECT * FROM wound WHERE wound_id={id}")[0];
+                var img = DBUtl.GetList<Image>($"SELECT img_file FROM image WHERE image_id={woundRecord.woundid}")[0];
+                //record - Image(wound image), Wound(id, name, stage, remarks), WoundCategory(id, name), WoundLocation(id, name), Tissue(id, name), WVersion(id, name)
+                CombineClass record = new CombineClass()
+                {
+                    wound = new Wound() { wound_id = id, name = woundRecord.woundname, wound_stage = woundRecord.woundstage, remarks = woundRecord.woundremarks },
+                    woundc = new WoundCategory() { wound_category_id = wound.wound_category_id, name = woundRecord.woundcategoryname },
+                    woundl = new WoundLocation() { wound_location_id = wound.wound_location_id, name = woundRecord.woundlocationname },
+                    tissue = new Tissue() { tissue_id = wound.tissue_id, name = woundRecord.tissuename },
+                    woundv = new WVersion() { version_id = wound.version_id, name = woundRecord.versionname },
+                    image = new Image() { img_file = img.img_file }
+                };
+
+                List<SelectListItem> versions = new List<SelectListItem>() {
+                    new SelectListItem {
+                        Text = "Version 1.16", Value = "v1.16"
+                    },
+                    new SelectListItem {
+                        Text = "Version 1.17", Value = "v1.17"
+                    },
+                    new SelectListItem {
+                        Text = "Version 1.18", Value = "v1.18"
+                    },
+                    new SelectListItem {
+                        Text = "Version 2.0", Value = "v2.0"
+                    }
+                };
+                ViewData["versions"] = new SelectList(versions, "Text", "Value");
+                return View(record);
             }
             else
             {
-                TempData["Message"] = "Patient Record does not exist";
+                TempData["Msg"] = "Wound record does not exist";
                 TempData["MsgType"] = "warning";
                 return RedirectToAction("Details");
             }
         }
 
         [HttpPost]
-        public IActionResult Update()
+        public IActionResult Update(CombineClass cc)
         {
-            return RedirectToAction();
+            if (!ModelState.IsValid)
+            {
+                ViewData["Msg"] = "Invalid Input";
+                ViewData["MsgType"] = "warning";
+                return View("Index");
+            }
+            else
+            {
+                //wound table
+                string wSql = @"UPDATE wound
+                                SET name='{0}', wound_stage='{1}', remarks='{2}'
+                                WHERE wound_id={3}";
+                int wRowsAffected = DBUtl.ExecSQL(wSql, cc.wound.name, cc.wound.wound_stage, cc.wound.remarks, cc.wound.wound_id);
+
+                //wound_category table
+                string wCSql = @"UPDATE wound_category
+                                 SET name='{0}'
+                                 WHERE wound_category_id={1}";
+                int wCRowsAffected = DBUtl.ExecSQL(wCSql, cc.woundc.name, cc.woundc.wound_category_id);
+
+                //wound_location table
+                string wLSql = @"UPDATE wound_location
+                                 SET name='{0}'
+                                 WHERE wound_location_id={1}";
+                int wLRowsAffected = DBUtl.ExecSQL(wLSql, cc.woundl.name, cc.woundl.wound_location_id);
+
+                //tissue table
+                string tSql = @"UPDATE Tissue
+                                SET name='{0}'
+                                WHERE tissue_id={1}";
+                int tRowsAffected = DBUtl.ExecSQL(tSql, cc.tissue.name, cc.tissue.tissue_id);
+
+                //version table
+                string wVSql = @"UPDATE Version
+                                 SET name='{0}'
+                                 WHERE version_id={1}";
+                int wVRowsAffected = DBUtl.ExecSQL(wVSql, cc.woundv.name, cc.woundv.version_id);
+
+                if (wRowsAffected == 1 && wCRowsAffected == 1 &&
+                    wLRowsAffected == 1 && tRowsAffected == 1 &&
+                    wVRowsAffected == 1)
+                {
+                    TempData["Msg"] = "Wound record updated";
+                    TempData["MsgType"] = "success";
+                }
+                else
+                {
+                    TempData["Msg"] = DBUtl.DB_Message;
+                    TempData["MsgType"] = "danger";
+                }
+            }
+            return RedirectToAction("Details", new { id = cc.wound.wound_id });
         }
         #endregion
 
