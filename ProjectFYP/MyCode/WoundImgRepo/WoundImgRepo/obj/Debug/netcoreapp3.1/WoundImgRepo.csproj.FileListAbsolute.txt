@@ -151,3 +151,4 @@ C:\Users\19044593\source\repos\WoundRepository\ProjectFYP\MyCode\WoundImgRepo\Wo
 C:\Users\19044593\source\repos\WoundRepository\ProjectFYP\MyCode\WoundImgRepo\WoundImgRepo\obj\Debug\netcoreapp3.1\WoundImgRepo.dll
 C:\Users\19044593\source\repos\WoundRepository\ProjectFYP\MyCode\WoundImgRepo\WoundImgRepo\obj\Debug\netcoreapp3.1\WoundImgRepo.pdb
 C:\Users\19044593\source\repos\WoundRepository\ProjectFYP\MyCode\WoundImgRepo\WoundImgRepo\obj\Debug\netcoreapp3.1\WoundImgRepo.genruntimeconfig.cache
+C:\Users\19044593\source\repos\WoundRepository\ProjectFYP\MyCode\WoundImgRepo\WoundImgRepo\obj\Debug\netcoreapp3.1\Razor\Views\Login\Forbidden.cshtml.g.cs
