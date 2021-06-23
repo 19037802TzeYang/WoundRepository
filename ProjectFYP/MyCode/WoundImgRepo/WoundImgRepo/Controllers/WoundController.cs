@@ -256,7 +256,7 @@ namespace WoundImgRepo.Controllers
             {
                 WoundRecord woundRecord = recordFound[0];
                 var wound = DBUtl.GetList<Wound>($"SELECT * FROM wound WHERE wound_id={id}")[0];
-                var img = DBUtl.GetList<Image>($"SELECT img_file FROM image WHERE image_id={woundRecord.woundid}")[0];
+                var img = DBUtl.GetList<Image>($"SELECT img_file FROM image WHERE image_id={woundRecord.imageid}")[0];
                 //record - Image(wound image), Wound(id, name, stage, remarks), WoundCategory(id, name), WoundLocation(id, name), Tissue(id, name), WVersion(id, name)
                 CombineClass record = new CombineClass()
                 {
