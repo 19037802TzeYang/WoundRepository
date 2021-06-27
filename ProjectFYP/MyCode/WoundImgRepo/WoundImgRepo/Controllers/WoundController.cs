@@ -182,6 +182,24 @@ namespace WoundImgRepo.Controllers
             }
         }
         #endregion
+        #region Delete()
+        public IActionResult Delete(int id)
+        {
+            string deletewoundandannotationSQL = "DELETE FROM annotation WHERE wound_id={0} DELETE FROM wound WHERE wound_id={0}";
+            if (DBUtl.ExecSQL(deletewoundandannotationSQL,id) == 1)
+            {
+                TempData["Msg"] = "Wound record deleted!";
+                TempData["MsgType"] = "success";
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                TempData["Msg"] = DBUtl.DB_Message;
+                TempData["MsgType"] = "danger";
+                return RedirectToAction("Index");
+            }
+        }
+        #endregion
 
         #region UpdateAnnotationMaskImage()
         [HttpPost]
