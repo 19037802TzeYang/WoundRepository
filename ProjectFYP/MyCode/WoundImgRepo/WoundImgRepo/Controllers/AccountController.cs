@@ -26,6 +26,9 @@ namespace WoundImgRepo.Controllers
             TempData["ReturnUrl"] = returnUrl;
             return View();
         }
+
+        // Login
+
         [AllowAnonymous]
         [HttpPost]
         public IActionResult Login(LogInUser user)
@@ -33,7 +36,11 @@ namespace WoundImgRepo.Controllers
             if (!AuthenticateUser(user.Username, user.Password,
                                   out ClaimsPrincipal principal))
             {
+
                 ViewData["Message"] = "Incorrect User ID or Password";
+
+                ViewData["Message"] = "Incorrect Username or Password";
+
                 return View();
             }
             else
@@ -63,7 +70,8 @@ namespace WoundImgRepo.Controllers
             return View();
         }
 
-        private bool AuthenticateUser(string uid, string pw,
+        private bool AuthenticateUser(string usname, string pw,
+
                                          out ClaimsPrincipal principal)
         {
             principal = null;
@@ -74,7 +82,7 @@ namespace WoundImgRepo.Controllers
 
             // TODO: L09 Task 1 - Make Login Secure, use the new way of calling DBUtl
             //string select = String.Format(sql, uid, pw);
-            DataTable ds = DBUtl.GetTable(sql, uid, pw);
+            DataTable ds = DBUtl.GetTable(sql, usname, pw);
             //DataTable ds = DBUtl.GetTable(select);
             if (ds.Rows.Count == 1)
             {
@@ -82,7 +90,7 @@ namespace WoundImgRepo.Controllers
                    new ClaimsPrincipal(
                       new ClaimsIdentity(
                          new Claim[] {
-                        new Claim(ClaimTypes.NameIdentifier, uid),
+                        new Claim(ClaimTypes.NameIdentifier, usname),
                         new Claim(ClaimTypes.Name, ds.Rows[0]["username"].ToString()),
                         new Claim(ClaimTypes.Role, ds.Rows[0]["user_role"].ToString())
                          },

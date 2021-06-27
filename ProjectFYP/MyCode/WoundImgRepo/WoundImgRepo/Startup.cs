@@ -19,7 +19,8 @@ namespace WoundImgRepo
         {
             services.AddMvc(options => options.EnableEndpointRouting = false);
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                    .AddCookie(options => {
+                    .AddCookie(options =>
+                    {
                         options.LoginPath = "/Login/LoginPage/";
                         //options.AccessDeniedPath = "/Account/Forbidden/";
                     });

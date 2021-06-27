@@ -1,16 +1,14 @@
-@model WoundImgRepo.Models.LogInUser
+@model LogInUser
 
-<form 
-      method="post">
-
+<form asp-controller="Account"
+      asp-action="Login"
+      method="post"
+      >
     <h2>Please Sign In</h2>
-      
+
     <div class="col-sm-5">
         <!--Homepage - This is for LogInUser Index-->
-        @*email fill in*@
-        <div class="form-group row">
-
-        </div>
+        @*username fill in*@
         <div class="form-group row">
             <label asp-for="Username" class="control-label">Username: </label>
             <label asp-for="Username" for="Username" class="sr-only">username</label>
@@ -51,4 +49,4 @@
 
     </div>
     <input type="submit" class="btn btn-primary" value="Login" />
-    </form>
+</form>
