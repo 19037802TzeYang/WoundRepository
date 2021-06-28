@@ -31,9 +31,11 @@
 
 <table id="jsUserTable" class="table table-condensed table-hover">
     <tr>
+        <th scope="col">ID</th>
         <th scope="col">Name</th>
         <th scope="col">Email</th>
-        <th scope="col">User role</th>
+        <th scope="col">User Role</th>
+        <th scope="col">Last Login</th>
         <th scope="col">Action</th>
     </tr>
     <tbody>
@@ -41,6 +43,7 @@
         {
             
             <tr>
+                <td>@account.user_id</td>
                 <td>@account.username</td>
                 <td>@account.email</td>
                 <td>@account.user_role</td>
