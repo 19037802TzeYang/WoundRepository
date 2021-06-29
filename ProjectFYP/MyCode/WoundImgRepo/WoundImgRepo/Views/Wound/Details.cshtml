@@ -16,6 +16,20 @@
         margin-top: 10px;
     }
 </style>
+@section MoreScripts{ 
+<script>
+    $(document).ready(function () {
+        $("#increase").click(function () {
+            $("img").attr("width", "1000");
+            $("img").attr("height", "1000");
+        });
+        $("#decrease").click(function () {
+            $("img").attr("width", "500");
+            $("img").attr("height", "500");
+        });
+    });
+</script>
+}
 
 @if (TempData["Msg"] != null)
 {
@@ -24,6 +38,12 @@
     </div>
 }
 <h2 class="mt-4 mb-4">Wound Record</h2>
+<div class="row">
+    <div class="col-md-10">
+        <button id="increase">Increase Size</button>
+        <button id="decrease">Decrease Size</button>
+    </div>    
+</div>
 <div class="row">
     <div class="col-xs-6 col-sm-4">
         <h6>Wound</h6>
