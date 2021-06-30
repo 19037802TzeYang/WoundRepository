@@ -11,20 +11,20 @@ namespace WoundImgRepo.Controllers
     public class AdminController : Controller
     {
         // TODO: L09 Task 6 - Add only the admin role to the [Authorize] attributes (4x)
-        [Authorize(Roles = "admin")]
-        public IActionResult Users()
+        [Authorize(Roles = "Admin")]
+        public IActionResult Userlist()
         {
             List<User> list = DBUtl.GetList<User>("SELECT * FROM useracc");
             return View(list);
         }
 
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "Admin")]
         public IActionResult CreateUser()
         {
             return View();
         }
 
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public IActionResult CreateUser(User usr)
         {
@@ -55,7 +55,7 @@ namespace WoundImgRepo.Controllers
             }
         }
 
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "Admin")]
         public IActionResult Delete(string id)
         {
             string userid = User.FindFirst(ClaimTypes.NameIdentifier).Value;
