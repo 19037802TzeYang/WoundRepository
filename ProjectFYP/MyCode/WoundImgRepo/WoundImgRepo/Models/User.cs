@@ -10,8 +10,7 @@ namespace WoundImgRepo.Models
      
          //BEWARE USERID IS FOR DATABASE
         [Required(ErrorMessage = "Please enter User ID")]
-     
-        public string user_id { get; set; }
+        public int user_id { get; set; }
    
         [Required]
         public string username { get; set; }
@@ -38,7 +37,8 @@ namespace WoundImgRepo.Models
         [RegularExpression("(Doctor|Annotator|Admin)", ErrorMessage = "Select option")]
         public string user_role { get; set; }
 
-        public DateTime last_Login { get; set; }
+        public DateTime last_login { get; set; }
     }
 }
+
 
