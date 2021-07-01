@@ -1,7 +1,6 @@
-﻿@{
+@{
     Layout = "_Wound";
 }
-
 @model List<User>
 
 @section MoreScripts {
@@ -20,40 +19,42 @@
         });
     </script>
 }
-@if (TempData["Message"] != null)
+@if (TempData["Msg"] != null)
 {
     <div class="alert alert-@TempData["MsgType"]">
-        @TempData["Message"]
+        @TempData["Msg"]
     </div>
 }
 
 <h2>Users</h2>
 
 <table id="jsUserTable" class="table table-condensed table-hover">
-    <tr>
-        <th scope="col">ID</th>
-        <th scope="col">Name</th>
-        <th scope="col">Email</th>
-        <th scope="col">User Role</th>
-        <th scope="col">Last Login</th>
-        <th scope="col">Action</th>
-    </tr>
+    <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">User role</th>
+            <th scope="col">Logged in date-Time</th>
+            <th scope="col">Action</th>
+        </tr>
+    </thead>
     <tbody>
         @foreach (User account in Model)
         {
-            
-            <tr>
-                <td>@account.user_id</td>
-                <td>@account.username</td>
-                <td>@account.email</td>
-                <td>@account.user_role</td>
-                <td>
-                    <a asp-controller="Register"
-                       asp-action="Delete"
-                       asp-route-id="@account.username"
-                       onclick="return confirm('Delete User [@account.username]')">Delete</a>
-                </td>
-            </tr>
+        <tr>
+            <td>@account.user_id</td>
+            <td>@account.username</td>
+            <td>@account.email</td>
+            <td>@account.user_role</td>
+            <td>@account.last_login</td>
+            <td>
+                <a asp-controller="Admin"
+                   asp-action="Delete"
+                   asp-route-id="@account.user_id"
+                   onclick="return confirm('Delete User [@account.username]')">Delete</a>
+            </td>
+        </tr>
         }
     </tbody>
 </table>
