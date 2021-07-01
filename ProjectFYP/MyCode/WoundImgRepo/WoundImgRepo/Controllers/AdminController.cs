@@ -1,70 +1,179 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using WoundImgRepo.Models;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Http;
+using System.IO;
+using Microsoft.AspNetCore.Hosting;
+using System.Dynamic;
+
+using System.Collections;
 using System.Data;
+using System.Text.RegularExpressions;
+using System.Diagnostics;
 using System.Security.Claims;
 
-namespace WoundImgRepo.Controllers
+namespace hostrepository.Controllers
 {
     public class AdminController : Controller
     {
-        // TODO: L09 Task 6 - Add only the admin role to the [Authorize] attributes (4x)
+        //display register page
         [Authorize(Roles = "Admin")]
-        public IActionResult Userlist()
-        {
-            List<User> list = DBUtl.GetList<User>("SELECT * FROM useracc");
-            return View(list);
-        }
-
-        [Authorize(Roles = "Admin")]
-        public IActionResult CreateUser()
+        public IActionResult Registry()
         {
             return View();
         }
 
+        //display list of users
+        [Authorize(Roles = "Admin")]
+        public IActionResult Userlist()
+        {
+            List<User> List = DBUtl.GetList<User>("SELECT * FROM useracc");
+            return View(List);
+        }
+        //stores in bad passwords
+        private string[] badPasswords = new[] {
+            "111111",
+            "12345",
+            "123456",
+            "1234567",
+            "12345678",
+            "123456789",
+            "abc123",
+            "password",
+            "password1",
+            "qwerty"
+        };
+
+        //check if the details keyed in are eligable for registration
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public IActionResult CreateUser(User usr)
+        public ActionResult Registry(string username, string password, string UserPw2, string email, String user_role)
+
+
         {
-            // TODO: L09 Task 5 - Write secure code to insert TravelUser into database
-            if (!ModelState.IsValid)
+
+
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(UserPw2) || string.IsNullOrEmpty(email) || String.IsNullOrEmpty(user_role))
             {
-                ViewData["Message"] = "Invalid Input";
+
+                //stores in password 1
+
+
+                ViewData["Message"] = "One or more fields are missing";
                 ViewData["MsgType"] = "warning";
-                return View("CreateUser");
+                return View("~/Views/Admin/Registry.cshtml");
             }
             else
             {
-                string insert =
-                    @"INSERT INTO useracc(user_id, username, email, password, user_role, last_login)
-                    VALUES('{0}', '{1}', '{2}', HASHBYTES('SHA1', '{3}'), '{4}', '{5}')";
-                if (DBUtl.ExecSQL(insert, usr.user_id, usr.username, usr.email,
-                                    usr.password, usr.user_role, usr.last_Login) == 1)
+                //check for duplicate names
+                string dupname = "SELECT * FROM useracc WHERE username = '{0}'";
+                DataTable matchdupe = DBUtl.GetTable(dupname, username);
+                if (matchdupe.Rows.Count == 1)
                 {
-                    TempData["Message"] = "User Created";
+                    ViewData["Message"] = "duplicate name detected! ";
+                    ViewData["MsgType"] = "warning";
+                    return View("~/Views/Admin/Registry.cshtml");
+                }
+
+                //password checker for hackable passwords
+                if (badPasswords.Contains(password) || password.Length < 5)
+                {
+                    ViewData["Message"] = "main Password too weak.";
+                    ViewData["MsgType"] = "warning";
+                    return View("~/Views/Admin/Registry.cshtml");
+                }
+
+                // compare passwords
+                if (password.Equals(UserPw2) != true || UserPw2.Length < 5)
+                {
+                    ViewData["Message"] = "second password : error detected! ";
+                    ViewData["MsgType"] = "warning";
+                    return View("~/Views/Admin/Registry.cshtml");
+                }
+
+
+
+                Regex list_of_caps = new Regex(@"[A-Z]");
+
+                //check if at least 1 character is in uppercase
+                MatchCollection matches = list_of_caps.Matches(password);
+                if (matches.Count == 0)
+                {
+                    ViewData["Message"] = "Password Has no capital";
+                    ViewData["MsgType"] = "warning";
+                    return View("~/Views/Admin/Registry.cshtml");
+                }
+
+                Regex numbercheck = new Regex(@"[1-9]");
+
+                //check if at least 1 character is in uppercase
+                MatchCollection matchnum = numbercheck.Matches(password);
+                if (matchnum.Count == 0)
+                {
+                    ViewData["Message"] = "Password Has no numbers";
+                    ViewData["MsgType"] = "warning";
+                    return View("~/Views/Admin/Registry.cshtml");
+                }
+
+
+                //check if email addressed is in use
+                string namecheck_SQL =
+               @"SELECT user_id FROM useracc 
+                      WHERE username = '{0}'";
+
+                DataTable matchname = DBUtl.GetTable(namecheck_SQL, username);
+                              
+                if (matchname.Rows.Count == 1)
+                {
+                    ViewData["Message"] = "User currently exist , try using another name ";
+                    ViewData["MsgType"] = "warning";
+                    return View("~/Views/Admin/Registry.cshtml");
+                }
+                
+
+
+                //check if insert is done
+                 string INSERT = @"INSERT INTO useracc( username, email, password, user_role) 
+                VALUES ( '{0}', '{1}', HASHBYTES('SHA1', '{2}'), '{3}')";
+                 int rowsAffected = DBUtl.ExecSQL(INSERT, username, email, password, user_role);
+
+                if (rowsAffected == 1)
+                {
+                    //replace dis wif ur homepage
+                    TempData["Message"] = "Successful Registration !";
                     ViewData["MsgType"] = "success";
+                    return RedirectToAction("Userlist");
                 }
                 else
                 {
-                    TempData["Message"] = DBUtl.DB_Message;
-                    ViewData["MsgType"] = "danger";
+                    TempData["Message"] = "not workin";
+                    ViewData["MsgType"] = "warning";
+                    return View();
                 }
-                return RedirectToAction("Users");
+
             }
         }
+
+
+
+
 
         [Authorize(Roles = "Admin")]
         public IActionResult Delete(string id)
         {
-            string userid = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            if (userid.Equals(id, StringComparison.InvariantCultureIgnoreCase))
-            {
-                TempData["Message"] = "Own ID cannot be deleted";
-                TempData["MsgType"] = "warning";
-            }
-            else
+      //      Debug.WriteLine("deleting" + id);
+        //    string userid = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+          //  if (userid.Equals(id, StringComparison.InvariantCultureIgnoreCase))
+            //{
+              //  TempData["Message"] = "Own ID cannot be deleted";
+                //TempData["MsgType"] = "warning";
+        //    }
+          //  else
             {
                 string delete = "DELETE FROM useracc WHERE user_id='{0}'";
                 int res = DBUtl.ExecSQL(delete, id);
@@ -81,5 +190,6 @@ namespace WoundImgRepo.Controllers
             }
             return RedirectToAction("Userlist");
         }
+
     }
 }
