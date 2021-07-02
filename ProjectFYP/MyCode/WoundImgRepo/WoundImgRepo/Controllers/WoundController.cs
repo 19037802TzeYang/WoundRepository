@@ -32,31 +32,56 @@ namespace WoundImgRepo.Controllers
         #region Details()
         public IActionResult Details(int id)
         {
+            var wound = DBUtl.GetList<Wound>($"SELECT * FROM wound WHERE wound_id={id}")[0];
             string selectWoundSql = @"SELECT w.wound_id as woundid, w.name as woundname, w.wound_stage as woundstage, w.remarks as woundremarks, 
                                       wc.name as woundcategoryname, wl.name as woundlocationname, t.name as tissuename, 
-                                      v.name as versionname, i.img_file as imagefile, i.image_id as imageid
+                                      v.name as versionname, v.version_id as versionid, i.img_file as imagefile, i.image_id as imageid
                                       FROM wound w
                                       INNER JOIN image i ON i.image_id = w.image_id
                                       INNER JOIN wound_category wc ON wc.wound_category_id = w.wound_category_id
                                       INNER JOIN wound_location wl ON wl.wound_location_id = w.wound_location_id
                                       INNER JOIN tissue t ON t.tissue_id = w.tissue_id
                                       INNER JOIN version v ON v.version_id = w.version_id
-                                      WHERE wound_id={0}";
-            List<WoundRecord> recordFound = DBUtl.GetList<WoundRecord>(selectWoundSql, id);
-
-            if (recordFound.Count == 1)
+                                      WHERE w.name='{0}'";
+            //retrieve all woundRecord that is found
+            List<WoundRecord> recordFound = DBUtl.GetList<WoundRecord>(selectWoundSql, wound.name);
+            //create new list of WoundRecord
+            var woundRecordList = new List<WoundRecord>();
+            if (recordFound.Count > 0)
             {
-                WoundRecord woundRecord = recordFound[0];
-                string selectAnnotationSql = @"SELECT i.img_file as annotationimagefile, im.img_file as maskimagefile
-                                               FROM annotation an
-                                               INNER JOIN image i ON an.annotation_image_id = i.image_id
-                                               INNER JOIN image im ON an.mask_image_id = im.image_id
-                                               INNER JOIN wound w ON an.wound_id = w.wound_id
-                                               WHERE w.wound_id={0}";
-                List<AnnotationMaskImage> annotationMaskImageList = DBUtl.GetList<AnnotationMaskImage>(selectAnnotationSql, id);
-                woundRecord.annotationMaskImage = new List<AnnotationMaskImage>();
-                woundRecord.annotationMaskImage.AddRange(annotationMaskImageList);
-                return View(woundRecord);
+                //check if any of the wound record that has been found has the same version name in the list
+                foreach (var woundRecord in recordFound)
+                {
+                    string selectAnnotationSql = @"SELECT i.img_file as annotationimagefile, im.img_file as maskimagefile
+                                                   FROM annotation an
+                                                   INNER JOIN image i ON an.annotation_image_id = i.image_id
+                                                   INNER JOIN image im ON an.mask_image_id = im.image_id
+                                                   INNER JOIN wound w ON an.wound_id = w.wound_id
+                                                   WHERE w.wound_id={0} AND w.version_id={1}";
+                    List<AnnotationMaskImage> annotationMaskImageList = DBUtl.GetList<AnnotationMaskImage>(selectAnnotationSql, woundRecord.woundid, woundRecord.versionid);
+
+                    if (woundRecordList.Any(x => x.versionname.Equals(woundRecord.versionname, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        //get the wound record that has the same version name and add in the additional annotation/mask image
+                        var sameVersionNameWR = woundRecordList.FirstOrDefault(x => x.versionname.Equals(woundRecord.versionname, StringComparison.OrdinalIgnoreCase));
+                        sameVersionNameWR.annotationMaskImage.AddRange(annotationMaskImageList);
+                    }
+                    else
+                    {
+                        woundRecord.annotationMaskImage = new List<AnnotationMaskImage>();
+                        woundRecord.annotationMaskImage.AddRange(annotationMaskImageList);
+                        woundRecordList.Add(woundRecord);
+                    }
+                }
+                //set versions data dropdown list
+                SetVersionViewData();
+                //assign value to properties and pass to view
+                var woundDetailsViewModel = new WoundDetailsViewModel()
+                {
+                    woundRecordList = woundRecordList,
+                    woundRecord = recordFound[0]
+                };
+                return View(woundDetailsViewModel);
             }
             else
             {
@@ -67,24 +92,28 @@ namespace WoundImgRepo.Controllers
         }
         #endregion
 
+        #region SetVersionViewData()
+        public void SetVersionViewData()
+        {
+            var getVersion = DBUtl.GetList<WVersion>("SELECT * FROM version");
+            List<SelectListItem> versionsSelectList = new List<SelectListItem>();
+            foreach (var version in getVersion)
+            {
+                versionsSelectList.Add(new SelectListItem()
+                {
+                    Text = version.name,
+                    Value = version.name
+                });
+            }
+            ViewData["versions"] = new SelectList(versionsSelectList, "Text", "Value");
+        }
+        #endregion
+
         #region Create()
         public IActionResult Create()
         {
-            List<SelectListItem> versions = new List<SelectListItem>() {
-                new SelectListItem {
-                    Text = "Version 1.16", Value = "v1.16"
-                },
-                new SelectListItem {
-                    Text = "Version 1.17", Value = "v1.17"
-                },
-                new SelectListItem {
-                    Text = "Version 1.18", Value = "v1.18"
-                },
-                new SelectListItem {
-                    Text = "Version 2.0", Value = "v2.0"
-                }
-            };
-            ViewData["versions"] = new SelectList(versions, "Text", "Value");
+            //set versions data dropdown list
+            SetVersionViewData();
             return View();
         }
 
@@ -136,10 +165,7 @@ namespace WoundImgRepo.Controllers
                 int tRowsAffected = DBUtl.ExecSQL(tSql, cc.tissue.name);
                 Tissue t = DBUtl.GetList<Tissue>("SELECT tissue_id FROM Tissue ORDER BY tissue_id DESC")[0];
 
-                //version table
-                string wVLSql = @"INSERT INTO version(name)
-                                  VALUES('{0}')";
-                int wVRowsAffected = DBUtl.ExecSQL(wVLSql, cc.woundv.name);
+                //version table created by admin
                 WVersion v = DBUtl.GetList<WVersion>("SELECT version_id FROM Version ORDER BY version_id DESC")[0];
 
                 //wound table 
@@ -167,7 +193,7 @@ namespace WoundImgRepo.Controllers
                 if (imageRowsAffected == 1 && wRowsAffected == 1 &&
                     wCRowsAffected == 1 && wLRowsAffected == 1 &&
                     tRowsAffected == 1 && wRowsAffected == 1 &&
-                    wVRowsAffected == 1 && anRowsAffected == 1)
+                    anRowsAffected == 1)
                 {
                     TempData["Msg"] = "New wound created";
                     TempData["MsgType"] = "success";
@@ -203,8 +229,9 @@ namespace WoundImgRepo.Controllers
 
         #region UpdateAnnotationMaskImage()
         [HttpPost]
-        public IActionResult UpdateAnnotationMaskImage(WoundRecord wr)
+        public IActionResult UpdateAnnotationMaskImage(WoundDetailsViewModel details)
         {
+            var wr = details.woundRecord;
             if (!ModelState.IsValid)
             {
                 ViewData["Msg"] = "Invalid Input";
@@ -213,6 +240,16 @@ namespace WoundImgRepo.Controllers
             }
             else
             {
+                var version = DBUtl.GetList<WVersion>($"SELECT * FROM version WHERE name='{wr.versionname}'")[0];
+                var wound = DBUtl.GetList<Wound>($"SELECT * FROM wound WHERE wound_id={wr.woundid}")[0];
+                //wound table 
+                string wSql = @"INSERT INTO wound(name, wound_stage, remarks, 
+                                wound_category_id, wound_location_id, tissue_id, version_id, image_id)
+                                VALUES('{0}','{1}','{2}',{3},{4},{5},{6},{7})";
+                int wRowsAffected = DBUtl.ExecSQL(wSql, wound.name, wound.wound_stage, wound.remarks,
+                    wound.wound_category_id, wound.wound_location_id, wound.tissue_id, version.version_id, wound.image_id);
+                Wound w = DBUtl.GetList<Wound>("SELECT wound_id FROM wound ORDER BY wound_id DESC")[0];
+
                 //image table
                 string anpicfilename = DoPhotoUpload(wr.annotationimage);
                 string animageSql = @"INSERT INTO image(name, type, img_file)
@@ -235,7 +272,7 @@ namespace WoundImgRepo.Controllers
                     {
                         string anSql = @"INSERT INTO annotation(mask_image_id, wound_id, annotation_image_id)
                                          VALUES({0},{1},{2})";
-                        anRowsAffected = DBUtl.ExecSQL(anSql, maskImg[imgCount].image_id, wr.woundid, img.image_id);
+                        anRowsAffected = DBUtl.ExecSQL(anSql, maskImg[imgCount].image_id, w.wound_id, img.image_id);
                         imgCount += 1;
                     });
                 }
@@ -286,21 +323,8 @@ namespace WoundImgRepo.Controllers
                     image = new Image() { img_file = img.img_file }
                 };
 
-                List<SelectListItem> versions = new List<SelectListItem>() {
-                    new SelectListItem {
-                        Text = "Version 1.16", Value = "v1.16"
-                    },
-                    new SelectListItem {
-                        Text = "Version 1.17", Value = "v1.17"
-                    },
-                    new SelectListItem {
-                        Text = "Version 1.18", Value = "v1.18"
-                    },
-                    new SelectListItem {
-                        Text = "Version 2.0", Value = "v2.0"
-                    }
-                };
-                ViewData["versions"] = new SelectList(versions, "Text", "Value");
+                //set versions data dropdown list
+                SetVersionViewData();
                 return View(record);
             }
             else

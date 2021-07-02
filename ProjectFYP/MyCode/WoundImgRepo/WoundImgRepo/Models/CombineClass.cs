@@ -37,5 +37,12 @@ namespace WoundImgRepo.Models
         public IFormFile annotationimage { get; set; }
         public IFormFile maskimage { get; set; }
         public List<AnnotationMaskImage> annotationMaskImage { get; set; }
+        public int versionid { get; set; }
+    }
+
+    public class WoundDetailsViewModel
+    {
+        public List<WoundRecord> woundRecordList { get; set; }
+        public WoundRecord woundRecord { get; set; }
     }
 }
