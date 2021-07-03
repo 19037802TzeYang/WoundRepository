@@ -58,8 +58,8 @@
 
             <th scope="col" width="20%">Tissue</th>
             <th scope="col" width="20%">Version</th>
-            <th scope="col" width="20%">Image Id</th>
-            <th scope="col" width="20%">User Id</th>
+            
+            <th scope="col" width="20%">Username</th>
             <th scope="col" width="20%">Details</th>
             <th scope="col" width="20%">Edit / Delete</th>
         </tr>
@@ -78,8 +78,8 @@
                 
                 <td width="20%">@w.tissuename</td>
                 <td width="20%">@w.versionname</td>
-                <td width="20%">@w.imageid</td>
-                <td width="20%">@w.woundid</td>
+                
+                <td width="20%">@w.username</td>
                 <td width="20%"><a asp-controller="Wound" asp-action="Details" asp-route-id="@w.woundid">Details</a></td>
                 <td width="20%"><a asp-controller="Wound" asp-action="Update" asp-route-id="@w.woundid">Edit</a> |  <a asp-controller="Wound" asp-action="Delete" asp-route-id="@w.woundid">Delete</a></td>
             </tr>
