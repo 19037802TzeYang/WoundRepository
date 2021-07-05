@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication;
+
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -6,6 +7,7 @@ using System.Data;
 using System.Security.Claims;
 using WoundImgRepo.Models;
 using Microsoft.AspNetCore.Authorization;
+using System.Collections.Generic;
 
 namespace WoundImgRepo.Controllers
 {
@@ -33,13 +35,35 @@ namespace WoundImgRepo.Controllers
         [HttpPost]
         public IActionResult LoginPage(LogInUser user)
         {
-            if (!AuthenticateUser(user.Username, user.Password,
+
+
+            int status = 0;
+
+            //getting the status of users
+            string getuserstatus = "SELECT * FROM useracc  WHERE username = '" + user.Username + "' ";
+            List<User> List = DBUtl.GetList<User>(getuserstatus);
+            foreach (User account in List)
+            {
+                status = account.status;
+            }
+            System.Diagnostics.Debug.WriteLine("user status is" + status);
+            if (status != 1)
+            {
+                ViewData["Message"] = "account is deactivated , please contact your supervisor for help";
+                ViewData["MsgType"] = "danger";
+                return View();
+            }
+            
+
+
+
+        if (!AuthenticateUser(user.Username, user.Password,
                                   out ClaimsPrincipal principal))
             {
 
 
                 ViewData["Message"] = "Incorrect Username or Password";
-
+                ViewData["MsgType"] = "danger";
                 return View();
             }
             else
@@ -48,9 +72,7 @@ namespace WoundImgRepo.Controllers
                    CookieAuthenticationDefaults.AuthenticationScheme,
                    principal);
 
-                // Update the Last Login Timestamp of the User
-                string update = "UPDATE useracc SET last_login=GETDATE() WHERE username='{0}' AND password='{1}'";
-                DBUtl.ExecSQL(update, user.Username, user.Password);
+                
 
                 if (TempData["returnUrl"] != null)
                 {
@@ -59,6 +81,15 @@ namespace WoundImgRepo.Controllers
                         return Redirect(returnUrl);
                 }
 
+               
+
+                
+                
+                    // Update the Last Login Timestamp of the User
+                    string update = "UPDATE useracc SET last_login=GETDATE() WHERE username='{0}' AND password='{1}'";
+                    DBUtl.ExecSQL(update, user.Username, user.Password);
+           
+                
                 System.Diagnostics.Debug.WriteLine("login succss!");
                 return RedirectToAction("Index", "Wound");
             }
