@@ -32,6 +32,7 @@ namespace WoundImgRepo.Models
         public string woundlocationname { get; set; }
         public string versionname { get; set; }
         public string tissuename { get; set; }
+        public string username { get; set; }
         public string imagefile { get; set; }
         public int imageid { get; set; }
         public IFormFile annotationimage { get; set; }
