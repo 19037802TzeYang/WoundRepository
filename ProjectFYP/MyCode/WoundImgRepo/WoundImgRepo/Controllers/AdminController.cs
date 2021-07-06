@@ -34,6 +34,8 @@ namespace hostrepository.Controllers
         //display list of users
         #region showUserlist()
         //   [Authorize(Roles = "Admin")]
+        //   [Authorize(Roles = "Doctor")]
+        //   [Authorize(Roles = "Annotator")]
         public IActionResult Userlist()
         {
             List<User> List = DBUtl.GetList<User>("SELECT * FROM useracc");

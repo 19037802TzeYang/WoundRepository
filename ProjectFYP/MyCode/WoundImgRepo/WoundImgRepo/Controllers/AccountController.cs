@@ -49,7 +49,7 @@ namespace WoundImgRepo.Controllers
             System.Diagnostics.Debug.WriteLine("user status is" + status);
             if (status != 1)
             {
-                ViewData["Message"] = "account is deactivated , please contact your supervisor for help";
+                ViewData["Message"] = "Account is deactivated , please contact your supervisor for support.";
                 ViewData["MsgType"] = "danger";
                 return View();
             }

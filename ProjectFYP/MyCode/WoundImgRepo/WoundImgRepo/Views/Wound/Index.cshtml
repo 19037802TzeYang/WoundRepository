@@ -81,7 +81,9 @@
                 
                 <td width="20%">@w.username</td>
                 <td width="20%"><a asp-controller="Wound" asp-action="Details" asp-route-id="@w.woundid">Details</a></td>
-                <td width="20%"><a asp-controller="Wound" asp-action="Update" asp-route-id="@w.woundid">Edit</a> |  <a asp-controller="Wound" asp-action="Delete" asp-route-id="@w.woundid">Delete</a></td>
+                <td width="20%"><a asp-controller="Wound" asp-action="Update" asp-route-id="@w.woundid">Edit</a> |  
+                <a asp-controller="Wound" asp-action="Delete" asp-route-id="@w.woundid"
+                   onclick="return confirm('Delete Wound [@w.woundname] ?')">Delete</a></td>
             </tr>
         }
     </tbody>
