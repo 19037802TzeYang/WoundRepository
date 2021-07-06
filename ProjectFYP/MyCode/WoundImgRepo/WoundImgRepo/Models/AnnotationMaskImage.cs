@@ -8,6 +8,7 @@ namespace WoundImgRepo.Models
 {
     public class AnnotationMaskImage
     {
+        public int annotationid { get; set; }
         public string annotationimagefile { get; set; }
         public string maskimagefile { get; set; }
     }

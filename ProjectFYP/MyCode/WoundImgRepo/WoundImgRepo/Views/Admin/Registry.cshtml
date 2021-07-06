@@ -20,15 +20,15 @@
 
         @*password fill in*@
         <div class="form-group row">
-            <label asp-for="password" class="control-label">Password: </label>
-            <label asp-for="password" for="password" class="sr-only">Password </label>
+            <label asp-for="password" class="control-label">Password (5 char. min): </label>
+            <label asp-for="password" for="password" class="sr-only">Password</label>
             <input asp-for="password" id="password" class="form-control" placeholder="Password" autofocus="">
             <span asp-validation-for="password" class="text-danger"></span>
         </div>
 
         @*password checker*@
         <div class="form-group row">
-            <label asp-for="UserPw2" class="control-label">Confirm Password: </label>
+            <label asp-for="UserPw2" class="control-label">Confirm Password (5 char. min): </label>
             <label asp-for="UserPw2" for="UserPw2" class="sr-only">Password </label>
             <input asp-for="UserPw2" id="UserPw2" class="form-control" placeholder="Confirm Password" autofocus="">
             <span asp-validation-for="UserPw2" class="text-danger"></span>
@@ -67,6 +67,7 @@
                 </div>
             </div>
         </div>
+     
 
         @*print error message*@
         @if (ViewData["Message"] != null)
@@ -74,12 +75,12 @@
             <div class="form-group row">
                 <div class="offset-sm-2 col-sm-6">
                     <div class="alert alert-@ViewData["MsgType"]">
-                        <text>@ViewData["Message"]</text>
+                        <text>@ViewData["Msg"]</text>
                     </div>
                 </div>
             </div>
         }
 
     </div>
-    <input type="submit" class="btn btn-primary" value="Register" />
+        <input type="submit" class="btn btn-primary" value="Register" />
 </form>

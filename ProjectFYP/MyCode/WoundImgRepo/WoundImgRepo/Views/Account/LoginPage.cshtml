@@ -15,7 +15,7 @@
         <div class="form-group row">
             <label asp-for="Username" class="control-label">Username: </label>
             <label asp-for="Username" for="Username" class="sr-only">username</label>
-            <input asp-for="Username" id="Username" class="form-control" placeholder="Username" autofocus="">
+            <input asp-for="Username" id="Username" class="form-control" placeholder="Username" autofocus=""  >
             <span asp-validation-for="Username" class="text-danger"></span>
         </div>
 
@@ -28,16 +28,7 @@
             <span asp-validation-for="Password" class="text-danger"></span>
         </div>
 
-        @*remember-me checkbox*@
-        <div class="form-group row">
-            <div class="form-check">
-                <input asp-for="RememberMe" class="form-check-input" />
-                <label asp-for="RememberMe" class="form-check-label">
-                    Remember Me
-                </label>
-            </div>
-        </div>
-
+     
 
         @*print error message*@
 

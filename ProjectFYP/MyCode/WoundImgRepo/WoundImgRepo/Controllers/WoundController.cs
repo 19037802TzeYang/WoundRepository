@@ -19,13 +19,14 @@ namespace WoundImgRepo.Controllers
         {
             List<WoundRecord> list = DBUtl.GetList<WoundRecord>(@"SELECT w.wound_id as woundid, w.name as woundname, w.wound_stage as woundstage, w.remarks as woundremarks, 
                                       wc.name as woundcategoryname, wl.name as woundlocationname, t.name as tissuename,
-                                      v.name as versionname, i.img_file as imagefile, i.image_id as imageid
+                                      v.name as versionname, i.img_file as imagefile, i.image_id as imageid, u.username
                                       FROM wound w
                                       INNER JOIN image i ON i.image_id = w.image_id
                                       INNER JOIN wound_category wc ON wc.wound_category_id = w.wound_category_id
                                       INNER JOIN wound_location wl ON wl.wound_location_id = w.wound_location_id
                                       INNER JOIN tissue t ON t.tissue_id = w.tissue_id
-                                      INNER JOIN version v ON v.version_id = w.version_id");
+                                      INNER JOIN version v ON v.version_id = w.version_id
+                                        INNER JOIN useracc u ON u.user_id = w.user_id");
             return View("Index", list);
         }
 
@@ -43,7 +44,7 @@ namespace WoundImgRepo.Controllers
                                       INNER JOIN tissue t ON t.tissue_id = w.tissue_id
                                       INNER JOIN version v ON v.version_id = w.version_id
                                       WHERE w.name='{0}'";
-            //retrieve all woundRecord that is found
+            //retrieve all wound record
             List<WoundRecord> recordFound = DBUtl.GetList<WoundRecord>(selectWoundSql, wound.name);
             //create new list of WoundRecord
             var woundRecordList = new List<WoundRecord>();
@@ -52,7 +53,7 @@ namespace WoundImgRepo.Controllers
                 //check if any of the wound record that has been found has the same version name in the list
                 foreach (var woundRecord in recordFound)
                 {
-                    string selectAnnotationSql = @"SELECT i.img_file as annotationimagefile, im.img_file as maskimagefile
+                    string selectAnnotationSql = @"SELECT i.img_file as annotationimagefile, im.img_file as maskimagefile, annotation_id as annotationid
                                                    FROM annotation an
                                                    INNER JOIN image i ON an.annotation_image_id = i.image_id
                                                    INNER JOIN image im ON an.mask_image_id = im.image_id
@@ -166,7 +167,7 @@ namespace WoundImgRepo.Controllers
                 Tissue t = DBUtl.GetList<Tissue>("SELECT tissue_id FROM Tissue ORDER BY tissue_id DESC")[0];
 
                 //version table created by admin
-                WVersion v = DBUtl.GetList<WVersion>("SELECT version_id FROM Version ORDER BY version_id DESC")[0];
+                WVersion v = DBUtl.GetList<WVersion>($"SELECT version_id FROM Version WHERE name='{cc.woundv.name}'")[0];
 
                 //wound table 
                 string wSql = @"INSERT INTO wound(name, wound_stage, remarks, 
@@ -208,6 +209,35 @@ namespace WoundImgRepo.Controllers
             }
         }
         #endregion
+
+        #region DeleteAnnotationMaskImage()
+        public IActionResult DeleteAnnotationMaskImage(int woundid, int annotationid)
+        {       
+            var getAnnotation = DBUtl.GetList<Annotation>($"SELECT * FROM annotation WHERE annotation_id={annotationid}")[0];
+
+            string maskImgSql = "DELETE FROM image WHERE image_id={0}";
+            int maskImgRowsAffected = DBUtl.ExecSQL(maskImgSql, getAnnotation.mask_image_id);
+            string annotationImgSql = "DELETE FROM image WHERE image_id={0}";
+            int annotationImgRowsAffected = DBUtl.ExecSQL(annotationImgSql, getAnnotation.annotation_image_id);
+            string annotationSql = "DELETE FROM annotation WHERE wound_id={0}";
+            int annotationRowsAffected = DBUtl.ExecSQL(annotationSql, woundid);
+
+            if (maskImgRowsAffected == 1 && 
+                annotationImgRowsAffected == 1 && 
+                annotationRowsAffected == 1)
+            {
+                TempData["Message"] = "Annotation and Mask Image Deleted";
+                TempData["MsgType"] = "success";
+            }
+            else
+            {
+                TempData["Message"] = DBUtl.DB_Message;
+                TempData["MsgType"] = "danger";
+            }
+            return RedirectToAction("Details", new { id = woundid });
+        }
+        #endregion
+
         #region Delete()
         public IActionResult Delete(int id)
         {
@@ -322,7 +352,6 @@ namespace WoundImgRepo.Controllers
                     woundv = new WVersion() { version_id = wound.version_id, name = woundRecord.versionname },
                     image = new Image() { img_file = img.img_file }
                 };
-
                 //set versions data dropdown list
                 SetVersionViewData();
                 return View(record);
