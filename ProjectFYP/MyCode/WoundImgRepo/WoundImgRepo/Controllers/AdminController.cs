@@ -16,7 +16,6 @@ using System.Data;
 using System.Text.RegularExpressions;
 using System.Diagnostics;
 using System.Security.Claims;
-using Microsoft.TeamFoundation.Build.WebApi;
 
 namespace hostrepository.Controllers
 {
@@ -24,7 +23,7 @@ namespace hostrepository.Controllers
     {
         //display register page
         #region DisplayRegistry()
-        //  [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public IActionResult Registry()
         {
             return View("~/Views/Admin/Registry.cshtml");
@@ -33,7 +32,7 @@ namespace hostrepository.Controllers
 
         //display list of users
         #region showUserlist()
-        //   [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public IActionResult Userlist()
         {
             List<User> List = DBUtl.GetList<User>("SELECT * FROM useracc");
@@ -63,7 +62,7 @@ namespace hostrepository.Controllers
 
         //check if the details keyed in are eligable for registration
         #region Registrypost()
-        // [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public ActionResult Registry(string username, string password, string UserPw2, string email, String user_role)
         {
@@ -138,7 +137,7 @@ namespace hostrepository.Controllers
                       WHERE username = '{0}'";
 
                 DataTable matchname = DBUtl.GetTable(namecheck_SQL, username);
-                              
+
                 if (matchname.Rows.Count == 1)
                 {
                     ViewData["Msg"] = "User currently exist , try using another name ";
@@ -163,7 +162,7 @@ namespace hostrepository.Controllers
                 //check if insert is done
                 string INSERT = @"INSERT INTO useracc( username, email, password, user_role, status) 
                 VALUES ( '{0}', '{1}', HASHBYTES('SHA1', '{2}'), '{3}', 1)";
-                 int rowsAffected = DBUtl.ExecSQL(INSERT, username, email, password, user_role);
+                int rowsAffected = DBUtl.ExecSQL(INSERT, username, email, password, user_role);
 
                 if (rowsAffected == 1)
                 {
@@ -185,7 +184,7 @@ namespace hostrepository.Controllers
 
 
         #region showingedituser()
-        //    [Authorize(Roles = "Admin"l]
+        [Authorize(Roles = "Admin")]
         public IActionResult EditUser(string id)
         {
 
@@ -208,7 +207,7 @@ namespace hostrepository.Controllers
         }
         #endregion
 
-        //    [Authorize(Roles = "Admin"l]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public IActionResult EditUser(int editPW, string username, string password, string UserPw2, string email, String user_role , int id)
         {
@@ -392,7 +391,7 @@ namespace hostrepository.Controllers
         }
 
 
-        //    [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public IActionResult Delete(string id)
         {
       //      Debug.WriteLine("deleting" + id);
@@ -418,6 +417,32 @@ namespace hostrepository.Controllers
                 }
             }
             return RedirectToAction("Userlist");
+        }
+
+        public IActionResult AddVersion(string name)
+        {
+            string message = "Internal Server Error";
+            if (!string.IsNullOrEmpty(name))
+            {
+                var versions = DBUtl.GetList<WVersion>($"SELECT * FROM version");
+                if (!versions.Any(x => x.name.Equals(name, StringComparison.OrdinalIgnoreCase)))
+                {
+                    string wVLSql = @"INSERT INTO version(name)
+                                VALUES('{0}')";
+                    var vExec = DBUtl.ExecSQL(wVLSql, name);
+                    if (vExec == 1)
+                    {
+                        TempData["Msg"] = "New version created";
+                        TempData["MsgType"] = "success";
+                        return RedirectToAction("Index");
+                    }
+                    message = DBUtl.DB_Message;
+                }
+                message = "Version name already exist";
+            }
+            TempData["Msg"] = message;
+            TempData["MsgType"] = "danger";
+            return RedirectToAction("Index");
         }
 
     }
