@@ -16,7 +16,7 @@ using System.Data;
 using System.Text.RegularExpressions;
 using System.Diagnostics;
 using System.Security.Claims;
-using Microsoft.TeamFoundation.Build.WebApi;
+
 
 namespace hostrepository.Controllers
 {
@@ -420,5 +420,37 @@ namespace hostrepository.Controllers
             return RedirectToAction("Userlist");
         }
 
+
+
+        public IActionResult Statusedit(int id)
+        {
+            //---------------------------------------------------------------------------------------------------------------------------
+            //Takes in a user details
+            String Getuser = "SELECT * FROM useracc WHERE user_id = " + id;
+            List<User> List = DBUtl.GetList<User>(Getuser);
+            int status = 0;
+            foreach (User account in List)
+            {
+                status = account.status;
+            }
+            string update="";
+            //---------------------------------------------------------------------------------------------------------------------------
+            //edit status
+            if (status == 0)
+            {
+                 update = "UPDATE useracc SET status = 1 WHERE user_id = {0}";
+                TempData["Msg"] = "User account activated";
+                TempData["MsgType"] = "success";
+            } else if (status != 0)
+            {
+                 update = "UPDATE useracc SET status = 0 WHERE user_id = {0}";
+                TempData["Msg"] = "User account de-activated";
+                TempData["MsgType"] = "success";
+            }
+
+            int rowsAffected = DBUtl.ExecSQL(update, id);
+
+            return RedirectToAction("Userlist");
+        }
     }
 }
