@@ -1,6 +1,6 @@
 @model User;
 
-<form asp-controller="Register" asp-action="Registry" method="post">
+<form asp-controller="Admin" asp-action="Registry" method="post">
 
     <h2>Sign up</h2>
     <div class="col-sm-5">
@@ -44,42 +44,42 @@
 
 
         @*Select list *@
-    <div class="form-group row">
-        <label class="control-label col-sm-\2">User Role : </label>
-        <div class="col-sm-5">
-            <div class="form-check form-check-inline">
-                <input type="radio" class="form-check-input" id="rb1"
-                       asp-for="user_role" value="Doctor" checked />
-                <label class="form-check-label" for="rb1">Doctor</label>
+        <div class="form-group row">
+            <label class="control-label col-sm-\2">User Role : </label>
+            <div class="col-sm-5">
+                <div class="form-check form-check-inline">
+                    <input type="radio" class="form-check-input" id="rb1"
+                           asp-for="user_role" value="Doctor" checked />
+                    <label class="form-check-label" for="rb1">Doctor</label>
 
-            </div>
-            <div class="form-check form-check-inline">
-                <input type="radio" class="form-check-input" id="rb2"
-                       asp-for="user_role" value="Annotator" />
-                <label class="form-check-label" for="rb2">Annotator</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input type="radio" class="form-check-input" id="rb2"
+                           asp-for="user_role" value="Annotator" />
+                    <label class="form-check-label" for="rb2">Annotator</label>
 
-            </div>
+                </div>
 
-            <div class="form-check form-check-inline">
-                <input type="radio" class="form-check-input" id="rb3"
-                       asp-for="user_role" value="Admin" />
-                <label class="form-check-label" for="rb3">Admin</label>
-            </div>
+                <div class="form-check form-check-inline">
+                    <input type="radio" class="form-check-input" id="rb3"
+                           asp-for="user_role" value="Admin" />
+                    <label class="form-check-label" for="rb3">Admin</label>
+                </div>
             </div>
         </div>
 
-            @*print error message*@
-            @if (ViewData["Message"] != null)
-            {
-                <div class="form-group row">
-                    <div class="offset-sm-2 col-sm-6">
-                        <div class="alert alert-@ViewData["MsgType"]">
-                            <text>@ViewData["Message"]</text>
-                        </div>
+        @*print error message*@
+        @if (ViewData["Message"] != null)
+        {
+            <div class="form-group row">
+                <div class="offset-sm-2 col-sm-6">
+                    <div class="alert alert-@ViewData["MsgType"]">
+                        <text>@ViewData["Message"]</text>
                     </div>
                 </div>
-            }
+            </div>
+        }
 
-        </div>
-        <input type="submit" class="btn btn-primary" value="Register" />
+    </div>
+    <input type="submit" class="btn btn-primary" value="Register" />
 </form>

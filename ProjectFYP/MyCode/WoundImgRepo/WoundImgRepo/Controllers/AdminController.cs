@@ -145,13 +145,13 @@ namespace hostrepository.Controllers
                 if (rowsAffected == 1)
                 {
                     //replace dis wif ur homepage
-                    TempData["Message"] = "Successful Registration !";
+                    TempData["Message"] = "Successful Registration!";
                     ViewData["MsgType"] = "success";
                     return RedirectToAction("Userlist");
                 }
                 else
                 {
-                    TempData["Message"] = "not workin";
+                    TempData["Message"] = "Not working";
                     ViewData["MsgType"] = "warning";
                     return View();
                 }

@@ -1,16 +1,20 @@
-<div class="collapse navbar-collapse" id="navbarSupportedContent">
+﻿<div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
         <li class="nav-item">
             <a class="nav-link" asp-controller="Wound" asp-action="Index">Dashboard</a>
         </li>
-       
+        <li class="nav-item">
+            <a class="nav-link" asp-controller="Wound" asp-action="Create">New Wound</a>
+        </li>
     </ul>
     <ul class="nav navbar-nav ml-auto">
         <li>
             <p class="navbar-text">
-                Doctor
+
+                Annotator
                 &emsp;&emsp;
-                Welcome @User.Identity.Name<br />
+                Welcome @User.Identity.Name!<br />
+
             </p>
         </li>
         <li>
@@ -25,3 +29,4 @@
         </li>
     </ul>
 </div>
+
