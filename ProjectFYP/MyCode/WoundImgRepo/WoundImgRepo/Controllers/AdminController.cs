@@ -140,7 +140,7 @@ namespace hostrepository.Controllers
                       WHERE username = '{0}'";
 
                 DataTable matchname = DBUtl.GetTable(namecheck_SQL, username);
-                              
+
                 if (matchname.Rows.Count == 1)
                 {
                     ViewData["Msg"] = "User currently exist , try using another name ";
@@ -165,7 +165,7 @@ namespace hostrepository.Controllers
                 //check if insert is done
                 string INSERT = @"INSERT INTO useracc( username, email, password, user_role, status) 
                 VALUES ( '{0}', '{1}', HASHBYTES('SHA1', '{2}'), '{3}', 1)";
-                 int rowsAffected = DBUtl.ExecSQL(INSERT, username, email, password, user_role);
+                int rowsAffected = DBUtl.ExecSQL(INSERT, username, email, password, user_role);
 
                 if (rowsAffected == 1)
                 {
@@ -195,14 +195,14 @@ namespace hostrepository.Controllers
             String Getuser = "SELECT * FROM useracc WHERE user_id = " + id;
 
             List<User> List = DBUtl.GetList<User>(Getuser);
-            foreach(User account in List)
+            foreach (User account in List)
             {
                 TempData["id"] = account.user_id;
                 TempData["username"] = account.username;
-                TempData["email"]  = account.email;
-                TempData["role"] =   account.user_role;
+                TempData["email"] = account.email;
+                TempData["role"] = account.user_role;
                 TempData["password"] = account.password;
-               
+
 
             }
             TempData["usernamecurrently"] = "presentnamefirst";
@@ -212,13 +212,13 @@ namespace hostrepository.Controllers
 
         //    [Authorize(Roles = "Admin"l]
         [HttpPost]
-        public IActionResult EditUser(int editPW, string username, string password, string UserPw2, string email, String user_role , int id)
+        public IActionResult EditUser(int editPW, string username, string password, string UserPw2, string email, String user_role, int id)
         {
-            Debug.WriteLine("we are editing on :"+ editPW);
+            Debug.WriteLine("we are editing on :" + editPW);
             //<---------------------------------------------------------------------------------------------------->
             //resources for checking names
             string dupname = "SELECT user_id FROM useracc WHERE username = '{0}' AND user_id != {1}";
-            DataTable matchdupe = DBUtl.GetTable(dupname, username , id);
+            DataTable matchdupe = DBUtl.GetTable(dupname, username, id);
 
             //<---------------------------------------------------------------------------------------------------->
             //fault counter
@@ -230,7 +230,7 @@ namespace hostrepository.Controllers
                @"SELECT user_id FROM useracc 
                       WHERE email = '{0}' AND user_id != {1}";
 
-            DataTable matchemail = DBUtl.GetTable(emailcheck_SQL, email , id);
+            DataTable matchemail = DBUtl.GetTable(emailcheck_SQL, email, id);
 
 
             //---------------------------------------------------------------------------------------------------------------------------
@@ -268,14 +268,14 @@ namespace hostrepository.Controllers
                 if (string.IsNullOrEmpty(password))
                 {
                     password = "";
-                 
+
                 }
                 if (string.IsNullOrEmpty(UserPw2))
                 {
-                   
+
                     UserPw2 = "";
                 }
-                
+
                 //---------------------------------------------------------------------------------------------------------------------------
                 //check if both passwords are empty
                 if (password == "" || UserPw2 == "")
@@ -339,16 +339,17 @@ namespace hostrepository.Controllers
             }
             //---------------------------------------------------------------------------------------------------------------------------
             //triggers if no fault is detected
-            if(atfault == 0)
+            if (atfault == 0)
             {
                 int rowsAffected = 0;
                 //---------------------------------------------------------------------------------------------------------------------------
                 //Triggers if user allows password reset
-                if (editPW ==1) {
+                if (editPW == 1)
+                {
                     String edituserconfirmed = @"UPDATE useracc SET 
                                                         username = '{0}' ,email = '{1}' ,password = HASHBYTES('SHA1', '{2}') ,user_role = '{3}' 
                                                         WHERE user_id = {4}";
-                   rowsAffected = DBUtl.ExecSQL(edituserconfirmed ,username , email , password , user_role , id);
+                    rowsAffected = DBUtl.ExecSQL(edituserconfirmed, username, email, password, user_role, id);
                     TempData["Msg"] = "User updated";
                     TempData["MsgType"] = "success";
                 }
@@ -363,7 +364,7 @@ namespace hostrepository.Controllers
                     TempData["Msg"] = "User updated";
                     TempData["MsgType"] = "success";
                 }
-                if (rowsAffected !=1)
+                if (rowsAffected != 1)
                 {
                     TempData["Msg"] = "User Record failed";
                     TempData["MsgType"] = "danger";
@@ -397,14 +398,14 @@ namespace hostrepository.Controllers
         //    [Authorize(Roles = "Admin")]
         public IActionResult Delete(string id)
         {
-      //      Debug.WriteLine("deleting" + id);
-        //    string userid = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-          //  if (userid.Equals(id, StringComparison.InvariantCultureIgnoreCase))
+            //      Debug.WriteLine("deleting" + id);
+            //    string userid = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            //  if (userid.Equals(id, StringComparison.InvariantCultureIgnoreCase))
             //{
-              //  TempData["Message"] = "Own ID cannot be deleted";
-                //TempData["MsgType"] = "warning";
-        //    }
-          //  else
+            //  TempData["Message"] = "Own ID cannot be deleted";
+            //TempData["MsgType"] = "warning";
+            //    }
+            //  else
             {
                 string delete = "DELETE FROM useracc WHERE user_id='{0}'";
                 int res = DBUtl.ExecSQL(delete, id);
@@ -435,17 +436,18 @@ namespace hostrepository.Controllers
             {
                 status = account.status;
             }
-            string update="";
+            string update = "";
             //---------------------------------------------------------------------------------------------------------------------------
             //edit status
             if (status == 0)
             {
-                 update = "UPDATE useracc SET status = 1 WHERE user_id = {0}";
+                update = "UPDATE useracc SET status = 1 WHERE user_id = {0}";
                 TempData["Msg"] = "User account activated";
                 TempData["MsgType"] = "success";
-            } else if (status != 0)
+            }
+            else if (status != 0)
             {
-                 update = "UPDATE useracc SET status = 0 WHERE user_id = {0}";
+                update = "UPDATE useracc SET status = 0 WHERE user_id = {0}";
                 TempData["Msg"] = "User account de-activated";
                 TempData["MsgType"] = "success";
             }
@@ -453,6 +455,32 @@ namespace hostrepository.Controllers
             int rowsAffected = DBUtl.ExecSQL(update, id);
 
             return RedirectToAction("Userlist");
+        }
+
+        public IActionResult AddVersion(string name)
+        {
+            string message = "Internal Server Error";
+            if (!string.IsNullOrEmpty(name))
+            {
+                var versions = DBUtl.GetList<WVersion>($"SELECT * FROM version");
+                if (!versions.Any(x => x.name.Equals(name, StringComparison.OrdinalIgnoreCase)))
+                {
+                    string wVLSql = @"INSERT INTO version(name)
+                                VALUES('{0}')";
+                    var vExec = DBUtl.ExecSQL(wVLSql, name);
+                    if (vExec == 1)
+                    {
+                        TempData["Msg"] = "New version created";
+                        TempData["MsgType"] = "success";
+                        return RedirectToAction("Index");
+                    }
+                    message = DBUtl.DB_Message;
+                }
+                message = "Version name already exist";
+            }
+            TempData["Msg"] = message;
+            TempData["MsgType"] = "danger";
+            return RedirectToAction("Index");
         }
     }
 }

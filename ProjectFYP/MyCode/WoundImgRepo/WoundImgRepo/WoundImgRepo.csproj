@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -15,6 +15,11 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <Folder Include="wwwroot\photos\" />
+	</ItemGroup>
+	<ItemGroup>
+	  <None Include="Views\Chart\Summary.cshtml" />
+	  <None Include="wwwroot\lib\chartjs\Chart.min.js" />
+	  <None Include="wwwroot\lib\chartjs\chartjs-plugin-labels.min.js" />
 	</ItemGroup>
 
 </Project>
