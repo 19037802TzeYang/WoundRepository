@@ -37,6 +37,7 @@ namespace WoundImgRepo.Controllers
             {
                 ViewData["Legend"] = "Wound Version";
                 ViewData["Colors"] = new[] { "violet", "orange" };
+               //static
                 ViewData["Labels"] = new[] { "Version 1.16", "Version 1.17" };
                 ViewData["Data"] = version;
             }

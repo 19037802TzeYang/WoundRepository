@@ -1,20 +1,17 @@
 ﻿@model List<WVersion>
-@{
-    Layout = "_Wound";
-}
+@{ Layout = "_Wound"; }
 @if (TempData["Msg"] != null)
 {
-    <div class="alert alert-@TempData["MsgType"]">
-        @TempData["Msg"]
-    </div>
-}
+<div class="alert alert-@TempData["MsgType"]">
+    @TempData["Msg"]
+</div>}
 
 @section MoreScripts {
     <script>
 
         function addVersion() {
             var name = $('#versionName').val();
-            window.location = 'Admin/AddVersion'
+            window.location = 'Admin/AddVersion?name=' + name;
         }
     </script>
 }
@@ -62,12 +59,8 @@
     <tbody>
         @foreach (WVersion v in Model)
         {
-            <tr scope="row">
-                <td width="20%">@v.name</td>
-            </tr>
-        }
+<tr scope="row">
+    <td width="20%">@v.name</td>
+</tr>}
     </tbody>
 </table>
-
-
-

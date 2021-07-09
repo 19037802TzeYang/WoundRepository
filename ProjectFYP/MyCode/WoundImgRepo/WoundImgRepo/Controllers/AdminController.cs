@@ -457,6 +457,12 @@ namespace hostrepository.Controllers
             return RedirectToAction("Userlist");
         }
 
+        public IActionResult Index()
+        {
+            var versions = DBUtl.GetList<WVersion>($"SELECT * FROM version");
+            return View(versions);
+        }
+
         public IActionResult AddVersion(string name)
         {
             string message = "Internal Server Error";
