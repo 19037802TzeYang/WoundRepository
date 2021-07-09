@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using System.Dynamic;
+using System.Security.Claims;
 
 namespace WoundImgRepo.Controllers
 {
@@ -113,6 +114,10 @@ namespace WoundImgRepo.Controllers
         #region Create()
         public IActionResult Create()
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("LoginPage", "Account", new { returnUrl = "/Woud/Create" });
+            }
             //set versions data dropdown list
             SetVersionViewData();
             return View();
@@ -121,6 +126,11 @@ namespace WoundImgRepo.Controllers
         [HttpPost]
         public IActionResult Create(CombineClass cc)
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("LoginPage", "Account", new { returnUrl = "/Woud/Create" });
+            }
+
             if (!ModelState.IsValid)
             {
                 ViewData["Msg"] = "Invalid Input";
@@ -129,6 +139,8 @@ namespace WoundImgRepo.Controllers
             }
             else
             {
+                var userDetail = DBUtl.GetList<User>("SELECT * FROM useracc WHERE username = '" + User.Identity.Name + "'")[0];
+
                 //image table
                 string picfilename = DoPhotoUpload(cc.image.Photo);
                 string imageSql = @"INSERT INTO image(name, type, img_file)
@@ -171,10 +183,10 @@ namespace WoundImgRepo.Controllers
 
                 //wound table 
                 string wSql = @"INSERT INTO wound(name, wound_stage, remarks, 
-                                wound_category_id, wound_location_id, tissue_id, version_id, image_id)
-                                VALUES('{0}','{1}','{2}',{3},{4},{5},{6},{7})";
+                                wound_category_id, wound_location_id, tissue_id, version_id, image_id, user_id)
+                                VALUES('{0}','{1}','{2}',{3},{4},{5},{6},{7},{8})";
                 int wRowsAffected = DBUtl.ExecSQL(wSql, cc.wound.name, cc.wound.wound_stage, cc.wound.remarks,
-                    wc.wound_category_id, wl.wound_location_id, t.tissue_id, v.version_id, img.image_id);
+                    wc.wound_category_id, wl.wound_location_id, t.tissue_id, v.version_id, img.image_id, userDetail.user_id);
                 Wound w = DBUtl.GetList<Wound>("SELECT wound_id FROM wound ORDER BY wound_id DESC")[0];
 
                 //annotation table
@@ -184,9 +196,9 @@ namespace WoundImgRepo.Controllers
                 {
                     anImg.ForEach(img =>
                     {
-                        string anSql = @"INSERT INTO annotation(mask_image_id, wound_id, annotation_image_id)
-                                         VALUES({0},{1},{2})";
-                        anRowsAffected = DBUtl.ExecSQL(anSql, maskImg[imgCount].image_id, w.wound_id, img.image_id);
+                        string anSql = @"INSERT INTO annotation(mask_image_id, wound_id, annotation_image_id, user_id)
+                                         VALUES({0},{1},{2},{3})";
+                        anRowsAffected = DBUtl.ExecSQL(anSql, maskImg[imgCount].image_id, w.wound_id, img.image_id, userDetail.user_id);
                         imgCount += 1;
                     });
                 }
