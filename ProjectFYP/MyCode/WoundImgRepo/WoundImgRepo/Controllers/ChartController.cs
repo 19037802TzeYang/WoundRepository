@@ -21,6 +21,14 @@ namespace WoundImgRepo.Controllers
             return View("Summary");
 
         }
+        public IActionResult WoundsLocationRecords()
+        {
+            PrepareWoundsData(1);
+            ViewData["Chart"] = "pie";
+            ViewData["Title"] = "Version";
+            ViewData["ShowLegend"] = "true";
+            return View("WoundsLocationRecords");
+        }
 
         private void PrepareData(int x)
         {
@@ -49,6 +57,38 @@ namespace WoundImgRepo.Controllers
                 ViewData["Labels"] = new[] { "X", "Y", "Z" };
                 ViewData["Data"] = new int[] { 1, 2, 3 };
             }
+        }
+        private void PrepareWoundsData(int x)
+        {
+            int[] wounds = new int[] { 0, 0, 0 };
+
+            List<Wound> list = DBUtl.GetList<Wound>("SELECT * FROM wound");
+            foreach (Wound w in list)
+            {
+                wounds[calculatePosition(w.wound_location_id)]++;
+            }
+
+            if (x == 1)
+            {
+                ViewData["Legend"] = "Wounds";
+                ViewData["Colors"] = new[] { "grey", "brown", "black" };
+                ViewData["Labels"] = new[] { "Foot", "Buttock", "Unknown" };
+                ViewData["Data"] = wounds;
+            }
+
+            else
+            {
+                ViewData["Legend"] = "Nothing";
+                ViewData["Colors"] = new[] { "gray", "darkgray", "black" };
+                ViewData["Labels"] = new[] { "X", "Y", "Z" };
+                ViewData["Data"] = new int[] { 1, 2, 3 };
+            }
+        }
+        private int calculatePosition(int x)
+        {
+            if (x == 1) return 0;
+            else if (x == 2) return 1;
+            else return 2;
         }
     }
 }
