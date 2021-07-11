@@ -32,7 +32,7 @@ namespace WoundImgRepo.Controllers
 
         private void PrepareData(int x)
         {
-            int[] version = new int[] { 0, 0 };
+            int[] version = new int[2] { 0, 0 }; 
             List<WVersion> list = DBUtl.GetList<WVersion>("SELECT * FROM version");
             foreach (WVersion wversion in list)
             {
@@ -61,8 +61,10 @@ namespace WoundImgRepo.Controllers
         private void PrepareWoundsData(int x)
         {
             int[] wounds = new int[] { 0, 0, 0 };
-
+            int length = wounds.Length;
             List<Wound> list = DBUtl.GetList<Wound>("SELECT * FROM wound");
+            List<WoundLocation> wLocation = DBUtl.GetList<WoundLocation>("SELECT * FROM wound_location");
+            
             foreach (Wound w in list)
             {
                 wounds[calculatePosition(w.wound_location_id)]++;
@@ -71,8 +73,22 @@ namespace WoundImgRepo.Controllers
             if (x == 1)
             {
                 ViewData["Legend"] = "Wounds";
-                ViewData["Colors"] = new[] { "grey", "brown", "black" };
-                ViewData["Labels"] = new[] { "Foot", "Buttock", "Unknown" };
+                string[] knownColors = new string[3] { "grey", "brown", "black" };
+                string[] colors = new string[wounds.Length];
+                string[] labels = new string[wounds.Length];
+                for (int i = 0; i < colors.Length; i++)
+                {
+
+                    colors[i] = knownColors[i];
+                    
+                }
+                for (int i = 0; i < wLocation.Count; i++)
+                {
+                    
+                    labels[i] = wLocation[i].name;
+                }
+                ViewData["Colors"] = colors ;
+                ViewData["Labels"] = labels;
                 ViewData["Data"] = wounds;
             }
 
