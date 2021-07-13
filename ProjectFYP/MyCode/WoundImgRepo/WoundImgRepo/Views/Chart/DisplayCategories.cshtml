@@ -1,6 +1,8 @@
 ﻿@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
+@{
+}
 @section MoreScripts {
     <script src="~/lib/chartjs/Chart.min.js"></script>
     <script src="~/lib/chartjs/chartjs-plugin-labels.min.js"></script>
@@ -32,7 +34,7 @@
                },
                scales: {
                   yAxes: [{
-                     display: @(ViewData["Chart"].ToString().Equals("bar")?"false":"true"),
+                     display: @(ViewData["Chart"].ToString().Equals("pie")?"false":"true"),
                      gridLines: {
                         display: false,
                      },
@@ -57,4 +59,5 @@
     <a href="Dashboard"><img src="~/images/93634.png" height="50" width="50"> Return to dashboard index</a>
 </div>
 <h2>Wound by @ViewData["Title"]</h2>
+
 <canvas id="chart" width="600" height="300"></canvas>
