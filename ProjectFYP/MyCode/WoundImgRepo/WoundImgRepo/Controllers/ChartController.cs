@@ -21,6 +21,10 @@ namespace WoundImgRepo.Controllers
             return View("Summary");
 
         }
+        public IActionResult Dashboard()
+        {
+            return View();
+        }
         public IActionResult WoundsLocationRecords()
         {
             PrepareWoundsData(1);
