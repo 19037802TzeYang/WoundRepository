@@ -35,6 +35,7 @@
         });
     </script>
 }
+
 <form asp-controller="Wound"
       asp-action="Indexpost"
       >
@@ -45,16 +46,89 @@
             <label class="col-sm-2 font-weight-bold">Section: </label>
             <div class="col-sm-3">
                 <select id="searchedsection" name="searchedsection" for="searchedsection">
-                    <option value="w.wound_id">Wound Id</option>
-                    <option value="w.name">Wound Name</option>
-                    <option value = "w.wound_stage"  > Wound Stage </option>                         
-                    <option value="w.remarks">Remarks</option>
-                    <option value="wc.name">Wound Category</option>
-                    <option value="wl.name">Wound Location</option>
-                    <option value="i.image_id">Image ID</option>
-                    <option value="t.name">Tissue</option>
-                    <option value="v.name">Version</option>
+                    <!--Viewbags are to be put inplace so as a user i don't have to keep reselecting my options if i made an error-->
+                    @if (ViewBag.selection == "w.wound_id")
+                    {
+                        <option value="w.wound_id" selected>Wound Id</option>
+                    }
+                    else
+                    {
+                        <option value="w.wound_id">Wound Id</option>
+
+                    }
+                    @if (ViewBag.selection == "w.name")
+                    {
+                        <option value="w.name" selected>Wound Name</option>
+                    }
+                    else
+                    {
+                        <option value="w.name">Wound Name</option>
+                    }
+                    @if (ViewBag.selection == "w.wound_stage")
+                    {
+                        <option value="w.wound_stage" selected> Wound Stage </option>
+                    }
+                    else
+                    {
+                        <option value="w.wound_stage"> Wound Stage </option>
+                    }
+                    @if (ViewBag.selection == "w.remarks")
+                    {
+                        <option value="w.remarks" selected>Remarks</option>
+                    }
+                    else
+                    {
+                        <option value="w.remarks">Remarks</option>
+                    }
+                    @if (ViewBag.selection == "wc.name")
+                    {
+                        <option value="wc.name" selected>Wound Category</option>
+                    }
+                    else
+                    {
+                        <option value="wc.name">Wound Category</option>
+                    }
+                    @if (ViewBag.selection == "wl.name")
+                    {
+                        <option value="wl.name" selected>Wound Location</option>
+                    }
+                    else
+                    {
+                        <option value="wl.name">Wound Location</option>
+                    }
+                    @if (ViewBag.selection == "i.image_id")
+                    {
+
+                        <option value="i.image_id" selected>Image ID</option>
+                    }
+                    else
+                    {
+                        <option value="i.image_id">Image ID</option>
+                    }
+                    @if (ViewBag.selection == "t.name")
+                    {
+                        <option value="t.name" selected>Tissue</option>
+                    }
+                    else
+                    {
+                        <option value="t.name">Tissue</option>
+                    }
+                    @if (ViewBag.selection == "v.name")
+                    {
+                        <option value="v.name" selected>Version</option>
+                    }
+                    else
+                    {
+                        <option value="v.name">Version</option>
+                    }
+                    @if (ViewBag.selection == "u.username")
+                    {
+                        <option value="u.username" selected>username</option>
+                    }
+                    else
+                    {
                     <option value="u.username">username</option>
+                    }
                 </select>
             </div>
             <div class="col-sm-8">
