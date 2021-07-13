@@ -41,7 +41,9 @@
         <label class="col-sm-2" asp-for="woundc.name">Wound Category: </label>
         <div class="col-sm-5">
             <input type="hidden" asp-for="woundc.wound_category_id" />
-            <input class="form-control" asp-for="woundc.name">
+            <select class="form-control" asp-items="@((SelectList)ViewData["woundCategory"])" asp-for="woundc.name">
+                <option value="">-SELECT-</option>
+            </select>
         </div>
     </div>
 
@@ -57,7 +59,9 @@
         <label class="col-sm-2" asp-for="tissue.name">Wound Tissue: </label>
         <div class="col-sm-5">
             <input type="hidden" asp-for="tissue.tissue_id" />
-            <input class="form-control" asp-for="tissue.name">
+            <select class="form-control" asp-items="@((SelectList)ViewData["tissue"])" asp-for="tissue.name">
+                <option value="">-SELECT-</option>
+            </select>
         </div>
     </div>
 
@@ -65,7 +69,7 @@
         <label class="col-sm-2">Image Version</label>
         <div class="col-sm-5">
             <input type="hidden" asp-for="woundv.version_id" />
-            <select class="form-control" asp-items="@((SelectList)ViewData["versions"])" asp-for="woundv.name">
+            <select class="form-control" asp-items="@((SelectList)ViewData["version"])" asp-for="woundv.name">
                 <option value="">-SELECT-</option>
             </select>
         </div>

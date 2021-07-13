@@ -75,7 +75,7 @@ namespace WoundImgRepo.Controllers
                         woundRecordList.Add(woundRecord);
                     }
                 }
-                //set versions data dropdown list
+                //set version data dropdown list
                 SetVersionViewData();
                 //assign value to properties and pass to view
                 var woundDetailsViewModel = new WoundDetailsViewModel()
@@ -94,6 +94,40 @@ namespace WoundImgRepo.Controllers
         }
         #endregion
 
+        #region SetWoundCategoryViewData()
+        public void SetWoundCategoryViewData()
+        {
+            var getWoundCategory = DBUtl.GetList<WoundCategory>("SELECT * FROM wound_category");
+            List<SelectListItem> wcSelectList = new List<SelectListItem>();
+            foreach (var wc in getWoundCategory)
+            {
+                wcSelectList.Add(new SelectListItem()
+                {
+                    Text = wc.name,
+                    Value = wc.name
+                });
+            }
+            ViewData["woundCategory"] = new SelectList(wcSelectList, "Text", "Value");
+        }
+        #endregion
+
+        #region SetTissueViewData()
+        public void SetTissueViewData()
+        {
+            var getTissue = DBUtl.GetList<Tissue>("SELECT * FROM tissue");
+            List<SelectListItem> tSelectList = new List<SelectListItem>();
+            foreach (var t in getTissue)
+            {
+                tSelectList.Add(new SelectListItem()
+                {
+                    Text = t.name,
+                    Value = t.name
+                });
+            }
+            ViewData["tissue"] = new SelectList(tSelectList, "Text", "Value");
+        }
+        #endregion
+
         #region SetVersionViewData()
         public void SetVersionViewData()
         {
@@ -107,7 +141,7 @@ namespace WoundImgRepo.Controllers
                     Value = version.name
                 });
             }
-            ViewData["versions"] = new SelectList(versionsSelectList, "Text", "Value");
+            ViewData["version"] = new SelectList(versionsSelectList, "Text", "Value");
         }
         #endregion
 
@@ -116,10 +150,12 @@ namespace WoundImgRepo.Controllers
         {
             if (!User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("LoginPage", "Account", new { returnUrl = "/Woud/Create" });
+                return RedirectToAction("LoginPage", "Account", new { returnUrl = "/Wound/Create" });
             }
-            //set versions data dropdown list
+            //set wound category, tissue, version data dropdown list
+            SetWoundCategoryViewData();
             SetVersionViewData();
+            SetTissueViewData();
             return View();
         }
 
@@ -128,7 +164,7 @@ namespace WoundImgRepo.Controllers
         {
             if (!User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("LoginPage", "Account", new { returnUrl = "/Woud/Create" });
+                return RedirectToAction("LoginPage", "Account", new { returnUrl = "/Wound/Create" });
             }
 
             if (!ModelState.IsValid)
@@ -139,6 +175,15 @@ namespace WoundImgRepo.Controllers
             }
             else
             {
+                //check wound name not exist
+                var wound = DBUtl.GetList<Wound>($"SELECT * FROM wound");
+                if (wound.Any(x => x.name.Equals(cc.wound.name, StringComparison.OrdinalIgnoreCase)))
+                {
+                    TempData["Msg"] = "Wound name already exist. Try giving unique name";
+                    TempData["MsgType"] = "warning";
+                    return View("Create");
+                }
+
                 var userDetail = DBUtl.GetList<User>("SELECT * FROM useracc WHERE username = '" + User.Identity.Name + "'")[0];
 
                 //image table
@@ -161,10 +206,7 @@ namespace WoundImgRepo.Controllers
                 var maskImg = DBUtl.GetList<Image>("SELECT image_id FROM image WHERE name='" + cc.wound.name + "'AND type='Mask Image'");
 
                 //wound_category table
-                string wCSql = @"INSERT INTO wound_category(name)
-                                 VALUES('{0}')";
-                int wCRowsAffected = DBUtl.ExecSQL(wCSql, cc.woundc.name);
-                WoundCategory wc = DBUtl.GetList<WoundCategory>("SELECT wound_category_id FROM wound_category ORDER BY wound_category_id DESC")[0];
+                WoundCategory wc = DBUtl.GetList<WoundCategory>($"SELECT wound_category_id FROM wound_category WHERE name='{cc.woundc.name}'")[0];
 
                 //wound_location table
                 string wLSql = @"INSERT INTO wound_location(name)
@@ -173,12 +215,9 @@ namespace WoundImgRepo.Controllers
                 WoundLocation wl = DBUtl.GetList<WoundLocation>("SELECT wound_location_id FROM wound_location ORDER BY wound_location_id DESC")[0];
 
                 //tissue table
-                string tSql = @"INSERT INTO tissue(name)
-                                VALUES('{0}')";
-                int tRowsAffected = DBUtl.ExecSQL(tSql, cc.tissue.name);
-                Tissue t = DBUtl.GetList<Tissue>("SELECT tissue_id FROM Tissue ORDER BY tissue_id DESC")[0];
+                Tissue t = DBUtl.GetList<Tissue>($"SELECT tissue_id FROM Tissue WHERE name='{cc.tissue.name}'")[0];
 
-                //version table created by admin
+                //version table
                 WVersion v = DBUtl.GetList<WVersion>($"SELECT version_id FROM Version WHERE name='{cc.woundv.name}'")[0];
 
                 //wound table 
@@ -204,8 +243,8 @@ namespace WoundImgRepo.Controllers
                 }
 
                 if (imageRowsAffected == 1 && wRowsAffected == 1 &&
-                    wCRowsAffected == 1 && wLRowsAffected == 1 &&
-                    tRowsAffected == 1 && wRowsAffected == 1 &&
+                    wLRowsAffected == 1 &&
+                    wRowsAffected == 1 &&
                     anRowsAffected == 1)
                 {
                     TempData["Msg"] = "New wound created";
@@ -364,8 +403,10 @@ namespace WoundImgRepo.Controllers
                     woundv = new WVersion() { version_id = wound.version_id, name = woundRecord.versionname },
                     image = new Image() { img_file = img.img_file }
                 };
-                //set versions data dropdown list
+                //set wound category, tissue, version data dropdown list
+                SetWoundCategoryViewData();
                 SetVersionViewData();
+                SetTissueViewData();
                 return View(record);
             }
             else

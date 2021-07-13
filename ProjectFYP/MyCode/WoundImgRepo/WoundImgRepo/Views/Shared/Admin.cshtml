@@ -12,8 +12,15 @@
         <li class="nav-item">
             <a class="nav-link" asp-controller="Admin" asp-action="Registry">New User</a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" asp-controller="Admin" asp-action="Index">Add Version</a>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Metadata
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <a class="dropdown-item" asp-controller="Admin" asp-action="WoundCategory">Wound Category</a>
+                <a class="dropdown-item" asp-controller="Admin" asp-action="Tissue">Tissue Type</a>
+                <a class="dropdown-item" asp-controller="Admin" asp-action="Version">Version</a>
+            </div>
         </li>
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" data-toggle="dropdown">
@@ -24,8 +31,6 @@
                 <a class="nav-link" asp-controller="Chart" asp-action="Version">Version</a>
             </div>
         </li>
-
-
     </ul>
     <ul class="nav navbar-nav ml-auto">
         <li>
