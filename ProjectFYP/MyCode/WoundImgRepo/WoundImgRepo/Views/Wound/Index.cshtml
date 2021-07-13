@@ -35,7 +35,46 @@
         });
     </script>
 }
+<form asp-controller="Wound"
+      asp-action="Indexpost"
+      >
+    <div class="col-sm-5">
+        <!--Doing search-->
+        <h4>Specified Search :</h4>
+        <div class="form-group row">
+            <label class="col-sm-2 font-weight-bold">Section: </label>
+            <div class="col-sm-3">
+                <select id="searchedsection" name="searchedsection" for="searchedsection">
+                    <option value="w.wound_id">Wound Id</option>
+                    <option value="w.name">Wound Name</option>
+                    <option value = "w.wound_stage"  > Wound Stage </option>                         
+                    <option value="w.remarks">Remarks</option>
+                    <option value="wc.name">Wound Category</option>
+                    <option value="wl.name">Wound Location</option>
+                    <option value="i.image_id">Image ID</option>
+                    <option value="t.name">Tissue</option>
+                    <option value="v.name">Version</option>
+                    <option value="u.username">username</option>
+                </select>
+            </div>
+            <div class="col-sm-8">
+                <input id="searchedobj" name ="searchedobj" for="searchedobj" class="form-control" placeholder="Search in wound database                " autofocus="">
+            </div>
+            <div class="col-sm-1">
+                <input type="submit" class="btn btn-outline-primary" value="Go" />
+            </div>
+        </div>
+    </div>
+    @if (TempData["Msg"] != null)
+    {
+        <div class="alert alert-@TempData["MsgType"]">
+            @TempData["Msg"]
+        </div>
+    }
+</form>
 
+
+    <!--table set up-->
 <style>
     img {
         width: 200px;
