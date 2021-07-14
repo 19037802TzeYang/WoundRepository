@@ -36,6 +36,7 @@
             <th scope="col">Email</th>
             <th scope="col">User role</th>
             <th scope="col">Logged in date-Time</th>
+            <th scope="col">Status</th>
             <th scope="col">Action</th>
         </tr>
     </thead>
@@ -43,16 +44,59 @@
         @foreach (User account in Model)
         {
         <tr>
-            <td>@account.user_id</td>
-            <td>@account.username</td>
-            <td>@account.email</td>
-            <td>@account.user_role</td>
-            <td>@account.last_login</td>
+            <!--List normal user contents-->>
+
+            <td> @account.user_id</td>
+            <td> @account.username</td>
+            <td> @account.email</td>
+            <td> @account.user_role</td>
+
+            <!--show if account has logged in b4-->>
+            @if (@account.last_login.Year == 0001)
+            {
+                <td>User has never logged in yet </td>
+            }
+            else
+            {
+                <td> @account.last_login</td>
+            }
+
+            <!--show if account is activated or not-->>
+            @if (@account.status == 1)
+            {
+                <td> Activated</td>
+            }
+            else
+            {
+                <td> deactivated</td>
+            }
+
             <td>
+                <!--Delete user-->
                 <a asp-controller="Admin"
                    asp-action="Delete"
                    asp-route-id="@account.user_id"
-                   onclick="return confirm('Delete User [@account.username]')">Delete</a>
+                   onclick="return confirm('Delete User [@account.username]?')"> Delete</a>
+                <!--Edit user-->
+                |  <a asp-controller="Admin"
+                      asp-action="EditUser"
+                      asp-route-id="@account.user_id"> Edit</a>
+                <!--activate or deactivate user account-->
+                |
+
+                @if (@account.status == 1)
+                {
+                    <a asp-controller="Admin" asp-action="Statusedit"
+                       asp-route-id="@account.user_id"
+                       onclick="return confirm('Deactivate user :[@account.username] ?')"> deactivate</a>
+                }
+                else
+                {
+                    <a asp-controller="Admin" asp-action="Statusedit"
+                       asp-route-id="@account.user_id"
+                       onclick="return confirm('activate user :[@account.username] ?')"> activate</a>
+                }
+
             </td>
         </tr>
         }
