@@ -8,11 +8,16 @@ using System.Security.Claims;
 using WoundImgRepo.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
+using System.Diagnostics;
+
 
 namespace WoundImgRepo.Controllers
 {
+    
     public class AccountController : Controller
     {
+        public string current_user = "";
+
         [Authorize]
         public IActionResult Logoff(string returnUrl = null)
         {
@@ -25,6 +30,7 @@ namespace WoundImgRepo.Controllers
         [AllowAnonymous]
         public IActionResult LoginPage(string returnUrl = null)
         {
+           
             TempData["ReturnUrl"] = returnUrl;
             return View();
         }
@@ -47,22 +53,23 @@ namespace WoundImgRepo.Controllers
                 status = account.status;
             }
             System.Diagnostics.Debug.WriteLine("user status is" + status);
-            if (status != 1)
-            {
-                ViewData["Message"] = "Account is deactivated , please contact your supervisor for support.";
-                ViewData["MsgType"] = "danger";
-                return View();
-            }
             
 
 
 
-        if (!AuthenticateUser(user.Username, user.Password,
+
+            if (!AuthenticateUser(user.Username, user.Password,
                                   out ClaimsPrincipal principal))
             {
 
 
                 ViewData["Message"] = "Incorrect Username or Password";
+                ViewData["MsgType"] = "danger";
+                return View();
+            }
+            else if (status != 1)
+            {
+                ViewData["Message"] = "Account is deactivated , please contact your supervisor for support.";
                 ViewData["MsgType"] = "danger";
                 return View();
             }
@@ -91,7 +98,8 @@ namespace WoundImgRepo.Controllers
            
                 
                 System.Diagnostics.Debug.WriteLine("login succss!");
-                return RedirectToAction("TheWounds", "Wound");
+                current_user = user.Username;
+                return RedirectToAction("Index", "Wound");
             }
         }
 
@@ -130,6 +138,7 @@ namespace WoundImgRepo.Controllers
             }
             return false;
         }
+   
 
     }
 }
