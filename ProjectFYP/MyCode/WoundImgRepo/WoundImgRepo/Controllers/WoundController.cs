@@ -184,6 +184,7 @@ namespace WoundImgRepo.Controllers
                     return View("Create");
                 }
 
+                //useracc table
                 var userDetail = DBUtl.GetList<User>("SELECT * FROM useracc WHERE username = '" + User.Identity.Name + "'")[0];
 
                 //image table
@@ -428,39 +429,30 @@ namespace WoundImgRepo.Controllers
             }
             else
             {
-                //wound table
-                string wSql = @"UPDATE wound
-                                SET name='{0}', wound_stage='{1}', remarks='{2}'
-                                WHERE wound_id={3}";
-                int wRowsAffected = DBUtl.ExecSQL(wSql, cc.wound.name, cc.wound.wound_stage, cc.wound.remarks, cc.wound.wound_id);
-
                 //wound_category table
-                string wCSql = @"UPDATE wound_category
-                                 SET name='{0}'
-                                 WHERE wound_category_id={1}";
-                int wCRowsAffected = DBUtl.ExecSQL(wCSql, cc.woundc.name, cc.woundc.wound_category_id);
+                WoundCategory wc = DBUtl.GetList<WoundCategory>($"SELECT wound_category_id FROM wound_category WHERE name='{cc.woundc.name}'")[0];
 
                 //wound_location table
                 string wLSql = @"UPDATE wound_location
                                  SET name='{0}'
                                  WHERE wound_location_id={1}";
                 int wLRowsAffected = DBUtl.ExecSQL(wLSql, cc.woundl.name, cc.woundl.wound_location_id);
+                WoundLocation wl = DBUtl.GetList<WoundLocation>($"SELECT wound_location_id FROM wound_location WHERE name='{cc.woundl.name}'")[0];
 
                 //tissue table
-                string tSql = @"UPDATE Tissue
-                                SET name='{0}'
-                                WHERE tissue_id={1}";
-                int tRowsAffected = DBUtl.ExecSQL(tSql, cc.tissue.name, cc.tissue.tissue_id);
+                Tissue t = DBUtl.GetList<Tissue>($"SELECT tissue_id FROM Tissue WHERE name='{cc.tissue.name}'")[0];
 
                 //version table
-                string wVSql = @"UPDATE Version
-                                 SET name='{0}'
-                                 WHERE version_id={1}";
-                int wVRowsAffected = DBUtl.ExecSQL(wVSql, cc.woundv.name, cc.woundv.version_id);
+                WVersion v = DBUtl.GetList<WVersion>($"SELECT version_id FROM Version WHERE name='{cc.woundv.name}'")[0];
 
-                if (wRowsAffected == 1 && wCRowsAffected == 1 &&
-                    wLRowsAffected == 1 && tRowsAffected == 1 &&
-                    wVRowsAffected == 1)
+                //wound table
+                string wSql = @"UPDATE wound
+                                SET name='{0}', wound_stage='{1}', remarks='{2}', wound_category_id={3}, wound_location_id={4}, tissue_id={5}, version_id={6}
+                                WHERE wound_id={7}";
+                int wRowsAffected = DBUtl.ExecSQL(wSql, cc.wound.name, cc.wound.wound_stage, cc.wound.remarks, wc.wound_category_id, wl.wound_location_id, t.tissue_id, v.version_id, cc.wound.wound_id);
+
+                if (wRowsAffected == 1 && 
+                    wLRowsAffected == 1)
                 {
                     TempData["Msg"] = "Wound record updated";
                     TempData["MsgType"] = "success";
