@@ -95,15 +95,19 @@
                         </div>
                     </div>
                     <div class="col-xs-6 col-sm-2 box">
-                        <a type="button" 
-                           class="btn btn-primary"
-                           asp-controller="wound"
-                           asp-action="DeleteAnnotationMaskImage"
-                           asp-route-woundid="@woundRecord.woundid"
-                           asp-route-annotationid="@ai.annotationid"
-                           onclick="return confirm('Delete Annotation and Mask Image')">
-                            Delete
-                        </a>
+                        @if (User.IsInRole("Admin") || User.IsInRole("Annotator"))
+
+                        {
+                            <a type="button"
+                               class="btn btn-primary"
+                               asp-controller="wound"
+                               asp-action="DeleteAnnotationMaskImage"
+                               asp-route-woundid="@woundRecord.woundid"
+                               asp-route-annotationid="@ai.annotationid"
+                               onclick="return confirm('Delete Annotation and Mask Image')">
+                                Delete
+                            </a>
+                        }
                     </div>
                 }
 
@@ -115,7 +119,9 @@
                     <div><p>Wound Location:</p><span>@Model.woundRecord.woundlocationname</span></div>
                     <div><p>Tissue:</p><span>@Model.woundRecord.tissuename</span></div>
                     <!-- get this wound version name -->
-                    <div><p>Version:</p><span>@woundRecord.versionname</span></div>    
+                    <div><p>Version:</p><span>@woundRecord.versionname</span></div>
+                    @if (User.IsInRole("Admin") || User.IsInRole("Annotator"))
+                    {
                         <button type="button" class="btn btn-primary mt-0" data-toggle="modal" data-target="#annotationMaskModal">
                             Upload
                         </button>
@@ -126,6 +132,7 @@
                            asp-route-id="@Model.woundRecord.woundid">
                             Edit
                         </a>
+                    }
                 </div>
             </div>
         </div>

@@ -16,6 +16,8 @@ namespace WoundImgRepo.Controllers
 {
     public class WoundController : Controller
     {
+        #region Index()
+        [Authorize(Roles = "Admin, Annotator")]
         public IActionResult Index()
         {
             ViewBag.selection = "nothing";
@@ -31,6 +33,7 @@ namespace WoundImgRepo.Controllers
                                         INNER JOIN useracc u ON u.user_id = w.user_id");
             return View("Index", list);
         }
+        #endregion
 
         #region Indexpost()
         public IActionResult Indexpost( )
@@ -38,7 +41,7 @@ namespace WoundImgRepo.Controllers
             IFormCollection form = HttpContext.Request.Form;
             string searchedsection = form["searchedsection"].ToString();
             string searchedobj = form["searchedobj"].ToString().Trim();
-            Debug.WriteLine("doin index search with "+ searchedsection);
+            //Debug.WriteLine("doin index search with "+ searchedsection);
 
             String listinput = @"SELECT w.wound_id as woundid, w.name as woundname, w.wound_stage as woundstage, w.remarks as woundremarks, 
                                       wc.name as woundcategoryname, wl.name as woundlocationname, t.name as tissuename,
@@ -54,7 +57,7 @@ namespace WoundImgRepo.Controllers
 
 
 
-            Debug.WriteLine(listinput);
+            //Debug.WriteLine(listinput);
 
             ViewBag.selection = searchedsection;
 
@@ -124,6 +127,44 @@ namespace WoundImgRepo.Controllers
                 TempData["MsgType"] = "warning";
                 return RedirectToAction("Index");
             }
+        }
+        #endregion
+
+        #region Details2()
+        public IActionResult Details2(int id)
+        {
+            string sql =
+                @"SELECT * FROM wound";
+
+            List<WoundRecord> woundRecords = DBUtl.GetList<WoundRecord>(sql, id);
+            if (woundRecords.Count == 1)
+            {
+                WoundRecord record = woundRecords[0];
+                return View("Details2", record);
+            }
+            else
+            {
+                TempData["Message"] = "Wound record does not exist";
+                TempData["MsgType"] = "warning";
+                return RedirectToAction("Index");
+            }
+        }
+        #endregion
+
+        #region TheWounds()
+        public IActionResult TheWounds()
+        {
+            List<WoundRecord> list = DBUtl.GetList<WoundRecord>(@"SELECT w.wound_id as woundid, w.name as woundname, w.wound_stage as woundstage, w.remarks as woundremarks, 
+             wc.name as woundcategoryname, wl.name as woundlocationname, t.name as tissuename,
+             v.name as versionname, i.img_file as imagefile, i.image_id as imageid, u.username
+             FROM wound w
+             INNER JOIN image i ON i.image_id = w.image_id
+             INNER JOIN wound_category wc ON wc.wound_category_id = w.wound_category_id
+             INNER JOIN wound_location wl ON wl.wound_location_id = w.wound_location_id
+             INNER JOIN tissue t ON t.tissue_id = w.tissue_id
+             INNER JOIN version v ON v.version_id = w.version_id
+             INNER JOIN useracc u ON u.user_id = w.user_id");
+            return View(list);
         }
         #endregion
 

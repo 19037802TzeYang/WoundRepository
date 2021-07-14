@@ -11,7 +11,7 @@ namespace WoundImgRepo.Controllers
     public class ChartController : Controller
     {
 
-        [Authorize(Roles = "Admin")]
+        
         public IActionResult Version()
         {
             PrepareData(1);
@@ -43,21 +43,37 @@ namespace WoundImgRepo.Controllers
         }
         private void PrepareData(int x)
         {
-            int[] version = new int[2] { 0, 0 }; 
+            int[] version = new int[3] { 0, 0, 0 };
             List<WVersion> list = DBUtl.GetList<WVersion>("SELECT * FROM version");
             foreach (WVersion wversion in list)
             {
+                version[calculatePosition(wversion.version_id)]++;
+                /*
                 if (wversion.version_id == 1) version[0]++;
                 else if (wversion.version_id == 2) version[1]++;
                 else version[2]++;
+                */
             }
 
             if (x == 1)
             {
                 ViewData["Legend"] = "Wound Version";
-                ViewData["Colors"] = new[] { "violet", "orange" };
-               //static
-                ViewData["Labels"] = new[] { "Version 1.16", "Version 1.17" };
+                ViewData["Colors"] = new string[3] { "grey", "brown", "black" };
+                string[] colors = new string[version.Length];
+                string[] labels = new string[version.Length];
+                for (int i = 0; i < colors.Length; i++)
+                {
+
+                    colors[i] = colors[i];
+
+                }
+                for (int i = 0; i < list.Count; i++)
+                {
+
+                    labels[i] = list[i].name;
+                }
+                ViewData["Colors"] = colors;
+                ViewData["Labels"] = labels;
                 ViewData["Data"] = version;
             }
 

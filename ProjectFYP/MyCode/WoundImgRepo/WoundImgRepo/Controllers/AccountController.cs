@@ -91,7 +91,7 @@ namespace WoundImgRepo.Controllers
            
                 
                 System.Diagnostics.Debug.WriteLine("login succss!");
-                return RedirectToAction("Index", "Wound");
+                return RedirectToAction("TheWounds", "Wound");
             }
         }
 
