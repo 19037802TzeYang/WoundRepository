@@ -30,9 +30,32 @@ namespace WoundImgRepo.Controllers
         [AllowAnonymous]
         public IActionResult LoginPage(string returnUrl = null)
         {
-           
-            TempData["ReturnUrl"] = returnUrl;
-            return View();
+            #region checkuserrole()
+            int checktheuserrole = 0;
+            if (User.IsInRole("Admin"))
+            {
+                checktheuserrole = 1;
+            }
+            else if (User.IsInRole("Doctor"))
+            {
+                checktheuserrole = 2;
+            }
+            else if (User.IsInRole("Annotator"))
+            {
+                checktheuserrole = 3;
+            }
+            if (checktheuserrole == 0)
+            {
+                TempData["ReturnUrl"] = returnUrl;
+                return View();
+            }
+            #endregion
+
+            else
+            {
+                return RedirectToAction("Index", "Wound");
+            }
+            
         }
 
         // Login
@@ -77,7 +100,12 @@ namespace WoundImgRepo.Controllers
             {
                 HttpContext.SignInAsync(
                    CookieAuthenticationDefaults.AuthenticationScheme,
-                   principal);
+                   principal,
+                   new AuthenticationProperties
+                   {
+                       IsPersistent = user.RememberMe
+                   }
+                   );
 
                 
 
