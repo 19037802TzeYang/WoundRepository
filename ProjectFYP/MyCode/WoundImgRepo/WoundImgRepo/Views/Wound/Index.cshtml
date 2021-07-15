@@ -1,4 +1,4 @@
-﻿@model List<WoundRecord>
+@model List<WoundRecord>
 @{
     Layout = "_Wound";
 }
@@ -15,14 +15,12 @@
 
     <script>
         function ConfirmDelete() {
-            if (confirm("Are you sure you want to delete? This will remove all records with the annotation as well.") == false)
-            {
+            if (confirm("Are you sure you want to delete? This will remove all records with the annotation as well.") == false) {
                 event.preventDefault();
                 event.stopPropagation();
                 return false;
             }
         }
-
         $(document).ready(function () {
             $('#jsWoundsTable').DataTable({
                 ordering: true,
@@ -33,15 +31,16 @@
                 pageLength: 5
             });
         });
+       
     </script>
 }
 
 <form asp-controller="Wound"
-      asp-action="Indexpost"
-      >
+      asp-action="Indexpost">
     <div class="col-sm-5">
         <!--Doing search-->
-        <h4>Specified Search :</h4>
+        <h4>Filter Foundry :</h4>
+        <h6>Filter out records you only need to see!</h6>
         <div class="form-group row">
             <label class="col-sm-2 font-weight-bold">Section: </label>
             <div class="col-sm-3">
@@ -127,12 +126,13 @@
                     }
                     else
                     {
-                    <option value="u.username">username</option>
+                        <option value="u.username">username</option>
                     }
                 </select>
             </div>
             <div class="col-sm-8">
-                <input id="searchedobj" name ="searchedobj" for="searchedobj" class="form-control" placeholder="Search in wound database                " autofocus="">
+                @{ViewData["current"] = ViewBag.keyword; }
+                <input id="searchedobj" name="searchedobj" for="searchedobj" class="form-control"  placeholder="Place in keywords     "  autofocus="" value=@ViewData["current"]>
             </div>
             <div class="col-sm-1">
                 <input type="submit" class="btn btn-outline-primary" value="Go" />
@@ -148,7 +148,8 @@
 </form>
 
 
-    <!--table set up-->
+
+<!--table set up-->
 <style>
     img {
         width: 200px;
@@ -172,41 +173,41 @@
             <th scope="col" width="20%">Tissue</th>
             <th scope="col" width="20%">Version</th>
             <th scope="col" width="20%">Details</th>
-            @if (User.IsInRole("Admin") || User.IsInRole("Annotator"))
+            @if (User.IsInRole("Admin") || User.IsInRole("Annotator") )
             {
-            <th scope="col" width="20%">Username</th>
-            
-            <th scope="col" width="20%">Edit / Delete</th>
+                <th scope="col" width="20%">Username</th>
+
+                <th scope="col" width="20%">Edit / Delete</th>
             }
         </tr>
     </thead>
     <tbody>
         @foreach (WoundRecord w in Model)
         {
-        <tr scope="row">
-            <td width="20%">@w.woundid</td>
-            <td width="20%">@w.woundname</td>
-            <td width="20%">@w.woundstage</td>
-            <td width="20%">@w.woundremarks</td>
-            <td width="20%">@w.woundcategoryname</td>
-            <td width="20%">@w.woundlocationname</td>
-            <td width="20%"><img src="~/photos/@w.imagefile"></td>
+            <tr scope="row">
+                <td width="20%">@w.woundid</td>
+                <td width="20%">@w.woundname</td>
+                <td width="20%">@w.woundstage</td>
+                <td width="20%">@w.woundremarks</td>
+                <td width="20%">@w.woundcategoryname</td>
+                <td width="20%">@w.woundlocationname</td>
+                <td width="20%"><img src="~/photos/@w.imagefile"></td>
 
-            <td width="20%">@w.tissuename</td>
-            <td width="20%">@w.versionname</td>
-            <td width="20%"><a asp-controller="Wound" asp-action="Details" asp-route-id="@w.woundid">Details</a></td>
-            @if (User.IsInRole("Admin") || User.IsInRole("Annotator"))
-            {
-                <td width="20%">@w.username</td>
+                <td width="20%">@w.tissuename</td>
+                <td width="20%">@w.versionname</td>
+                <td width="20%"><a asp-controller="Wound" asp-action="Details" asp-route-id="@w.woundid">Details</a></td>
+                @if (User.IsInRole("Admin") || User.IsInRole("Annotator"))
+                {
+                    <td width="20%">@w.username</td>
 
 
-                <td width="20%">
-                    <a asp-controller="Wound" asp-action="Update" asp-route-id="@w.woundid">Edit</a> |
-                    <a asp-controller="Wound" asp-action="Delete" asp-route-id="@w.woundid"
-                       onclick="return confirm('Delete Wound [@w.woundname] ?')">Delete</a>
-                </td>
-            }
-        </tr>
+                    <td width="20%">
+                        <a asp-controller="Wound" asp-action="Update" asp-route-id="@w.woundid">Edit</a> |
+                        <a asp-controller="Wound" asp-action="Delete" asp-route-id="@w.woundid"
+                           onclick="return confirm('Delete Wound [@w.woundname] ?')">Delete</a>
+                    </td>
+                }
+            </tr>
         }
     </tbody>
 </table>
