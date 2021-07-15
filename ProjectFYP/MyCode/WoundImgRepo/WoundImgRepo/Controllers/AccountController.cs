@@ -63,13 +63,13 @@ namespace WoundImgRepo.Controllers
             {
 
 
-                ViewData["Message"] = "Incorrect Username or Password";
+                ViewData["Msg"] = "Incorrect Username or Password";
                 ViewData["MsgType"] = "danger";
                 return View();
             }
             else if (status != 1)
             {
-                ViewData["Message"] = "Account is deactivated , please contact your supervisor for support.";
+                ViewData["Msg"] = "Account is deactivated , please contact your supervisor for support.";
                 ViewData["MsgType"] = "danger";
                 return View();
             }
