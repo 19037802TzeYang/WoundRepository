@@ -3,6 +3,96 @@
 *@
 @{
 }
+@section MoreScripts {
+    <script src="~/lib/chartjs/Chart.min.js"></script>
+    <script src="~/lib/chartjs/chartjs-plugin-labels.min.js"></script>
+
+    <script language="javascript">
+
+
+      $(document).ready(function () {
+         new Chart(document.getElementById("chart"), {
+            type: '@ViewData["Chart"]',
+            data: {
+               labels: @Json.Serialize(ViewData["Labels"]),
+               datasets: [{
+                  label: '@ViewData["Legend"]',
+                  data: @Json.Serialize(ViewData["Data"]),
+                  backgroundColor: @Json.Serialize(ViewData["Colors"]),
+                  fill: false
+               }]
+            },
+             options: {
+               responsive: false,
+               scaleBeginAtZero: true,
+                legend: {
+                    display: @ViewData["ShowLegend"]
+               },
+
+               title: {
+                  display: true,
+                  text: '@ViewData["Title"]'
+               }
+            }
+         });
+      });
+
+        $(document).ready(function () {
+         new Chart(document.getElementById("Catchart"), {
+            type: '@ViewData["CatChart"]',
+            data: {
+               labels: @Json.Serialize(ViewData["CatLabels"]),
+               datasets: [{
+                  label: '@ViewData["CatLegend"]',
+                  data: @Json.Serialize(ViewData["CatData"]),
+                  backgroundColor: @Json.Serialize(ViewData["CatColors"]),
+                  fill: false
+               }]
+            },
+             options: {
+               responsive: false,
+               scaleBeginAtZero: true,
+                legend: {
+                    display: @ViewData["CatShowLegend"]
+               },
+
+               title: {
+                  display: true,
+                  text: '@ViewData["CatTitle"]'
+               }
+            }
+         });
+      });
+        $(document).ready(function () {
+         new Chart(document.getElementById("UserChart"), {
+            type: '@ViewData["UserChart"]',
+            data: {
+               labels: @Json.Serialize(ViewData["UserLabels"]),
+               datasets: [{
+                  label: '@ViewData["UserLegend"]',
+                  data: @Json.Serialize(ViewData["UserData"]),
+                  backgroundColor: @Json.Serialize(ViewData["UserColors"]),
+                  fill: false
+               }]
+            },
+             options: {
+               responsive: false,
+               scaleBeginAtZero: true,
+                legend: {
+                    display: @ViewData["UserShowLegend"]
+               },
+
+               title: {
+                  display: true,
+                  text: '@ViewData["UserTitle"]'
+               }
+            }
+         });
+      });
+    </script>
+
+    
+}
 <head>
     <!-- style sheets references -->
     <link href="~/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
@@ -15,14 +105,32 @@
 <body>
     <div class="container-fluid">
         <div class="row">
-        <h1>Welcome to the dashboard</h1>
+            <h1>Welcome to the dashboard</h1>
         </div>
-        <div class="row">
-            <ul class="nav nav-link">
-                <li class="nav-item"><a class="nav-link" href="/Chart/WoundsLocationRecords">Wounds by location</a></li>
-                <li class="nav-item"><a class="nav-link" href="/Chart/DisplayCategories">Wounds by category</a></li>
 
-            </ul>
+        <ul class="nav nav-tabs">
+            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Location">Wounds by location</a></li>
+            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Category">Wounds by category</a></li>
+            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Users">Display Users</a></li>
+        </ul>
+
+        <div class="tab-content">
+            <div id="Location" class="tab-pane fade in active">
+                <h2>Wound by @ViewData["Title"]</h2>
+                <canvas id="chart" width="600" height="300"></canvas>
+            </div>
+            <div id="Category" class="tab-pane fade">
+                <h2>Wound by @ViewData["CatTitle"]</h2>
+                <canvas id="Catchart" width="600" height="300"></canvas>
+            </div>
+            <div id="Users" class="tab-pane fade">
+                <h2>Display @ViewData["UserTitle"]</h2>
+                <canvas id="UserChart" width="600" height="300"></canvas>
+            </div>
         </div>
+        
+            
+        
+
     </div>
 </body>

@@ -23,6 +23,18 @@ namespace WoundImgRepo.Controllers
         }
         public IActionResult Dashboard()
         {
+            PrepareWoundsData(1);
+            ViewData["Chart"] = "bar";
+            ViewData["Title"] = "Location";
+            ViewData["ShowLegend"] = "false";
+            WoundCategoryRecords(1);
+            ViewData["CatChart"] = "pie";
+            ViewData["CatTitle"] = "Category";
+            ViewData["CatShowLegend"] = "false";
+            DisplayUsers(1);
+            ViewData["UserChart"] = "bar";
+            ViewData["UserTitle"] = "Category";
+            ViewData["UserShowLegend"] = "false";
             return View();
         }
         public IActionResult WoundsLocationRecords()
@@ -87,11 +99,11 @@ namespace WoundImgRepo.Controllers
         }
         private void PrepareWoundsData(int x)
         {
-            int[] wounds = new int[] { 0, 0, 0 };
+            
             
             List<Wound> list = DBUtl.GetList<Wound>("SELECT * FROM wound");
             List<WoundLocation> wLocation = DBUtl.GetList<WoundLocation>("SELECT * FROM wound_location");
-            
+            int[] wounds = new int[wLocation.Count];
             foreach (Wound w in list)
             {
                 wounds[calculatePosition(w.wound_location_id)]++;
@@ -141,7 +153,7 @@ namespace WoundImgRepo.Controllers
             }
             if (x == 1)
             {
-                ViewData["Legend"] = "Wounds";
+                ViewData["CatLegend"] = "Wounds";
                 string[] knownColors = new string[3] { "grey", "brown", "black" };
                 string[] colors = new string[categories.Length];
                 string[] labels = new string[categories.Length];
@@ -156,9 +168,28 @@ namespace WoundImgRepo.Controllers
 
                     labels[i] = categoryList[i].name;
                 }
-                ViewData["Colors"] = colors;
-                ViewData["Labels"] = labels;
-                ViewData["Data"] = categories;
+                ViewData["CatColors"] = colors;
+                ViewData["CatLabels"] = labels;
+                ViewData["CatData"] = categories;
+            }
+        }
+
+        private void DisplayUsers(int x)
+        {
+            List<User> list = DBUtl.GetList<User>("SELECT * FROM useracc");
+            int[] users = new int[3] { 0, 0, 0 };
+            foreach (User u in list)
+            {
+                users[findRole(u.user_role)]++;
+            }
+            if (x == 1)
+            {
+                string[] colors = new string[3] { "red", "blue", "yellow" };
+                string[] roles = new string[3] { "Doctor", "Annotator", "Admin" };
+                ViewData["UserLegend"] = "Users";
+                ViewData["UserColors"] = colors;
+                ViewData["UserLabels"] = roles;
+                ViewData["UserData"] = users;
             }
         }
         private int calculatePosition(int x)
@@ -166,6 +197,13 @@ namespace WoundImgRepo.Controllers
             if (x == 1) return 0;
             else if (x == 2) return 1;
             else return 2;
+        }
+        private int findRole(string role)
+        {
+            if (role.Equals("Doctor")) return 0;
+            else if (role.Equals("Annotator")) return 1;
+            else return 2;
+
         }
     }
 }
