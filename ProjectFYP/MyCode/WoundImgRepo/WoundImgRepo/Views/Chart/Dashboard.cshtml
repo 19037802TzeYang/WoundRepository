@@ -93,6 +93,27 @@
 
     
 }
+<style>
+    .sidenav {
+        height: 100%;
+        width: 160px;
+        position: fixed;
+        z-index: 1;
+        top: 0;
+        left: 0;
+        background-color: #111;
+        overflow-x: hidden;
+        padding-top: 20px;
+    }
+
+        .sidenav a {
+            padding: 6px 8px 6px 16px;
+            text-decoration: none;
+            font-size: 25px;
+            color: #818181;
+            display: block;
+        }
+</style>
 <head>
     <!-- style sheets references -->
     <link href="~/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
@@ -103,33 +124,40 @@
 
 </head>
 <body>
+    <div class="sidenav">
+        <a href="/Chart/Dashboard">Dashboard</a>
+        <a href="/Wound/Index">Main menu</a>
+    </div>
     <div class="container-fluid">
         <div class="row">
             <h1>Welcome to the dashboard</h1>
         </div>
 
+
+        <div class=" row">
         <ul class="nav nav-tabs">
             <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Location">Wounds by location</a></li>
             <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Category">Wounds by category</a></li>
             <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Users">Display Users</a></li>
         </ul>
 
-        <div class="tab-content">
-            <div id="Location" class="tab-pane fade in active">
-                <h2>Wound by @ViewData["Title"]</h2>
-                <canvas id="chart" width="600" height="300"></canvas>
-            </div>
-            <div id="Category" class="tab-pane fade">
-                <h2>Wound by @ViewData["CatTitle"]</h2>
-                <canvas id="Catchart" width="600" height="300"></canvas>
-            </div>
-            <div id="Users" class="tab-pane fade">
-                <h2>Display @ViewData["UserTitle"]</h2>
-                <canvas id="UserChart" width="600" height="300"></canvas>
-            </div>
-        </div>
         
-            
+            <div class="tab-content">
+                <div id="Location" class="tab-pane fade in active">
+                    <h2>Wound by @ViewData["Title"]</h2>
+                    <canvas id="chart" width="600" height="300"></canvas>
+                </div>
+                <div id="Category" class="tab-pane fade">
+                    <h2>Wound by @ViewData["CatTitle"]</h2>
+                    <canvas id="Catchart" width="600" height="300"></canvas>
+                </div>
+                <div id="Users" class="tab-pane fade">
+                    <h2>Display @ViewData["UserTitle"]</h2>
+                    <canvas id="UserChart" width="600" height="300"></canvas>
+                </div>
+            </div>
+
+        </div>
         
 
     </div>
