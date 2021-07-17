@@ -23,6 +23,34 @@ namespace WoundImgRepo.Controllers
         }
         public IActionResult Dashboard()
         {
+            List<Wound> list = DBUtl.GetList<Wound>("SELECT * FROM wound");
+            List<WoundLocation> locations = DBUtl.GetList<WoundLocation>("SELECT * FROM wound_location");
+            int[] locationId = new int[locations.Count];
+            for (int i = 0; i < locationId.Length; i++)
+            {
+                locationId[i] = locations[i].wound_location_id;
+            }
+            int totalLeg = 0;
+            int totalArm = 0;
+            foreach (Wound w in list)
+            {
+                if (w.wound_location_id.Equals(locationId[0]))
+                {
+                    totalLeg++;
+                }
+                else if (w.wound_location_id.Equals(locationId[1]))
+                {
+                    totalArm++;
+                }
+            }
+            if (totalLeg > totalArm)
+            {
+                ViewData["Maximum"] = "Foot";
+            }
+            else
+            {
+                ViewData["Maximum"] = "Buttock";
+            }
             PrepareWoundsData(1);
             ViewData["Chart"] = "bar";
             ViewData["Title"] = "Location";

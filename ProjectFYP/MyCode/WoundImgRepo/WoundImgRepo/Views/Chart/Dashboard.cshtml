@@ -132,17 +132,37 @@
         <div class="row">
             <h1>Welcome to the dashboard</h1>
         </div>
-
+        <div class="row">
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    Highest Location Record
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                    @ViewData["Maximum"]  
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div class=" row">
-        <ul class="nav nav-tabs">
-            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Location">Wounds by location</a></li>
-            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Category">Wounds by category</a></li>
-            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Users">Display Users</a></li>
-        </ul>
-
+            <ul class="nav nav-tabs">
+                <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Location">Wounds by location</a></li>
+                <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Category">Wounds by category</a></li>
+                <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Users">Display Users</a></li>
+            </ul>
+        </div>
         
-            <div class="tab-content">
+            <div class="tab-content" style="margin-top:10px">
                 <div id="Location" class="tab-pane fade in active">
                     <h2>Wound by @ViewData["Title"]</h2>
                     <canvas id="chart" width="600" height="300"></canvas>
@@ -157,7 +177,7 @@
                 </div>
             </div>
 
-        </div>
+        
         
 
     </div>
