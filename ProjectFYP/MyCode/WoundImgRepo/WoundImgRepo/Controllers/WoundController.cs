@@ -21,7 +21,7 @@ namespace WoundImgRepo.Controllers
         [Authorize(Roles = "Admin, Annotator")]
         public IActionResult Index()
         {
-            #region checkuserrole()
+            #region checkuserrole
             int checktheuserrole = 0;
             if (User.IsInRole("Admin"))
             {
@@ -92,7 +92,7 @@ namespace WoundImgRepo.Controllers
         #region Details()
         public IActionResult Details(int id)
         {
-         #region checkuserrole()
+            #region checkuserrole
             int checktheuserrole = 0;
             if (User.IsInRole("Admin"))
             {
@@ -111,6 +111,7 @@ namespace WoundImgRepo.Controllers
                 return View("~/Views/Account/Forbidden.cshtml");
             }
             #endregion
+
             var wound = DBUtl.GetList<Wound>($"SELECT * FROM wound WHERE wound_id={id}")[0];
             string selectWoundSql = @"SELECT w.wound_id as woundid, w.name as woundname, w.wound_stage as woundstage, w.remarks as woundremarks, 
                                       wc.name as woundcategoryname, wl.name as woundlocationname, t.name as tissuename, 
@@ -263,7 +264,7 @@ namespace WoundImgRepo.Controllers
         #region Create()
         public IActionResult Create()
         {
-         #region checkuserrole()
+            #region checkuserrole
             int checktheuserrole = 0;
             if (User.IsInRole("Admin"))
             {
@@ -282,6 +283,7 @@ namespace WoundImgRepo.Controllers
                 return View("~/Views/Account/Forbidden.cshtml");
             }
             #endregion
+
             if (!User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("LoginPage", "Account", new { returnUrl = "/Wound/Create" });
@@ -296,7 +298,6 @@ namespace WoundImgRepo.Controllers
         [HttpPost]
         public IActionResult Create(CombineClass cc)
         {
-        
             if (!User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("LoginPage", "Account", new { returnUrl = "/Wound/Create" });
@@ -358,10 +359,11 @@ namespace WoundImgRepo.Controllers
 
                 //wound table 
                 string wSql = @"INSERT INTO wound(name, wound_stage, remarks, 
-                                wound_category_id, wound_location_id, tissue_id, version_id, image_id, user_id)
+                                                  wound_category_id, wound_location_id, tissue_id, version_id, image_id, user_id)
                                 VALUES('{0}','{1}','{2}',{3},{4},{5},{6},{7},{8})";
                 int wRowsAffected = DBUtl.ExecSQL(wSql, cc.wound.name, cc.wound.wound_stage, cc.wound.remarks,
-                    wc.wound_category_id, wl.wound_location_id, t.tissue_id, v.version_id, img.image_id, userDetail.user_id);
+                                                        wc.wound_category_id, wl.wound_location_id, t.tissue_id, 
+                                                        v.version_id, img.image_id, userDetail.user_id);
                 Wound w = DBUtl.GetList<Wound>("SELECT wound_id FROM wound ORDER BY wound_id DESC")[0];
 
                 //annotation table
@@ -378,7 +380,9 @@ namespace WoundImgRepo.Controllers
                     });
                 }
 
-                if (imageRowsAffected == 1 && wRowsAffected == 1 &&
+                if (imageRowsAffected == 1 &&
+                    animageRowsAffected == 1 &&
+                    maskimageRowsAffected == 1 &&
                     wLRowsAffected == 1 &&
                     wRowsAffected == 1 &&
                     anRowsAffected == 1)
@@ -400,7 +404,7 @@ namespace WoundImgRepo.Controllers
         #region DeleteAnnotationMaskImage()
         public IActionResult DeleteAnnotationMaskImage(int woundid, int annotationid)
         {       
-         #region checkuserrole()
+            #region checkuserrole
             int checktheuserrole = 0;
             if (User.IsInRole("Admin"))
             {
@@ -419,6 +423,7 @@ namespace WoundImgRepo.Controllers
                 return View("~/Views/Account/Forbidden.cshtml");
             }
             #endregion
+
             var getAnnotation = DBUtl.GetList<Annotation>($"SELECT * FROM annotation WHERE annotation_id={annotationid}")[0];
 
             string annotationSql = "DELETE FROM annotation WHERE annotation_id={0}";
@@ -426,6 +431,7 @@ namespace WoundImgRepo.Controllers
 
             string maskImgSql = "DELETE FROM image WHERE image_id={0}";
             int maskImgRowsAffected = DBUtl.ExecSQL(maskImgSql, getAnnotation.mask_image_id);
+
             string annotationImgSql = "DELETE FROM image WHERE image_id={0}";
             int annotationImgRowsAffected = DBUtl.ExecSQL(annotationImgSql, getAnnotation.annotation_image_id);
 
@@ -433,12 +439,12 @@ namespace WoundImgRepo.Controllers
                 annotationImgRowsAffected == 1 && 
                 annotationRowsAffected == 1)
             {
-                TempData["Msg"] = "Annotation and Mask Image Deleted";
+                TempData["Msg"] = "Annotation and Mask image deleted";
                 TempData["MsgType"] = "success";
             }
             else
             {
-                TempData["Message"] = DBUtl.DB_Message;
+                TempData["Msg"] = DBUtl.DB_Message;
                 TempData["MsgType"] = "danger";
             }
             return RedirectToAction("Details", new { id = woundid });
@@ -448,7 +454,7 @@ namespace WoundImgRepo.Controllers
         #region Delete()
         public IActionResult Delete(int id)
         {
-         #region checkuserrole()
+            #region checkuserrole
             int checktheuserrole = 0;
             if (User.IsInRole("Admin"))
             {
@@ -467,6 +473,7 @@ namespace WoundImgRepo.Controllers
                 return View("~/Views/Account/Forbidden.cshtml");
             }
             #endregion
+
             string deletewoundandannotationSQL = "DELETE FROM annotation WHERE wound_id={0} DELETE FROM wound WHERE wound_id={0}";
             if (DBUtl.ExecSQL(deletewoundandannotationSQL,id) == 1)
             {
@@ -496,6 +503,9 @@ namespace WoundImgRepo.Controllers
             }
             else
             {
+                //useracc table
+                var userDetail = DBUtl.GetList<User>("SELECT * FROM useracc WHERE username = '" + User.Identity.Name + "'")[0];
+
                 var version = DBUtl.GetList<WVersion>($"SELECT * FROM version WHERE name='{wr.versionname}'")[0];
                 var woundList = DBUtl.GetList<Wound>($"SELECT * FROM wound WHERE wound_id={wr.woundid} AND version_id={version.version_id}");
                 var wound = new Wound();
@@ -508,10 +518,11 @@ namespace WoundImgRepo.Controllers
                     var getWound = DBUtl.GetList<Wound>($"SELECT * FROM wound WHERE wound_id={wr.woundid}")[0];
                     //wound table 
                     string wSql = @"INSERT INTO wound(name, wound_stage, remarks, 
-                                wound_category_id, wound_location_id, tissue_id, version_id, image_id)
-                                VALUES('{0}','{1}','{2}',{3},{4},{5},{6},{7})";
+                                                      wound_category_id, wound_location_id, tissue_id, version_id, image_id)
+                                    VALUES('{0}','{1}','{2}',{3},{4},{5},{6},{7})";
                     int wRowsAffected = DBUtl.ExecSQL(wSql, getWound.name, getWound.wound_stage, getWound.remarks,
-                        getWound.wound_category_id, getWound.wound_location_id, getWound.tissue_id, version.version_id, getWound.image_id);
+                                                            getWound.wound_category_id, getWound.wound_location_id, getWound.tissue_id, 
+                                                            version.version_id, getWound.image_id);
                     wound = DBUtl.GetList<Wound>("SELECT * FROM wound ORDER BY wound_id DESC")[0];
                 }
                 //image table
@@ -534,16 +545,18 @@ namespace WoundImgRepo.Controllers
                 {
                     anImg.ForEach(img =>
                     {
-                        string anSql = @"INSERT INTO annotation(mask_image_id, wound_id, annotation_image_id)
-                                         VALUES({0},{1},{2})";
-                        anRowsAffected = DBUtl.ExecSQL(anSql, maskImg[imgCount].image_id, wound.wound_id, img.image_id);
+                        string anSql = @"INSERT INTO annotation(mask_image_id, wound_id, annotation_image_id, user_id)
+                                         VALUES({0},{1},{2},{3})";
+                        anRowsAffected = DBUtl.ExecSQL(anSql, maskImg[imgCount].image_id, wound.wound_id, img.image_id, userDetail.user_id);
                         imgCount += 1;
                     });
                 }
 
-                if (animageRowsAffected == 1 && maskimageRowsAffected == 1)
+                if (animageRowsAffected == 1 && 
+                    maskimageRowsAffected == 1 && 
+                    anRowsAffected == 1)
                 {
-                    TempData["Msg"] = "Images updated successfully";
+                    TempData["Msg"] = "Annotation and Mask images added successfully";
                     TempData["MsgType"] = "success";
                     return RedirectToAction("Details", new { id = wr.woundid });
                 }
@@ -560,7 +573,7 @@ namespace WoundImgRepo.Controllers
         #region Update()
         public IActionResult Update(int id)
         {
-         #region checkuserrole()
+            #region checkuserrole
             int checktheuserrole = 0;
             if (User.IsInRole("Admin"))
             {
@@ -579,6 +592,7 @@ namespace WoundImgRepo.Controllers
                 return View("~/Views/Account/Forbidden.cshtml");
             }
             #endregion
+
             string selectWoundSql = @"SELECT wound_id as woundid, w.name as woundname, w.wound_stage as woundstage, w.remarks as woundremarks, 
                                       wc.name as woundcategoryname, wl.name as woundlocationname, t.name as tissuename, 
                                       v.name as versionname, i.img_file as imagefile, i.image_id as imageid
