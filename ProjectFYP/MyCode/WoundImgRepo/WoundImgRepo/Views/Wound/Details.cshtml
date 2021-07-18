@@ -152,6 +152,7 @@
             <div class="modal-body">
                 <form asp-controller="Wound" asp-action="UpdateAnnotationMaskImage" method="post" enctype="multipart/form-data">
                     <input type="hidden" asp-for="@Model.woundRecord.woundid" />
+                    <input type="hidden" asp-for="@Model.woundRecord.woundname" />
                     <div class="form-group row">
                         <label class="col-sm-4" asp-for="@Model.woundRecord.annotationimage">Annotation Image:</label>
                         <div class="col-sm-6">

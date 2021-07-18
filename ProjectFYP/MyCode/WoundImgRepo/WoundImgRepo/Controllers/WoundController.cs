@@ -341,12 +341,13 @@ namespace WoundImgRepo.Controllers
         {       
             var getAnnotation = DBUtl.GetList<Annotation>($"SELECT * FROM annotation WHERE annotation_id={annotationid}")[0];
 
+            string annotationSql = "DELETE FROM annotation WHERE annotation_id={0}";
+            int annotationRowsAffected = DBUtl.ExecSQL(annotationSql, annotationid);
+
             string maskImgSql = "DELETE FROM image WHERE image_id={0}";
             int maskImgRowsAffected = DBUtl.ExecSQL(maskImgSql, getAnnotation.mask_image_id);
             string annotationImgSql = "DELETE FROM image WHERE image_id={0}";
             int annotationImgRowsAffected = DBUtl.ExecSQL(annotationImgSql, getAnnotation.annotation_image_id);
-            string annotationSql = "DELETE FROM annotation WHERE wound_id={0}";
-            int annotationRowsAffected = DBUtl.ExecSQL(annotationSql, woundid);
 
             if (maskImgRowsAffected == 1 && 
                 annotationImgRowsAffected == 1 && 
@@ -397,15 +398,23 @@ namespace WoundImgRepo.Controllers
             else
             {
                 var version = DBUtl.GetList<WVersion>($"SELECT * FROM version WHERE name='{wr.versionname}'")[0];
-                var wound = DBUtl.GetList<Wound>($"SELECT * FROM wound WHERE wound_id={wr.woundid}")[0];
-                //wound table 
-                string wSql = @"INSERT INTO wound(name, wound_stage, remarks, 
+                var woundList = DBUtl.GetList<Wound>($"SELECT * FROM wound WHERE wound_id={wr.woundid} AND version_id={version.version_id}");
+                var wound = new Wound();
+                if (woundList.Any())
+                {
+                    wound = woundList.FirstOrDefault();
+                }
+                else
+                {
+                    var getWound = DBUtl.GetList<Wound>($"SELECT * FROM wound WHERE wound_id={wr.woundid}")[0];
+                    //wound table 
+                    string wSql = @"INSERT INTO wound(name, wound_stage, remarks, 
                                 wound_category_id, wound_location_id, tissue_id, version_id, image_id)
                                 VALUES('{0}','{1}','{2}',{3},{4},{5},{6},{7})";
-                int wRowsAffected = DBUtl.ExecSQL(wSql, wound.name, wound.wound_stage, wound.remarks,
-                    wound.wound_category_id, wound.wound_location_id, wound.tissue_id, version.version_id, wound.image_id);
-                Wound w = DBUtl.GetList<Wound>("SELECT wound_id FROM wound ORDER BY wound_id DESC")[0];
-
+                    int wRowsAffected = DBUtl.ExecSQL(wSql, getWound.name, getWound.wound_stage, getWound.remarks,
+                        getWound.wound_category_id, getWound.wound_location_id, getWound.tissue_id, version.version_id, getWound.image_id);
+                    wound = DBUtl.GetList<Wound>("SELECT * FROM wound ORDER BY wound_id DESC")[0];
+                }
                 //image table
                 string anpicfilename = DoPhotoUpload(wr.annotationimage);
                 string animageSql = @"INSERT INTO image(name, type, img_file)
@@ -428,7 +437,7 @@ namespace WoundImgRepo.Controllers
                     {
                         string anSql = @"INSERT INTO annotation(mask_image_id, wound_id, annotation_image_id)
                                          VALUES({0},{1},{2})";
-                        anRowsAffected = DBUtl.ExecSQL(anSql, maskImg[imgCount].image_id, w.wound_id, img.image_id);
+                        anRowsAffected = DBUtl.ExecSQL(anSql, maskImg[imgCount].image_id, wound.wound_id, img.image_id);
                         imgCount += 1;
                     });
                 }
