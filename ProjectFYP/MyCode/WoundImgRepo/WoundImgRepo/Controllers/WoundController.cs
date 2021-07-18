@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
+using System.Diagnostics;
 using System.Dynamic;
 using System.Security.Claims;
 
@@ -20,6 +21,27 @@ namespace WoundImgRepo.Controllers
         [Authorize(Roles = "Admin, Annotator")]
         public IActionResult Index()
         {
+            #region checkuserrole()
+            int checktheuserrole = 0;
+            if (User.IsInRole("Admin"))
+            {
+                checktheuserrole = 1;
+            }
+            else if (User.IsInRole("Doctor"))
+            {
+                checktheuserrole = 2;
+            }
+            else if (User.IsInRole("Annotator"))
+            {
+                checktheuserrole = 3;
+            }
+            if (checktheuserrole == 0)
+            {
+                return View("~/Views/Account/Forbidden.cshtml");
+            }
+            #endregion
+
+            ViewBag.keyword = "";
             ViewBag.selection = "nothing";
             List<WoundRecord> list = DBUtl.GetList<WoundRecord>(@"SELECT w.wound_id as woundid, w.name as woundname, w.wound_stage as woundstage, w.remarks as woundremarks, 
                                       wc.name as woundcategoryname, wl.name as woundlocationname, t.name as tissuename,
@@ -41,7 +63,7 @@ namespace WoundImgRepo.Controllers
             IFormCollection form = HttpContext.Request.Form;
             string searchedsection = form["searchedsection"].ToString();
             string searchedobj = form["searchedobj"].ToString().Trim();
-            //Debug.WriteLine("doin index search with "+ searchedsection);
+            Debug.WriteLine("doin index search with "+ searchedsection);
 
             String listinput = @"SELECT w.wound_id as woundid, w.name as woundname, w.wound_stage as woundstage, w.remarks as woundremarks, 
                                       wc.name as woundcategoryname, wl.name as woundlocationname, t.name as tissuename,
@@ -57,8 +79,8 @@ namespace WoundImgRepo.Controllers
 
 
 
-            //Debug.WriteLine(listinput);
-
+            Debug.WriteLine(listinput);
+            ViewBag.keyword = searchedobj;
             ViewBag.selection = searchedsection;
 
             List<WoundRecord> list = DBUtl.GetList<WoundRecord>(listinput);
@@ -70,6 +92,25 @@ namespace WoundImgRepo.Controllers
         #region Details()
         public IActionResult Details(int id)
         {
+         #region checkuserrole()
+            int checktheuserrole = 0;
+            if (User.IsInRole("Admin"))
+            {
+                checktheuserrole = 1;
+            }
+            else if (User.IsInRole("Doctor"))
+            {
+                checktheuserrole = 2;
+            }
+            else if (User.IsInRole("Annotator"))
+            {
+                checktheuserrole = 3;
+            }
+            if (checktheuserrole == 0)
+            {
+                return View("~/Views/Account/Forbidden.cshtml");
+            }
+            #endregion
             var wound = DBUtl.GetList<Wound>($"SELECT * FROM wound WHERE wound_id={id}")[0];
             string selectWoundSql = @"SELECT w.wound_id as woundid, w.name as woundname, w.wound_stage as woundstage, w.remarks as woundremarks, 
                                       wc.name as woundcategoryname, wl.name as woundlocationname, t.name as tissuename, 
@@ -222,6 +263,25 @@ namespace WoundImgRepo.Controllers
         #region Create()
         public IActionResult Create()
         {
+         #region checkuserrole()
+            int checktheuserrole = 0;
+            if (User.IsInRole("Admin"))
+            {
+                checktheuserrole = 1;
+            }
+            else if (User.IsInRole("Doctor"))
+            {
+                checktheuserrole = 2;
+            }
+            else if (User.IsInRole("Annotator"))
+            {
+                checktheuserrole = 3;
+            }
+            if (checktheuserrole == 0)
+            {
+                return View("~/Views/Account/Forbidden.cshtml");
+            }
+            #endregion
             if (!User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("LoginPage", "Account", new { returnUrl = "/Wound/Create" });
@@ -236,6 +296,7 @@ namespace WoundImgRepo.Controllers
         [HttpPost]
         public IActionResult Create(CombineClass cc)
         {
+        
             if (!User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("LoginPage", "Account", new { returnUrl = "/Wound/Create" });
@@ -339,6 +400,25 @@ namespace WoundImgRepo.Controllers
         #region DeleteAnnotationMaskImage()
         public IActionResult DeleteAnnotationMaskImage(int woundid, int annotationid)
         {       
+         #region checkuserrole()
+            int checktheuserrole = 0;
+            if (User.IsInRole("Admin"))
+            {
+                checktheuserrole = 1;
+            }
+            else if (User.IsInRole("Doctor"))
+            {
+                checktheuserrole = 2;
+            }
+            else if (User.IsInRole("Annotator"))
+            {
+                checktheuserrole = 3;
+            }
+            if (checktheuserrole == 0)
+            {
+                return View("~/Views/Account/Forbidden.cshtml");
+            }
+            #endregion
             var getAnnotation = DBUtl.GetList<Annotation>($"SELECT * FROM annotation WHERE annotation_id={annotationid}")[0];
 
             string annotationSql = "DELETE FROM annotation WHERE annotation_id={0}";
@@ -353,7 +433,7 @@ namespace WoundImgRepo.Controllers
                 annotationImgRowsAffected == 1 && 
                 annotationRowsAffected == 1)
             {
-                TempData["Message"] = "Annotation and Mask Image Deleted";
+                TempData["Msg"] = "Annotation and Mask Image Deleted";
                 TempData["MsgType"] = "success";
             }
             else
@@ -368,6 +448,25 @@ namespace WoundImgRepo.Controllers
         #region Delete()
         public IActionResult Delete(int id)
         {
+         #region checkuserrole()
+            int checktheuserrole = 0;
+            if (User.IsInRole("Admin"))
+            {
+                checktheuserrole = 1;
+            }
+            else if (User.IsInRole("Doctor"))
+            {
+                checktheuserrole = 2;
+            }
+            else if (User.IsInRole("Annotator"))
+            {
+                checktheuserrole = 3;
+            }
+            if (checktheuserrole == 0)
+            {
+                return View("~/Views/Account/Forbidden.cshtml");
+            }
+            #endregion
             string deletewoundandannotationSQL = "DELETE FROM annotation WHERE wound_id={0} DELETE FROM wound WHERE wound_id={0}";
             if (DBUtl.ExecSQL(deletewoundandannotationSQL,id) == 1)
             {
@@ -461,6 +560,25 @@ namespace WoundImgRepo.Controllers
         #region Update()
         public IActionResult Update(int id)
         {
+         #region checkuserrole()
+            int checktheuserrole = 0;
+            if (User.IsInRole("Admin"))
+            {
+                checktheuserrole = 1;
+            }
+            else if (User.IsInRole("Doctor"))
+            {
+                checktheuserrole = 2;
+            }
+            else if (User.IsInRole("Annotator"))
+            {
+                checktheuserrole = 3;
+            }
+            if (checktheuserrole == 0)
+            {
+                return View("~/Views/Account/Forbidden.cshtml");
+            }
+            #endregion
             string selectWoundSql = @"SELECT wound_id as woundid, w.name as woundname, w.wound_stage as woundstage, w.remarks as woundremarks, 
                                       wc.name as woundcategoryname, wl.name as woundlocationname, t.name as tissuename, 
                                       v.name as versionname, i.img_file as imagefile, i.image_id as imageid
