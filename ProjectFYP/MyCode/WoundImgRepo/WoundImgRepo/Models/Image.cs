@@ -13,7 +13,6 @@ namespace WoundImgRepo.Models
         
         public string name { get; set; }
         public string type { get; set; }
-        [Required(ErrorMessage ="Please insert a picture!")]
         public IFormFile Photo { get; set; }
         public string img_file { get; set; }
     }

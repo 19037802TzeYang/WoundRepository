@@ -1,47 +1,277 @@
-﻿@model List<WoundRecord>
-@{
-    Layout = "_Wound";
-}
+@model List<WoundRecord>
+@{ Layout = "_Wound"; }
 @if (TempData["Msg"] != null)
 {
-    <div class="alert alert-@TempData["MsgType"]">
-        @TempData["Msg"]
-    </div>
-}
+<div class="alert alert-@TempData["MsgType"]">
+    @TempData["Msg"]
+</div>}
 
 @section MoreScripts {
-    <link href="~/lib/datatables/css/jquery.dataTables.min.css" rel="stylesheet" />
+    @*
+        <link href="~/lib/datatables/css/jquery.dataTables.min.css" rel="stylesheet" />
+    *@
+    <link href="~/lib/datatables/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/lib/datatables/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
     <script src="~/lib/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="~/lib/datatables/js/dataTables.bootstrap5.min.js"></script>
 
     <script>
         function ConfirmDelete() {
-            if (confirm("Are you sure you want to delete? This will remove all records with the annotation as well.") == false)
-            {
+            if (confirm("Are you sure you want to delete? This will remove all records with the annotation as well.") == false) {
                 event.preventDefault();
                 event.stopPropagation();
                 return false;
             }
         }
 
+
+
         $(document).ready(function () {
             $('#jsWoundsTable').DataTable({
                 ordering: true,
                 paging: true,
                 searching: true,
-                info: true,
+                info: true, 
+                responsive: true,
                 lengthChange: true,
-                pageLength: 5
+                pageLength: 5,
+                
+
             });
         });
+
     </script>
 }
+<!--Collapsable-->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+    .collapsible {
+        background-color: #6CBB3C;
+        color: white;
+        cursor: pointer;
+        padding: 18px;
+        width: 100%;
+        border: none;
+        text-align: left;
+        outline: none;
+        font-size: 15px;
+    }
 
+        .active, .collapsible:hover {
+            background-color: #3d8dff;
+        }
+
+    .content {
+        padding: 0 18px;
+        display: none;
+        overflow: hidden;
+        background-color: #f1f1f1;
+    }
+</style>
+<body>
+
+     <h4>Column Filter:</h4>
+    <button type="button" class="collapsible">Hide column :</button>
+    <div class="content">
+        <input type="checkbox" onclick="Hidewoundid()" id="Hidewoundid"> Id 
+        <input type="checkbox" onclick="Hidename()" id="Hidename"> Name 
+        <input type="checkbox" onclick="Hidewoundstage()" id="Hidewoundstage"> Stage 
+        <input type="checkbox" onclick="HideRemarks()" id="HideRemarks"> Remarks 
+        <input type="checkbox" onclick="HideCategory()" id="HideCategory"> Category 
+        <input type="checkbox" onclick="HideLocation()" id="HideLocation"> Location 
+        <input type="checkbox" onclick="HideOriginalWoundImage()" id="HideOriginalWoundImage"> Original Wound Image 
+        <input type="checkbox" onclick="HideTissue()" id="HideTissue"> Tissue 
+        <input type="checkbox" onclick="HideVersion()" id="HideVersion"> Version 
+        <input type="checkbox" onclick="HideDetails()" id="HideDetails"> Details 
+        <input type="checkbox" onclick="HideUsername()" id="HideUsername"> Username 
+        <input type="checkbox" onclick="editNdelete()" id="editNdelete"> editNdelete 
+        <button onclick="ResizeColumn()">Resize column</button>
+    </div>
+
+    <script>
+        var coll = document.getElementsByClassName("collapsible");
+            var i;
+
+            for (i = 0; i < coll.length; i++) {
+                coll[i].addEventListener("click", function () {
+                    this.classList.toggle("active");
+                    var content = this.nextElementSibling;
+                    if (content.style.display === "block") {
+                        content.style.display = "none";
+                    } else {
+                        content.style.display = "block";
+                    }
+                });
+        }
+
+        function Hidewoundid() {
+            my_table = jQuery('#jsWoundsTable').DataTable();
+            var x = document.getElementById("Hidewoundid").checked;
+            if (x == true) {
+                my_table.column(0).visible(0);
+            } else {
+                my_table.column(0).visible(1); }
+
+        }
+        function Hidename() {
+            my_table = jQuery('#jsWoundsTable').DataTable();
+            var x = document.getElementById("Hidename").checked;
+            if (x == true) {
+                my_table.column(1).visible(0);
+            } else {
+                my_table.column(1).visible(1);
+            }
+
+        }
+        function Hidewoundstage() {
+            my_table = jQuery('#jsWoundsTable').DataTable();
+            var x = document.getElementById("Hidewoundstage").checked;
+            if (x == true) {
+                my_table.column(2).visible(0);
+            } else {
+                my_table.column(2).visible(1);
+            }
+
+        }
+        function HideRemarks() {
+            my_table = jQuery('#jsWoundsTable').DataTable();
+            var x = document.getElementById("HideRemarks").checked;
+            if (x == true) {
+                my_table.column(3).visible(0);
+            } else {
+                my_table.column(3).visible(1);
+            }
+
+        }
+        function HideCategory() {
+            my_table = jQuery('#jsWoundsTable').DataTable();
+            var x = document.getElementById("HideCategory").checked;
+            if (x == true) {
+                my_table.column(4).visible(0);
+            } else {
+                my_table.column(4).visible(1);
+            }
+
+        }
+        function HideLocation() {
+            my_table = jQuery('#jsWoundsTable').DataTable();
+            var x = document.getElementById("HideLocation").checked;
+            if (x == true) {
+                my_table.column(5).visible(0);
+            } else {
+                my_table.column(5).visible(1);
+            }
+
+        }
+        function HideOriginalWoundImage() {
+            my_table = jQuery('#jsWoundsTable').DataTable();
+            var x = document.getElementById("HideOriginalWoundImage").checked;
+            if (x == true) {
+                my_table.column(6).visible(0);
+            } else {
+                my_table.column(6).visible(1);
+            }
+
+        }
+        function HideTissue() {
+            my_table = jQuery('#jsWoundsTable').DataTable();
+            var x = document.getElementById("HideTissue").checked;
+            if (x == true) {
+                my_table.column(7).visible(0);
+            } else {
+                my_table.column(7).visible(1); }
+
+        }
+        function HideVersion() {
+            my_table = jQuery('#jsWoundsTable').DataTable();
+            var x = document.getElementById("HideVersion").checked;
+            if (x == true) {
+                my_table.column(8).visible(0);
+            } else {
+                my_table.column(8).visible(1);
+            }
+
+        }
+        function HideDetails() {
+            my_table = jQuery('#jsWoundsTable').DataTable();
+            var x = document.getElementById("HideDetails").checked;
+            if (x == true) {
+                my_table.column(9).visible(0);
+            } else {
+                my_table.column(9).visible(1);
+            }
+
+        }
+        function HideUsername() {
+            my_table = jQuery('#jsWoundsTable').DataTable();
+            var x = document.getElementById("HideUsername").checked;
+            if (x == true) {
+                my_table.column(10).visible(0);
+            } else {
+                my_table.column(10).visible(1);
+            }
+
+        }
+        function editNdelete() {
+            my_table = jQuery('#jsWoundsTable').DataTable();
+            var x = document.getElementById("editNdelete").checked;
+            if (x == true) {
+                my_table.column(11).visible(0);
+            } else {
+                my_table.column(11).visible(1);
+            }
+            
+        } 
+        function ResizeColumn() {
+            my_table = jQuery('#jsWoundsTable').DataTable();
+            my_table.column(0).visible(0);
+            my_table.column(1).visible(0);
+            my_table.column(2).visible(0);
+            my_table.column(3).visible(0);
+            my_table.column(4).visible(0);
+            my_table.column(5).visible(0);
+            my_table.column(6).visible(0);
+            my_table.column(7).visible(0);
+            my_table.column(8).visible(0);
+            my_table.column(9).visible(0);
+            my_table.column(10).visible(0);
+            my_table.column(11).visible(0);
+            Hidewoundid();
+            Hidename();
+            Hidewoundstage();
+            HideRemarks();
+            HideCategory();
+            HideLocation();
+            HideOriginalWoundImage();
+            HideTissue();
+            HideVersion();
+            HideDetails();
+            HideUsername();
+            editNdelete();
+        }
+    </script>
+
+</body>
+<!--Collapsable-->
+<!--table set up-->
+<style>
+    img {
+        width: 200px;
+        height: 200px;
+        object-fit: cover;
+    }
+
+    .paginate_button {
+    }
+</style>
+
+<h2 class="mt-4 mb-4">Wounds</h2>
 <form asp-controller="Wound"
-      asp-action="Indexpost"
-      >
-    <div class="col-sm-5">
+      asp-action="Indexpost">
+    <div class="col-sm-5 p-0">
         <!--Doing search-->
-        <h4>Specified Search :</h4>
+        <h4>Filter Foundry :</h4>
+        <h6>Filter out records you only need to see!</h6>
         <div class="form-group row">
             <label class="col-sm-2 font-weight-bold">Section: </label>
             <div class="col-sm-3">
@@ -49,167 +279,126 @@
                     <!--Viewbags are to be put inplace so as a user i don't have to keep reselecting my options if i made an error-->
                     @if (ViewBag.selection == "w.wound_id")
                     {
-                        <option value="w.wound_id" selected>Wound Id</option>
-                    }
-                    else
-                    {
-                        <option value="w.wound_id">Wound Id</option>
-
-                    }
+                <option value="w.wound_id" selected>Id</option> }
+                            else
+                            {
+                <option value="w.wound_id">Id</option>}
                     @if (ViewBag.selection == "w.name")
                     {
-                        <option value="w.name" selected>Wound Name</option>
-                    }
-                    else
-                    {
-                        <option value="w.name">Wound Name</option>
-                    }
+                <option value="w.name" selected>Name</option> }
+                            else
+                            {
+                <option value="w.name">Name</option>}
                     @if (ViewBag.selection == "w.wound_stage")
                     {
-                        <option value="w.wound_stage" selected> Wound Stage </option>
-                    }
-                    else
-                    {
-                        <option value="w.wound_stage"> Wound Stage </option>
-                    }
+                <option value="w.wound_stage" selected>Stage </option> }
+                            else
+                            {
+                <option value="w.wound_stage">Stage </option>}
                     @if (ViewBag.selection == "w.remarks")
                     {
-                        <option value="w.remarks" selected>Remarks</option>
-                    }
-                    else
-                    {
-                        <option value="w.remarks">Remarks</option>
-                    }
+                <option value="w.remarks" selected>Remarks</option> }
+                            else
+                            {
+                <option value="w.remarks">Remarks</option>}
                     @if (ViewBag.selection == "wc.name")
                     {
-                        <option value="wc.name" selected>Wound Category</option>
-                    }
-                    else
-                    {
-                        <option value="wc.name">Wound Category</option>
-                    }
+                <option value="wc.name" selected>Category</option> }
+                            else
+                            {
+                <option value="wc.name">Category</option>}
                     @if (ViewBag.selection == "wl.name")
                     {
-                        <option value="wl.name" selected>Wound Location</option>
-                    }
-                    else
-                    {
-                        <option value="wl.name">Wound Location</option>
-                    }
-                    @if (ViewBag.selection == "i.image_id")
-                    {
+                <option value="wl.name" selected>Location</option> }
+                            else
+                            {
+                <option value="wl.name">Location</option>}
 
-                        <option value="i.image_id" selected>Image ID</option>
-                    }
-                    else
-                    {
-                        <option value="i.image_id">Image ID</option>
-                    }
                     @if (ViewBag.selection == "t.name")
                     {
-                        <option value="t.name" selected>Tissue</option>
-                    }
-                    else
-                    {
-                        <option value="t.name">Tissue</option>
-                    }
+                <option value="t.name" selected>Tissue</option> }
+                            else
+                            {
+                <option value="t.name">Tissue</option>}
                     @if (ViewBag.selection == "v.name")
                     {
-                        <option value="v.name" selected>Version</option>
-                    }
-                    else
-                    {
-                        <option value="v.name">Version</option>
-                    }
-                    @if (ViewBag.selection == "u.username")
-                    {
-                        <option value="u.username" selected>username</option>
-                    }
-                    else
-                    {
-                    <option value="u.username">username</option>
-                    }
-                </select>
+                <option value="v.name" selected>Version</option> }
+                            else
+                            {
+                <option value="v.name">Version</option>}
+                   
+                @if (ViewBag.selection == "u.username")
+                {
+                <option value="u.username" selected>username</option> }
+                else
+                {
+                <option value="u.username">username</option>}
+                    
+                            </select>
             </div>
             <div class="col-sm-8">
-                <input id="searchedobj" name ="searchedobj" for="searchedobj" class="form-control" placeholder="Search in wound database                " autofocus="">
+                @{ViewData["current"] = ViewBag.keyword; }
+                <input id="searchedobj" name="searchedobj" for="searchedobj" class="form-control" placeholder="Place in keywords     " autofocus="" value=@ViewData["current"]>
             </div>
             <div class="col-sm-1">
                 <input type="submit" class="btn btn-outline-primary" value="Go" />
             </div>
         </div>
     </div>
-    @if (TempData["Msg"] != null)
-    {
-        <div class="alert alert-@TempData["MsgType"]">
-            @TempData["Msg"]
-        </div>
-    }
+    @*@if (TempData["Msg"] != null)
+        {
+            <div class="alert alert-@TempData["MsgType"]">
+                @TempData["Msg"]
+            </div>
+        }*@
 </form>
-
-
-    <!--table set up-->
-<style>
-    img {
-        width: 200px;
-        height: 200px;
-        object-fit: cover;
-    }
-</style>
-
-<h2>Wounds</h2>
-<table id="jsWoundsTable" class="table table-bordered table-condensed table-hover table-striped">
+<table id="jsWoundsTable" class="table table-bordered table-condensed table-hover table-striped display compact">
     <thead>
         <tr>
-            <th scope="col" width="20%">Wound Id</th>
-            <th scope="col" width="20%">Name</th>
-            <th scope="col" width="20%">Wound Stage</th>
-            <th scope="col" width="20%">Remarks</th>
-            <th scope="col" width="20%">Wound Category</th>
-            <th scope="col" width="20%">Wound Location</th>
-            <th scope="col" width="20%">Original Wound Image</th>
+            <th scope="col" >Id</th>
+            <th scope="col" >Name</th>
+            <th scope="col" >Stage</th>
+            <th scope="col" >Remarks</th>
+            <th scope="col" >Category</th>
+            <th scope="col" >Location</th>
+            <th scope="col" >Wound Image</th>
 
-            <th scope="col" width="20%">Tissue</th>
-            <th scope="col" width="20%">Version</th>
-            <th scope="col" width="20%">Details</th>
+            <th scope="col" >Tissue</th>
+            <th scope="col" >Version</th>
+            <th scope="col" >Details</th>
+            <th scope="col" >Username</th>
             @if (User.IsInRole("Admin") || User.IsInRole("Annotator"))
             {
-            <th scope="col" width="20%">Username</th>
-            
-            <th scope="col" width="20%">Edit / Delete</th>
-            }
+        <th scope="col" >Edit / Delete</th>}
         </tr>
     </thead>
     <tbody>
         @foreach (WoundRecord w in Model)
         {
-        <tr scope="row">
-            <td width="20%">@w.woundid</td>
-            <td width="20%">@w.woundname</td>
-            <td width="20%">@w.woundstage</td>
-            <td width="20%">@w.woundremarks</td>
-            <td width="20%">@w.woundcategoryname</td>
-            <td width="20%">@w.woundlocationname</td>
-            <td width="20%"><img src="~/photos/@w.imagefile"></td>
+<tr scope="row">
+    <td >@w.woundid</td>
+    <td >@w.woundname</td>
+    <td >@w.woundstage</td>
+    <td >@w.woundremarks</td>
+    <td >@w.woundcategoryname</td>
+    <td >@w.woundlocationname</td>
+    <td ><img src="~/photos/@w.imagefile"></td>
 
-            <td width="20%">@w.tissuename</td>
-            <td width="20%">@w.versionname</td>
-            <td width="20%"><a asp-controller="Wound" asp-action="Details" asp-route-id="@w.woundid">Details</a></td>
-            @if (User.IsInRole("Admin") || User.IsInRole("Annotator"))
-            {
-                <td width="20%">@w.username</td>
+    <td >@w.tissuename</td>
+    <td >@w.versionname</td>
+    <td ><a asp-controller="Wound" asp-action="Details" asp-route-id="@w.woundid">Details</a></td>
+    @if (User.IsInRole("Admin") || User.IsInRole("Annotator"))
+    {
+<td >@w.username</td>
 
 
-                <td width="20%">
-                    <a asp-controller="Wound" asp-action="Update" asp-route-id="@w.woundid">Edit</a> |
-                    <a asp-controller="Wound" asp-action="Delete" asp-route-id="@w.woundid"
-                       onclick="return confirm('Delete Wound [@w.woundname] ?')">Delete</a>
-                </td>
-            }
-        </tr>
-        }
+                    <td >
+                        <a asp-controller="Wound" asp-action="Update" asp-route-id="@w.woundid">Edit</a> |
+                        <a asp-controller="Wound" asp-action="Delete" asp-route-id="@w.woundid"
+                           onclick="return confirm('Delete Wound [@w.woundname] ?')">Delete</a>
+                    </td>
+}
+</tr>
+}
     </tbody>
 </table>
-
-
-

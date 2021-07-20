@@ -8,11 +8,16 @@ using System.Security.Claims;
 using WoundImgRepo.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
+using System.Diagnostics;
+
 
 namespace WoundImgRepo.Controllers
 {
+    
     public class AccountController : Controller
     {
+        public string current_user = "";
+
         [Authorize]
         public IActionResult Logoff(string returnUrl = null)
         {
@@ -25,8 +30,32 @@ namespace WoundImgRepo.Controllers
         [AllowAnonymous]
         public IActionResult LoginPage(string returnUrl = null)
         {
-            TempData["ReturnUrl"] = returnUrl;
-            return View();
+            #region checkuserrole()
+            int checktheuserrole = 0;
+            if (User.IsInRole("Admin"))
+            {
+                checktheuserrole = 1;
+            }
+            else if (User.IsInRole("Doctor"))
+            {
+                checktheuserrole = 2;
+            }
+            else if (User.IsInRole("Annotator"))
+            {
+                checktheuserrole = 3;
+            }
+            if (checktheuserrole == 0)
+            {
+                TempData["ReturnUrl"] = returnUrl;
+                return View();
+            }
+            #endregion
+
+            else
+            {
+                return RedirectToAction("Index", "Wound");
+            }
+            
         }
 
         // Login
@@ -47,22 +76,23 @@ namespace WoundImgRepo.Controllers
                 status = account.status;
             }
             System.Diagnostics.Debug.WriteLine("user status is" + status);
-            if (status != 1)
-            {
-                ViewData["Message"] = "Account is deactivated , please contact your supervisor for support.";
-                ViewData["MsgType"] = "danger";
-                return View();
-            }
             
 
 
 
-        if (!AuthenticateUser(user.Username, user.Password,
+
+            if (!AuthenticateUser(user.Username, user.Password,
                                   out ClaimsPrincipal principal))
             {
 
 
-                ViewData["Message"] = "Incorrect Username or Password";
+                ViewData["Msg"] = "Incorrect Username or Password";
+                ViewData["MsgType"] = "danger";
+                return View();
+            }
+            else if (status != 1)
+            {
+                ViewData["Msg"] = "Account is deactivated , please contact your supervisor for support.";
                 ViewData["MsgType"] = "danger";
                 return View();
             }
@@ -70,7 +100,12 @@ namespace WoundImgRepo.Controllers
             {
                 HttpContext.SignInAsync(
                    CookieAuthenticationDefaults.AuthenticationScheme,
-                   principal);
+                   principal,
+                   new AuthenticationProperties
+                   {
+                       IsPersistent = user.RememberMe
+                   }
+                   );
 
                 
 
@@ -91,7 +126,8 @@ namespace WoundImgRepo.Controllers
            
                 
                 System.Diagnostics.Debug.WriteLine("login succss!");
-                return RedirectToAction("TheWounds", "Wound");
+                current_user = user.Username;
+                return RedirectToAction("Index", "Wound");
             }
         }
 
@@ -130,6 +166,7 @@ namespace WoundImgRepo.Controllers
             }
             return false;
         }
+   
 
     }
 }

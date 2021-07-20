@@ -22,22 +22,64 @@ namespace hostrepository.Controllers
 {
     public class AdminController : Controller
     {
+        
+        
         //display register page
         #region DisplayRegistry()
-        //  [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public IActionResult Registry()
         {
+            #region checkuserrole()
+            int checktheuserrole = 0;
+            if (User.IsInRole("Admin"))
+            {
+                checktheuserrole = 1;
+            }else if (User.IsInRole("Doctor"))
+            {
+                checktheuserrole = 2;
+            }else if (User.IsInRole("Annotator"))
+            {
+                checktheuserrole = 3;
+            }
+            if(checktheuserrole == 0)
+            {
+                return View("~/Views/Account/Forbidden.cshtml");
+            }
+            #endregion
+
+
             return View("~/Views/Admin/Registry.cshtml");
+            
         }
         #endregion
 
         //display list of users
         #region showUserlist()
-        //   [Authorize(Roles = "Admin")]
-        //   [Authorize(Roles = "Doctor")]
-        //   [Authorize(Roles = "Annotator")]
+       [Authorize(Roles = "Admin")]
+       
         public IActionResult Userlist()
         {
+            #region checkuserrole()
+            int checktheuserrole = 0;
+            if (User.IsInRole("Admin"))
+            {
+                checktheuserrole = 1;
+            }
+            else if (User.IsInRole("Doctor"))
+            {
+                checktheuserrole = 2;
+            }
+            else if (User.IsInRole("Annotator"))
+            {
+                checktheuserrole = 3;
+            }
+            if (checktheuserrole == 0)
+            {
+                return View("~/Views/Account/Forbidden.cshtml");
+            }
+            #endregion
+
+
             List<User> List = DBUtl.GetList<User>("SELECT * FROM useracc");
             return View(List);
         }
@@ -65,10 +107,30 @@ namespace hostrepository.Controllers
 
         //check if the details keyed in are eligable for registration
         #region Registrypost()
-        // [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin") ]
         [HttpPost]
         public ActionResult Registry(string username, string password, string UserPw2, string email, String user_role)
         {
+
+            #region checkuserrole()
+            int checktheuserrole = 0;
+            if (User.IsInRole("Admin"))
+            {
+                checktheuserrole = 1;
+            }
+            else if (User.IsInRole("Doctor"))
+            {
+                checktheuserrole = 2;
+            }
+            else if (User.IsInRole("Annotator"))
+            {
+                checktheuserrole = 3;
+            }
+            if (checktheuserrole == 0)
+            {
+                return View("~/Views/Account/Forbidden.cshtml");
+            }
+            #endregion
 
             Debug.WriteLine(username);
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(UserPw2) || string.IsNullOrEmpty(email) || String.IsNullOrEmpty(user_role))
@@ -140,7 +202,7 @@ namespace hostrepository.Controllers
                       WHERE username = '{0}'";
 
                 DataTable matchname = DBUtl.GetTable(namecheck_SQL, username);
-
+                              
                 if (matchname.Rows.Count == 1)
                 {
                     ViewData["Msg"] = "User currently exist , try using another name ";
@@ -165,19 +227,19 @@ namespace hostrepository.Controllers
                 //check if insert is done
                 string INSERT = @"INSERT INTO useracc( username, email, password, user_role, status) 
                 VALUES ( '{0}', '{1}', HASHBYTES('SHA1', '{2}'), '{3}', 1)";
-                int rowsAffected = DBUtl.ExecSQL(INSERT, username, email, password, user_role);
+                 int rowsAffected = DBUtl.ExecSQL(INSERT, username, email, password, user_role);
 
                 if (rowsAffected == 1)
                 {
                     //replace dis wif ur homepage
                     TempData["Msg"] = "Successful Registration !";
-                    ViewData["MsgType"] = "success";
+                    TempData["MsgType"] = "success";
                     return RedirectToAction("Userlist");
                 }
                 else
                 {
                     TempData["Msg"] = "Registration not working";
-                    ViewData["MsgType"] = "danger";
+                    TempData["MsgType"] = "danger";
                     return View();
                 }
 
@@ -187,22 +249,40 @@ namespace hostrepository.Controllers
 
 
         #region showingedituser()
-        //    [Authorize(Roles = "Admin"l]
+        [Authorize(Roles = "Admin")]
         public IActionResult EditUser(string id)
         {
-
+            #region checkuserrole()
+            int checktheuserrole = 0;
+            if (User.IsInRole("Admin"))
+            {
+                checktheuserrole = 1;
+            }
+            else if (User.IsInRole("Doctor"))
+            {
+                checktheuserrole = 2;
+            }
+            else if (User.IsInRole("Annotator"))
+            {
+                checktheuserrole = 3;
+            }
+            if (checktheuserrole == 0)
+            {
+                return View("~/Views/Account/Forbidden.cshtml");
+            }
+            #endregion
             //gets a user back in
             String Getuser = "SELECT * FROM useracc WHERE user_id = " + id;
 
             List<User> List = DBUtl.GetList<User>(Getuser);
-            foreach (User account in List)
+            foreach(User account in List)
             {
                 TempData["id"] = account.user_id;
                 TempData["username"] = account.username;
-                TempData["email"] = account.email;
-                TempData["role"] = account.user_role;
+                TempData["email"]  = account.email;
+                TempData["role"] =   account.user_role;
                 TempData["password"] = account.password;
-
+               
 
             }
             TempData["usernamecurrently"] = "presentnamefirst";
@@ -210,15 +290,34 @@ namespace hostrepository.Controllers
         }
         #endregion
 
-        //    [Authorize(Roles = "Admin"l]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
-        public IActionResult EditUser(int editPW, string username, string password, string UserPw2, string email, String user_role, int id)
+        public IActionResult EditUser(int editPW, string username, string password, string UserPw2, string email, String user_role , int id)
         {
-            Debug.WriteLine("we are editing on :" + editPW);
+            #region checkuserrole()
+            int checktheuserrole = 0;
+            if (User.IsInRole("Admin"))
+            {
+                checktheuserrole = 1;
+            }
+            else if (User.IsInRole("Doctor"))
+            {
+                checktheuserrole = 2;
+            }
+            else if (User.IsInRole("Annotator"))
+            {
+                checktheuserrole = 3;
+            }
+            if (checktheuserrole == 0)
+            {
+                return View("~/Views/Account/Forbidden.cshtml");
+            }
+            #endregion
+            Debug.WriteLine("we are editing on :"+ editPW);
             //<---------------------------------------------------------------------------------------------------->
             //resources for checking names
             string dupname = "SELECT user_id FROM useracc WHERE username = '{0}' AND user_id != {1}";
-            DataTable matchdupe = DBUtl.GetTable(dupname, username, id);
+            DataTable matchdupe = DBUtl.GetTable(dupname, username , id);
 
             //<---------------------------------------------------------------------------------------------------->
             //fault counter
@@ -230,7 +329,7 @@ namespace hostrepository.Controllers
                @"SELECT user_id FROM useracc 
                       WHERE email = '{0}' AND user_id != {1}";
 
-            DataTable matchemail = DBUtl.GetTable(emailcheck_SQL, email, id);
+            DataTable matchemail = DBUtl.GetTable(emailcheck_SQL, email , id);
 
 
             //---------------------------------------------------------------------------------------------------------------------------
@@ -268,14 +367,14 @@ namespace hostrepository.Controllers
                 if (string.IsNullOrEmpty(password))
                 {
                     password = "";
-
+                 
                 }
                 if (string.IsNullOrEmpty(UserPw2))
                 {
-
+                   
                     UserPw2 = "";
                 }
-
+                
                 //---------------------------------------------------------------------------------------------------------------------------
                 //check if both passwords are empty
                 if (password == "" || UserPw2 == "")
@@ -339,17 +438,16 @@ namespace hostrepository.Controllers
             }
             //---------------------------------------------------------------------------------------------------------------------------
             //triggers if no fault is detected
-            if (atfault == 0)
+            if(atfault == 0)
             {
                 int rowsAffected = 0;
                 //---------------------------------------------------------------------------------------------------------------------------
                 //Triggers if user allows password reset
-                if (editPW == 1)
-                {
+                if (editPW ==1) {
                     String edituserconfirmed = @"UPDATE useracc SET 
                                                         username = '{0}' ,email = '{1}' ,password = HASHBYTES('SHA1', '{2}') ,user_role = '{3}' 
                                                         WHERE user_id = {4}";
-                    rowsAffected = DBUtl.ExecSQL(edituserconfirmed, username, email, password, user_role, id);
+                   rowsAffected = DBUtl.ExecSQL(edituserconfirmed ,username , email , password , user_role , id);
                     TempData["Msg"] = "User updated";
                     TempData["MsgType"] = "success";
                 }
@@ -364,7 +462,7 @@ namespace hostrepository.Controllers
                     TempData["Msg"] = "User updated";
                     TempData["MsgType"] = "success";
                 }
-                if (rowsAffected != 1)
+                if (rowsAffected !=1)
                 {
                     TempData["Msg"] = "User Record failed";
                     TempData["MsgType"] = "danger";
@@ -395,28 +493,62 @@ namespace hostrepository.Controllers
         }
 
 
-        //    [Authorize(Roles = "Admin")]
-        public IActionResult Delete(string id)
+       [Authorize(Roles = "Admin")]
+        public IActionResult Delete(int id)
         {
-            //      Debug.WriteLine("deleting" + id);
-            //    string userid = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            //  if (userid.Equals(id, StringComparison.InvariantCultureIgnoreCase))
-            //{
-            //  TempData["Message"] = "Own ID cannot be deleted";
-            //TempData["MsgType"] = "warning";
-            //    }
-            //  else
+            #region checkuserrole()
+            int checktheuserrole = 0;
+            if (User.IsInRole("Admin"))
             {
-                string delete = "DELETE FROM useracc WHERE user_id='{0}'";
+                checktheuserrole = 1;
+            }
+            else if (User.IsInRole("Doctor"))
+            {
+                checktheuserrole = 2;
+            }
+            else if (User.IsInRole("Annotator"))
+            {
+                checktheuserrole = 3;
+            }
+            if (checktheuserrole == 0)
+            {
+                return View("~/Views/Account/Forbidden.cshtml");
+            }
+            #endregion
+            int AIDE = 0;
+       
+            String Getuser = "SELECT * FROM useracc WHERE username = '" + User.Identity.Name+"'";
+            List<User> List = DBUtl.GetList<User>(Getuser);
+            foreach (User account in List)
+            {
+                 AIDE = account.user_id;
+                
+            }
+          
+
+            if (id == AIDE)
+            {
+                TempData["Msg"] = "deleting own record account is NOT allowed";
+                TempData["MsgType"] = "danger";
+                return RedirectToAction("Userlist");
+            }
+            else
+            {
+                
+                string delete = "DELETE FROM useracc WHERE user_id={0}";
+               
+
+                string formatdelete = String.Format(delete , id);
+                Debug.WriteLine(formatdelete);
                 int res = DBUtl.ExecSQL(delete, id);
                 if (res == 1)
                 {
-                    TempData["Message"] = "User Record Deleted";
+                    TempData["Msg"] = "User Record Deleted";
                     TempData["MsgType"] = "success";
                 }
                 else
                 {
-                    TempData["Message"] = DBUtl.DB_Message;
+                    TempData["Msg"] = DBUtl.DB_Message;
                     TempData["MsgType"] = "danger";
                 }
             }
@@ -427,6 +559,43 @@ namespace hostrepository.Controllers
 
         public IActionResult Statusedit(int id)
         {
+            #region checkuserrole()
+            int checktheuserrole = 0;
+            if (User.IsInRole("Admin"))
+            {
+                checktheuserrole = 1;
+            }
+            else if (User.IsInRole("Doctor"))
+            {
+                checktheuserrole = 2;
+            }
+            else if (User.IsInRole("Annotator"))
+            {
+                checktheuserrole = 3;
+            }
+            if (checktheuserrole == 0)
+            {
+                return View("~/Views/Account/Forbidden.cshtml");
+            }
+            #endregion
+            //------------------------------------------------------------------------------------------------------------------------
+            //check if user tried to deactivate their own account
+            int AIDE = 0;
+
+            String Getuser_viaid = "SELECT * FROM useracc WHERE username = '" + User.Identity.Name + "'";
+            List<User> Lista = DBUtl.GetList<User>(Getuser_viaid);
+            foreach (User account in Lista)
+            {
+                AIDE = account.user_id;
+
+            }
+            if (id == AIDE)
+            {
+                TempData["Msg"] = "de-activating your own account is NOT allowed";
+                TempData["MsgType"] = "danger";
+                return RedirectToAction("Userlist");
+            }
+
             //---------------------------------------------------------------------------------------------------------------------------
             //Takes in a user details
             String Getuser = "SELECT * FROM useracc WHERE user_id = " + id;
@@ -436,18 +605,17 @@ namespace hostrepository.Controllers
             {
                 status = account.status;
             }
-            string update = "";
+            string update="";
             //---------------------------------------------------------------------------------------------------------------------------
             //edit status
             if (status == 0)
             {
-                update = "UPDATE useracc SET status = 1 WHERE user_id = {0}";
+                 update = "UPDATE useracc SET status = 1 WHERE user_id = {0}";
                 TempData["Msg"] = "User account activated";
                 TempData["MsgType"] = "success";
-            }
-            else if (status != 0)
+            } else if (status != 0)
             {
-                update = "UPDATE useracc SET status = 0 WHERE user_id = {0}";
+                 update = "UPDATE useracc SET status = 0 WHERE user_id = {0}";
                 TempData["Msg"] = "User account de-activated";
                 TempData["MsgType"] = "success";
             }
@@ -528,7 +696,7 @@ namespace hostrepository.Controllers
                 TempData["Msg"] = "Version record does not exist";
                 TempData["MsgType"] = "warning";
                 return RedirectToAction("Version");
-            } 
+            }
         }
 
         public IActionResult DeleteVersion(int id)
