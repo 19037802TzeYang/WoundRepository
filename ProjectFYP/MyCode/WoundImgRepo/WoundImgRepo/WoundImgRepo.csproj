@@ -14,9 +14,6 @@
 		<PackageReference Include="System.Data.SqlClient" Version="4.7.0" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Folder Include="wwwroot\photos\" />
-	</ItemGroup>
-	<ItemGroup>
 	  <None Include="Views\Chart\Summary.cshtml" />
 	  <None Include="wwwroot\lib\chartjs\Chart.min.js" />
 	  <None Include="wwwroot\lib\chartjs\chartjs-plugin-labels.min.js" />

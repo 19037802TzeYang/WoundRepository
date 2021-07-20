@@ -624,5 +624,317 @@ namespace hostrepository.Controllers
 
             return RedirectToAction("Userlist");
         }
+
+        #region add/edit/delete version table
+        public IActionResult Version()
+        {
+            var versions = DBUtl.GetList<WVersion>($"SELECT * FROM version");
+            return View(versions);
+        }
+
+        public IActionResult AddVersion(string name)
+        {
+            string message = "Internal Server Error";
+            if (!string.IsNullOrEmpty(name))
+            {
+                var versions = DBUtl.GetList<WVersion>($"SELECT * FROM version");
+                if (!versions.Any(x => x.name.Equals(name, StringComparison.OrdinalIgnoreCase)))
+                {
+                    string wVLSql = @"INSERT INTO version(name)
+                                      VALUES('{0}')";
+                    var vExec = DBUtl.ExecSQL(wVLSql, name);
+                    if (vExec == 1)
+                    {
+                        TempData["Msg"] = "New version created";
+                        TempData["MsgType"] = "success";
+                        return RedirectToAction("Version");
+                    }
+                    message = DBUtl.DB_Message;
+                }
+                message = "Version name already exist";
+            }
+            TempData["Msg"] = message;
+            TempData["MsgType"] = "danger";
+            return RedirectToAction("Version");
+        }
+
+        public IActionResult EditVersion(string name, int id)
+        {
+            string getVersionSql = @"SELECT * 
+                                     FROM version 
+                                     WHERE version_id={0}";
+            List<WVersion> versionRecordFound = DBUtl.GetList<WVersion>(getVersionSql, id);
+            if (versionRecordFound.Count == 1)
+            {
+                if (!ModelState.IsValid)
+                {
+                    ViewData["Msg"] = "Invalid Input";
+                    ViewData["MsgType"] = "danger";
+                    return View("Version");
+                }
+                else
+                {
+                    string wvSql = @"UPDATE version
+                                     SET name='{0}'
+                                     WHERE version_id={1}";
+                    var wvExec = DBUtl.ExecSQL(wvSql, name, id);
+                    if (wvExec == 1)
+                    {
+                        TempData["Msg"] = "Version record updated";
+                        TempData["MsgType"] = "success";
+                    }
+                    else
+                    {
+                        TempData["Msg"] = DBUtl.DB_Message;
+                        TempData["MsgType"] = "danger";
+                    }
+                    return RedirectToAction("Version");
+                }
+            }
+            else
+            {
+                TempData["Msg"] = "Version record does not exist";
+                TempData["MsgType"] = "warning";
+                return RedirectToAction("Version");
+            }
+        }
+
+        public IActionResult DeleteVersion(int id)
+        {
+            string wvSql = @"SELECT * 
+                             FROM version 
+                             WHERE version_id={0}";
+            DataTable versionRecordFound = DBUtl.GetTable(wvSql, id);
+            if (versionRecordFound.Rows.Count != 1)
+            {
+                TempData["Message"] = "Version record does not exist";
+                TempData["MsgType"] = "warning";
+            }
+            else
+            {
+                wvSql = "DELETE FROM version WHERE version_id={0}";
+                int wvExec = DBUtl.ExecSQL(wvSql, id);
+                if (wvExec == 1)
+                {
+                    TempData["Msg"] = "Version record deleted";
+                    TempData["MsgType"] = "success";
+                }
+                else
+                {
+                    TempData["Msg"] = DBUtl.DB_Message;
+                    TempData["MsgType"] = "danger";
+                }
+            }
+            return RedirectToAction("Version");
+        }
+        #endregion
+
+        #region add/edit/delete wound category table
+        public IActionResult WoundCategory()
+        {
+            var woundCategories = DBUtl.GetList<WoundCategory>($"SELECT * FROM wound_category");
+            return View(woundCategories);
+        }
+
+        public IActionResult AddWoundCategory(string name)
+        {
+            string message = "Internal Server Error";
+            if (!string.IsNullOrEmpty(name))
+            {
+                var woundCategories = DBUtl.GetList<WoundCategory>($"SELECT * FROM wound_category");
+                if (!woundCategories.Any(x => x.name.Equals(name, StringComparison.OrdinalIgnoreCase)))
+                {
+                    string wcSql = @"INSERT INTO wound_category(name)
+                                     VALUES('{0}')";
+                    var wcExec = DBUtl.ExecSQL(wcSql, name);
+                    if (wcExec == 1)
+                    {
+                        TempData["Msg"] = "New wound category created";
+                        TempData["MsgType"] = "success";
+                        return RedirectToAction("WoundCategory");
+                    }
+                    message = DBUtl.DB_Message;
+                }
+                message = "Wound category name already exist";
+            }
+            TempData["Msg"] = message;
+            TempData["MsgType"] = "danger";
+            return RedirectToAction("WoundCategory");
+        }
+
+        public IActionResult EditWoundCategory(string name, int id)
+        {
+            string getWoundCategorySql = @"SELECT * 
+                                           FROM wound_category 
+                                           WHERE wound_category_id={0}";
+            List<WoundCategory> woundCategoryRecordFound = DBUtl.GetList<WoundCategory>(getWoundCategorySql, id);
+            if (woundCategoryRecordFound.Count == 1)
+            {
+                if (!ModelState.IsValid)
+                {
+                    ViewData["Msg"] = "Invalid Input";
+                    ViewData["MsgType"] = "danger";
+                    return View("EditWoundCategory");
+                }
+                else
+                {
+                    string wcSql = @"UPDATE wound_category
+                                     SET name='{0}'
+                                     WHERE wound_category_id={1}";
+                    var wcExec = DBUtl.ExecSQL(wcSql, name, id);
+                    if (wcExec == 1)
+                    {
+                        TempData["Msg"] = "Wound category record updated";
+                        TempData["MsgType"] = "success";
+                    }
+                    else
+                    {
+                        TempData["Msg"] = DBUtl.DB_Message;
+                        TempData["MsgType"] = "danger";
+                    }
+                    return RedirectToAction("WoundCategory");
+                }
+            }
+            else
+            {
+                TempData["Msg"] = "Wound category record does not exist";
+                TempData["MsgType"] = "warning";
+                return RedirectToAction("WoundCategory");
+            }
+        }
+
+        public IActionResult DeleteWoundCategory(int id)
+        {
+            string wcSql = @"SELECT * 
+                             FROM wound_category 
+                             WHERE wound_category_id={0}";
+            DataTable woundCategoryRecordFound = DBUtl.GetTable(wcSql, id);
+            if (woundCategoryRecordFound.Rows.Count != 1)
+            {
+                TempData["Msg"] = "Wound category record does not exist";
+                TempData["MsgType"] = "warning";
+            }
+            else
+            {
+                wcSql = "DELETE FROM wound_category WHERE wound_category_id={0}";
+                int wcExec = DBUtl.ExecSQL(wcSql, id);
+                if (wcExec == 1)
+                {
+                    TempData["Msg"] = "Wound category record deleted";
+                    TempData["MsgType"] = "success";
+                }
+                else
+                {
+                    TempData["Msg"] = DBUtl.DB_Message;
+                    TempData["MsgType"] = "danger";
+                }
+            }
+            return RedirectToAction("WoundCategory");
+        }
+        #endregion
+
+        #region add/edit/delete tissue table
+        public IActionResult Tissue()
+        {
+            var tissues = DBUtl.GetList<Tissue>($"SELECT * FROM tissue");
+            return View(tissues);
+        }
+
+        public IActionResult AddTissue(string name)
+        {
+            string message = "Internal Server Error";
+            if (!string.IsNullOrEmpty(name))
+            {
+                var tissues = DBUtl.GetList<Tissue>($"SELECT * FROM tissue");
+                if (!tissues.Any(x => x.name.Equals(name, StringComparison.OrdinalIgnoreCase)))
+                {
+                    string tSql = @"INSERT INTO tissue(name)
+                                    VALUES('{0}')";
+                    var tExec = DBUtl.ExecSQL(tSql, name);
+                    if (tExec == 1)
+                    {
+                        TempData["Msg"] = "New tissue type created";
+                        TempData["MsgType"] = "success";
+                        return RedirectToAction("Tissue");
+                    }
+                    message = DBUtl.DB_Message;
+                }
+                message = "Tissue type already exist";
+            }
+            TempData["Msg"] = message;
+            TempData["MsgType"] = "danger";
+            return RedirectToAction("Tissue");
+        }
+
+        public IActionResult EditTissue(string name, int id)
+        {
+            string getTissueSql = @"SELECT * 
+                                    FROM tissue 
+                                    WHERE tissue_id={0}";
+            List<Tissue> tissueRecordFound = DBUtl.GetList<Tissue>(getTissueSql, id);
+            if (tissueRecordFound.Count == 1)
+            {
+                if (!ModelState.IsValid)
+                {
+                    ViewData["Msg"] = "Invalid Input";
+                    ViewData["MsgType"] = "danger";
+                    return View("Tissue");
+                }
+                else
+                {
+                    string tSql = @"UPDATE tissue
+                                    SET name='{0}'
+                                    WHERE tissue_id={1}";
+                    var tExec = DBUtl.ExecSQL(tSql, name, id);
+                    if (tExec == 1)
+                    {
+                        TempData["Msg"] = "Tissue record updated";
+                        TempData["MsgType"] = "success";
+                    }
+                    else
+                    {
+                        TempData["Msg"] = DBUtl.DB_Message;
+                        TempData["MsgType"] = "danger";
+                    }
+                    return RedirectToAction("Tissue");
+                }
+            }
+            else
+            {
+                TempData["Msg"] = "Tissue record does not exist";
+                TempData["MsgType"] = "warning";
+                return RedirectToAction("Tissue");
+            }
+        }
+
+        public IActionResult DeleteTissue(int id)
+        {
+            string tSql = @"SELECT * 
+                            FROM tissue 
+                            WHERE tissue_id={0}";
+            DataTable tissueRecordFound = DBUtl.GetTable(tSql, id);
+            if (tissueRecordFound.Rows.Count != 1)
+            {
+                TempData["Msg"] = "Tissue record does not exist";
+                TempData["MsgType"] = "warning";
+            }
+            else
+            {
+                tSql = "DELETE FROM tissue WHERE tissue_id={0}";
+                int tExec = DBUtl.ExecSQL(tSql, id);
+                if (tExec == 1)
+                {
+                    TempData["Msg"] = "Tissue record deleted";
+                    TempData["MsgType"] = "success";
+                }
+                else
+                {
+                    TempData["Msg"] = DBUtl.DB_Message;
+                    TempData["MsgType"] = "danger";
+                }
+            }
+            return RedirectToAction("Tissue");
+        }
+        #endregion
     }
 }

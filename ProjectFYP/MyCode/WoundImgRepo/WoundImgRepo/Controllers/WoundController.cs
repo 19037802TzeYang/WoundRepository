@@ -303,6 +303,10 @@ namespace WoundImgRepo.Controllers
                 return RedirectToAction("LoginPage", "Account", new { returnUrl = "/Wound/Create" });
             }
 
+            //set wound category, tissue, version data dropdown list
+            SetWoundCategoryViewData();
+            SetVersionViewData();
+            SetTissueViewData();
             if (!ModelState.IsValid)
             {
                 ViewData["Msg"] = "Invalid Input";

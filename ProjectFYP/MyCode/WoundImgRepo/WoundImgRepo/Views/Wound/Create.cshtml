@@ -1,10 +1,4 @@
 ﻿@model CombineClass
-@if (TempData["Msg"] != null)
-{
-    <div class="alert alert-@TempData["MsgType"]">
-        @TempData["Msg"]
-    </div>
-}
 <form asp-controller="Wound" asp-action="Create" method="post" enctype="multipart/form-data">
     <div class="form-group row mt-4 mb-4">
         <div class="col-sm-6">
@@ -29,7 +23,7 @@
             <input type="file" asp-for="annotationimage">
         </div>
         <div class="col-sm-6">
-            <span asp-validation-for="annotationimages"></span>
+            <span asp-validation-for="annotationimage"></span>
         </div>
     </div>
 
@@ -39,7 +33,7 @@
             <input type="file" asp-for="maskimage">
         </div>
         <div class="col-sm-6">
-            <span asp-validation-for="maskimages"></span>
+            <span asp-validation-for="maskimage"></span>
         </div>
     </div>
 
@@ -48,6 +42,9 @@
         <div class="col-sm-4">
             <input class="form-control" asp-for="wound.name">
         </div>
+        <div class="col-sm-6">
+            <span class="text-danger" asp-validation-for="wound.name"></span>
+        </div>
     </div>
 
     <div class="form-group row">
@@ -55,12 +52,18 @@
         <div class="col-sm-4">
             <input class="form-control" asp-for="wound.wound_stage">
         </div>
+        <div class="col-sm-6">
+            <span class="text-danger" asp-validation-for="wound.wound_stage"></span>
+        </div>
     </div>
 
     <div class="form-group row">
         <label class="col-sm-2" asp-for="wound.remarks">Remarks: </label>
         <div class="col-sm-4">
             <input class="form-control" asp-for="wound.remarks">
+        </div>
+        <div class="col-sm-6">
+            <span class="text-danger" asp-validation-for="wound.remarks"></span>
         </div>
     </div>
 
@@ -71,12 +74,18 @@
                 <option value="">-SELECT-</option>
             </select>
         </div>
+        <div class="col-sm-6">
+            <span class="text-danger" asp-validation-for="woundc.name"></span>
+        </div>
     </div>
 
     <div class="form-group row">
         <label class="col-sm-2" asp-for="woundl.name">Wound Location: </label>
         <div class="col-sm-4">
             <input class="form-control" asp-for="woundl.name">
+        </div>
+        <div class="col-sm-6">
+            <span class="text-danger" asp-validation-for="woundl.name"></span>
         </div>
     </div>
 
@@ -87,6 +96,9 @@
                 <option value="">-SELECT-</option>
             </select>
         </div>
+        <div class="col-sm-6">
+            <span class="text-danger" asp-validation-for="tissue.name"></span>
+        </div>
     </div>
 
     <div class="form-group row">
@@ -96,6 +108,9 @@
                 <option value="">-SELECT-</option>
             </select>
         </div>
+        <div class="col-sm-6">
+            <span class="text-danger" asp-validation-for="woundv.name"></span>
+        </div>
     </div>
 
     <div class="form-group row">
@@ -103,6 +118,17 @@
             <input class="btn btn-primary" type="submit" value="Create">
         </div>
     </div>
+
+    @if (ViewData["Msg"] != null)
+    {
+        <div class="form-group row">
+            <div class="offset-sm-2 col-sm-4">
+                <div class="alert alert-@ViewData["MsgType"]">
+                    @ViewData["Msg"]
+                </div>
+            </div>
+        </div>
+    }
 </form>
 
 
