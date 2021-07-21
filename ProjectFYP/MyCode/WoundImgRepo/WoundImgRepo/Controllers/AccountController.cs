@@ -125,7 +125,7 @@ namespace WoundImgRepo.Controllers
                     DBUtl.ExecSQL(update, user.Username, user.Password);
            
                 
-                System.Diagnostics.Debug.WriteLine("login succss!");
+                System.Diagnostics.Debug.WriteLine("login success!");
                 current_user = user.Username;
                 return RedirectToAction("Index", "Wound");
             }
