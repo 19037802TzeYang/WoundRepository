@@ -1,4 +1,4 @@
-﻿@model List<WoundRecord>
+@model List<WoundRecord>
 
 @if (TempData["Message"] != null)
 {
@@ -23,15 +23,30 @@
                     </div>
                     <div>
                         <small>
-                            @row.woundlocationname
+                            @row.woundlocationname    
 
                         </small>
-                        <a asp-controller="Wound" asp-action="Details" asp-route-id="@row.woundid">Details</a>
+                        <style>
+                            .btn-primary {
+                                border-color: #000000;
+                                background-color: #656565;
+                                color: #FFF;
+                            }
+
+                                .btn-primary:hover {
+                                    border-color: #000000;
+                                    background-color: #808080;
+                                }
+                        </style>
+                        <p></p>
+                        <a class="btn btn-primary" style="width: 150px" asp-controller="Wound" asp-action="Details" asp-route-id="@row.woundid"><small>Details</small></a>
+                       
                     </div>
                 </div>
             </div>
         </div>
     }
 </div>
+
 
 
