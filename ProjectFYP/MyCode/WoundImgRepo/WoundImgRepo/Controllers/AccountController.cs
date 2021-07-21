@@ -121,7 +121,7 @@ namespace WoundImgRepo.Controllers
                 
                 
                     // Update the Last Login Timestamp of the User
-                    string update = "UPDATE useracc SET last_login=GETDATE() WHERE username='{0}' AND password='{1}'";
+                    string update = "UPDATE useracc SET last_login=GETDATE() WHERE username='{0}' AND password= HASHBYTES('SHA1', '{1}')";
                     DBUtl.ExecSQL(update, user.Username, user.Password);
            
                 
