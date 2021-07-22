@@ -30,7 +30,7 @@ namespace WoundImgRepo.Controllers
         [AllowAnonymous]
         public IActionResult LoginPage(string returnUrl = null)
         {
-            #region checkuserrole()
+            #region RememberMe()
             int checktheuserrole = 0;
             if (User.IsInRole("Admin"))
             {
@@ -53,7 +53,7 @@ namespace WoundImgRepo.Controllers
 
             else
             {
-                return RedirectToAction("Index", "Wound");
+                return RedirectToAction("TheWounds", "Wound");
             }
             
         }

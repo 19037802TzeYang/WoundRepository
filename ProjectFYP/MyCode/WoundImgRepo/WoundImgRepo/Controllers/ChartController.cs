@@ -23,34 +23,25 @@ namespace WoundImgRepo.Controllers
         }
         public IActionResult Dashboard()
         {
-            List<Wound> list = DBUtl.GetList<Wound>("SELECT * FROM wound");
-            List<WoundLocation> locations = DBUtl.GetList<WoundLocation>("SELECT * FROM wound_location");
-            int[] locationId = new int[locations.Count];
-            for (int i = 0; i < locationId.Length; i++)
-            {
-                locationId[i] = locations[i].wound_location_id;
-            }
-            int totalLeg = 0;
-            int totalArm = 0;
-            foreach (Wound w in list)
-            {
-                if (w.wound_location_id.Equals(locationId[0]))
-                {
-                    totalLeg++;
-                }
-                else if (w.wound_location_id.Equals(locationId[1]))
-                {
-                    totalArm++;
-                }
-            }
-            if (totalLeg > totalArm)
-            {
-                ViewData["Maximum"] = "Foot";
-            }
-            else
-            {
-                ViewData["Maximum"] = "Buttock";
-            }
+            List<WoundRecord> list = DBUtl.GetList<WoundRecord>(@"SELECT TOP 1 wl.name as woundlocationname
+                                      FROM wound w
+                                      
+                                      INNER JOIN wound_location wl ON wl.wound_location_id = w.wound_location_id
+                                    GROUP BY wl.name HAVING Count(wl.name) >=1");
+            
+            ViewData["Maximum"] = list[0].woundlocationname;
+            List<WoundRecord> Users = DBUtl.GetList<WoundRecord>(@"SELECT TOP 1  u.username
+                                      FROM wound w 
+                                        INNER JOIN useracc u ON u.user_id = w.user_id 
+                                    GROUP BY u.username HAVING Count(u.username) >=1");
+            
+            ViewData["MaximumUsers"] = Users[0].username;
+            List<Wound> total = DBUtl.GetList<Wound>("SELECT * FROM wound");
+            ViewData["TotalRecords"] = total.Count();
+            PrepareData(1);
+            ViewData["VersionChart"] = "line";
+            ViewData["VersionTitle"] = "Version";
+            ViewData["VersionShowLegend"] = "false";
             PrepareWoundsData(1);
             ViewData["Chart"] = "bar";
             ViewData["Title"] = "Location";
@@ -58,7 +49,7 @@ namespace WoundImgRepo.Controllers
             WoundCategoryRecords(1);
             ViewData["CatChart"] = "pie";
             ViewData["CatTitle"] = "Category";
-            ViewData["CatShowLegend"] = "false";
+            ViewData["CatShowLegend"] = "true";
             DisplayUsers(1);
             ViewData["UserChart"] = "bar";
             ViewData["UserTitle"] = "Category";
@@ -83,8 +74,14 @@ namespace WoundImgRepo.Controllers
         }
         private void PrepareData(int x)
         {
-            int[] version = new int[3] { 0, 0, 0 };
+            
             List<WVersion> list = DBUtl.GetList<WVersion>("SELECT * FROM version");
+            List<WoundRecord> wrList = DBUtl.GetList<WoundRecord>("SELECT * FROM wound");
+            int[] version = new int[list.Count];
+            for (int i = 0; i < version.Length; i++)
+            {
+                version[i] = 0;
+            }
             foreach (WVersion wversion in list)
             {
                 version[calculatePosition(wversion.version_id)]++;
@@ -97,8 +94,8 @@ namespace WoundImgRepo.Controllers
 
             if (x == 1)
             {
-                ViewData["Legend"] = "Wound Version";
-                ViewData["Colors"] = new string[3] { "grey", "brown", "black" };
+                ViewData["VersionLegend"] = "Wound Version";
+                ViewData["VersionColors"] = new string[3] { "grey", "brown", "black" };
                 string[] colors = new string[version.Length];
                 string[] labels = new string[version.Length];
                 for (int i = 0; i < colors.Length; i++)
@@ -112,17 +109,17 @@ namespace WoundImgRepo.Controllers
 
                     labels[i] = list[i].name;
                 }
-                ViewData["Colors"] = colors;
-                ViewData["Labels"] = labels;
-                ViewData["Data"] = version;
+                ViewData["VersionColors"] = colors;
+                ViewData["VersionLabels"] = labels;
+                ViewData["VersionData"] = version;
             }
 
             else
             {
-                ViewData["Legend"] = "Nothing";
-                ViewData["Colors"] = new[] { "gray", "darkgray", "black" };
-                ViewData["Labels"] = new[] { "X", "Y", "Z" };
-                ViewData["Data"] = new int[] { 1, 2, 3 };
+                ViewData["VersionLegend"] = "Nothing";
+                ViewData["VersionColors"] = new[] { "gray", "darkgray", "black" };
+                ViewData["VersionLabels"] = new[] { "X", "Y", "Z" };
+                ViewData["VersionData"] = new int[] { 1, 2, 3 };
             }
         }
         private void PrepareWoundsData(int x)
@@ -220,6 +217,7 @@ namespace WoundImgRepo.Controllers
                 ViewData["UserData"] = users;
             }
         }
+        
         private int calculatePosition(int x)
         {
             if (x == 1) return 0;
