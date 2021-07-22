@@ -1,10 +1,11 @@
 @model List<WoundRecord>
 @{ Layout = "_Layout"; }
+
 @if (TempData["Msg"] != null)
 {
-<div class="alert alert-@TempData["MsgType"]">
-    @TempData["Msg"]
-</div>}
+    <div class="alert alert-@TempData["MsgType"]">
+        @TempData["Msg"]
+    </div>}
 
 @section MoreScripts {
     @*
@@ -23,15 +24,12 @@
                 return false;
             }
         }
-
-
-
         $(document).ready(function () {
             $('#jsWoundsTable').DataTable({
-                ordering: true,
+                ordering: false,
                 paging: true,
                 searching: true,
-                info: true, 
+                info: true,
                 responsive: true,
                 lengthChange: true,
                 pageLength: 5,
@@ -39,10 +37,18 @@
 
             });
         });
-
     </script>
 }
-<!--Collapsable-->
+<style>
+    img {
+        width: 200px;
+        height: 200px;
+        object-fit: cover;
+    }
+</style>
+
+<h2 class="mb-4">Wound Repository</h2>
+<!--#region Collapsable-->
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
     .collapsible {
@@ -56,11 +62,9 @@
         outline: none;
         font-size: 15px;
     }
-
-        .active, .collapsible:hover {
-            background-color: #3d8dff;
-        }
-
+     .active, .collapsible:hover {
+         background-color: #3d8dff;
+     }
     .content {
         padding: 0 18px;
         display: none;
@@ -69,8 +73,7 @@
     }
 </style>
 <body>
-
-    <h4>Column Filter:</h4>
+    <h5>Column Filter:</h5>
     <button type="button" class="collapsible">Hide column :</button>
     <div class="content">
         <input type="checkbox" onclick="ResizeColumn()" id="Hidewoundid"> Id
@@ -84,13 +87,9 @@
         <input type="checkbox" onclick="ResizeColumn()" id="HideVersion"> Version
         <input type="checkbox" onclick="ResizeColumn()" id="HideDetails"> Details
         <input type="checkbox" onclick="ResizeColumn()" id="HideUsername"> Username
-        <input type="checkbox" onclick="ResizeColumn()" id="editNdelete"> editNdelete 
-        
-            <button onclick="ResizeColumn()">Resize Columns.</button>
+        <input type="checkbox" onclick="ResizeColumn()" id="editNdelete"> editNdelete
 
-
-        
-        
+        <button onclick="ResizeColumn()">Resize Columns.</button>
     </div>
 
     <script>
@@ -107,12 +106,12 @@
                 }
             });
         }
-       
+
         function Hidewoundid() {
             my_table = jQuery('#jsWoundsTable').DataTable();
             var x = document.getElementById("Hidewoundid").checked;
             if (x == true) {
-               
+
                 my_table.column(0).visible(0);
 
             } else {
@@ -210,8 +209,6 @@
                 my_table.column(10).visible(1);
 
             }
-
-
         }
         function editNdelete() {
             my_table = jQuery('#jsWoundsTable').DataTable();
@@ -221,7 +218,6 @@
             } else {
                 my_table.column(11).visible(1);
             }
-
         }
         function HideallCol() {
             my_table = jQuery('#jsWoundsTable').DataTable();
@@ -237,9 +233,10 @@
             my_table.column(9).visible(0);
             my_table.column(10).visible(0);
             my_table.column(11).visible(0);
-            my_table.column(12).visible(0);}
+            my_table.column(12).visible(0);
+        }
         function ResizeColumn() {
-            
+
             HideallCol()
             Hidewoundid();
             Hidename();
@@ -255,29 +252,16 @@
             editNdelete();
 
         }
-        
     </script>
-
 </body>
-<!--Collapsable-->
-<!--table set up-->
-<style>
-    img {
-        width: 200px;
-        height: 200px;
-        object-fit: cover;
-    }
+<!--#endregion-->
 
-    .paginate_button {
-    }
-</style>
-
-<h2 class="mt-4 mb-4">Wounds</h2>
+<!--#region search-->
 <form asp-controller="Wound"
       asp-action="Indexpost">
     <div class="col-sm-5 p-0">
         <!--Doing search-->
-        <h4>Filter Foundry :</h4>
+        <h5 class="mt-4">Filter Foundry :</h5>
         <h6>Filter out records you only need to see!</h6>
         <div class="form-group row">
             <label class="col-sm-2 font-weight-bold">Section: </label>
@@ -286,62 +270,80 @@
                     <!--Viewbags are to be put inplace so as a user i don't have to keep reselecting my options if i made an error-->
                     @if (ViewBag.selection == "w.wound_id")
                     {
-                <option value="w.wound_id" selected>Id</option> }
-                            else
-                            {
-                <option value="w.wound_id">Id</option>}
+                        <option value="w.wound_id" selected>Id</option>
+                    }
+                    else
+                    {
+                        <option value="w.wound_id">Id</option>
+                    }
                     @if (ViewBag.selection == "w.name")
                     {
-                <option value="w.name" selected>Name</option> }
-                            else
-                            {
-                <option value="w.name">Name</option>}
+                        <option value="w.name" selected>Name</option>
+                    }
+                    else
+                    {
+                        <option value="w.name">Name</option>
+                    }
                     @if (ViewBag.selection == "w.wound_stage")
                     {
-                <option value="w.wound_stage" selected>Stage </option> }
-                            else
-                            {
-                <option value="w.wound_stage">Stage </option>}
+                        <option value="w.wound_stage" selected>Stage </option>
+                    }
+                    else
+                    {
+                        <option value="w.wound_stage">Stage </option>
+                    }
                     @if (ViewBag.selection == "w.remarks")
                     {
-                <option value="w.remarks" selected>Remarks</option> }
-                            else
-                            {
-                <option value="w.remarks">Remarks</option>}
+                        <option value="w.remarks" selected>Remarks</option>
+                    }
+                    else
+                    {
+                        <option value="w.remarks">Remarks</option>
+                    }
                     @if (ViewBag.selection == "wc.name")
                     {
-                <option value="wc.name" selected>Category</option> }
-                            else
-                            {
-                <option value="wc.name">Category</option>}
+                        <option value="wc.name" selected>Category</option>
+                    }
+                    else
+                    {
+                        <option value="wc.name">Category</option>
+                    }
                     @if (ViewBag.selection == "wl.name")
                     {
-                <option value="wl.name" selected>Location</option> }
-                            else
-                            {
-                <option value="wl.name">Location</option>}
+                        <option value="wl.name" selected>Location</option>
+                    }
+                    else
+                    {
+                        <option value="wl.name">Location</option>
+                    }
 
                     @if (ViewBag.selection == "t.name")
                     {
-                <option value="t.name" selected>Tissue</option> }
-                            else
-                            {
-                <option value="t.name">Tissue</option>}
+                        <option value="t.name" selected>Tissue</option>
+                    }
+                    else
+                    {
+                        <option value="t.name">Tissue</option>
+                    }
                     @if (ViewBag.selection == "v.name")
                     {
-                <option value="v.name" selected>Version</option> }
-                            else
-                            {
-                <option value="v.name">Version</option>}
-                   
-                @if (ViewBag.selection == "u.username")
-                {
-                <option value="u.username" selected>username</option> }
-                else
-                {
-                <option value="u.username">username</option>}
-                    
-                            </select>
+                        <option value="v.name" selected>Version</option>
+                    }
+                    else
+                    {
+                        <option value="v.name">Version</option>
+                    }
+
+                    @if (ViewBag.selection == "u.username")
+                    {
+                        <option value="u.username" selected>username</option>
+                    }
+                    else
+                    {
+                        <option value="u.username">username</option>
+                    }
+
+                </select>
             </div>
             <div class="col-sm-8">
                 @{ViewData["current"] = ViewBag.keyword; }
@@ -352,17 +354,12 @@
             </div>
         </div>
     </div>
-    @*@if (TempData["Msg"] != null)
-        {
-            <div class="alert alert-@TempData["MsgType"]">
-                @TempData["Msg"]
-            </div>
-        }*@
 </form>
+<!--#endregion search-->
+<!--table set up-->
 <table id="jsWoundsTable" class="table table-bordered table-condensed table-hover table-striped display compact">
     <thead>
         <tr>
-
             <th scope="col">Id</th>
             <th scope="col">Name</th>
             <th scope="col">Stage</th>
@@ -370,46 +367,40 @@
             <th scope="col">Category</th>
             <th scope="col">Location</th>
             <th scope="col">Wound Image</th>
-
             <th scope="col">Tissue</th>
             <th scope="col">Version</th>
             <th scope="col">Details</th>
-
             <th scope="col">Username</th>
             <th scope="col">Edit / Delete</th>
             <th scope="col">Mass Delete</th>
-            <
         </tr>
     </thead>
     <tbody>
         @foreach (WoundRecord w in Model)
         {
-        <tr scope="row">
+            <tr scope="row">
+                <td>@w.woundid</td>
+                <td>@w.woundname</td>
+                <td>@w.woundstage</td>
+                <td>@w.woundremarks</td>
+                <td>@w.woundcategoryname</td>
+                <td>@w.woundlocationname</td>
+                <td><img src="~/photos/@w.imagefile"></td>
+                <td>@w.tissuename</td>
+                <td>@w.versionname</td>
+                <td><a asp-controller="Wound" asp-action="Details" asp-route-id="@w.woundid">Details</a></td>
+                <td>@w.username</td>
+                @if (User.IsInRole("Admin") || User.IsInRole("Annotator"))
+                {
+                    <td>
+                        <a asp-controller="Wound" asp-action="Update" asp-route-id="@w.woundid">Edit</a> |
+                        <a asp-controller="Wound" asp-action="Delete" asp-route-id="@w.woundid"
+                           onclick="return confirm('Delete Wound [@w.woundname] ?')">Delete</a>
+                    </td>
+                    <td><input type="checkbox" name="WRMass_delete" id="WRMass_delete" value="@w.woundid" /></td>
 
-            <td>@w.woundid</td>
-            <td>@w.woundname</td>
-            <td>@w.woundstage</td>
-            <td>@w.woundremarks</td>
-            <td>@w.woundcategoryname</td>
-            <td>@w.woundlocationname</td>
-            <td><img src="~/photos/@w.imagefile"></td>
-
-            <td>@w.tissuename</td>
-            <td>@w.versionname</td>
-            <td><a asp-controller="Wound" asp-action="Details" asp-route-id="@w.woundid">Details</a></td>
-
-            <td>@w.username</td>
-
-
-            <td>
-                <a asp-controller="Wound" asp-action="Update" asp-route-id="@w.woundid">Edit</a> |
-                <a asp-controller="Wound" asp-action="Delete" asp-route-id="@w.woundid"
-                   onclick="return confirm('Delete Wound [@w.woundname] ?')">Delete</a>
-            </td>
-            <td><input type="checkbox" name="WRMass_delete" id="WRMass_delete" value="@w.woundid" /></td>
-
-
-        </tr>
-}
+                }
+            </tr>
+        }
     </tbody>
 </table>

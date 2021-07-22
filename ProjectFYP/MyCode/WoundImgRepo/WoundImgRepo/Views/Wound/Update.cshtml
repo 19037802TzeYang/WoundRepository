@@ -2,16 +2,11 @@
 <form asp-controller="Wound" asp-action="Update" method="post" enctype="multipart/form-data">
     <div class="row">
         <div class="col-sm-4">
-            <h2 class="mt-4">Edit Wound</h2><br>
+            <h2>Edit Wound</h2><br>
         </div>
     </div>
 
     <div class="form-group row">
-        <div class="col-sm-4 mr-5">
-            <div class="border">
-                <img src="/photos/@Model.image.img_file" class="img-fluid" alt="Responsive image" style="width:100%; height:auto;" />
-            </div>
-        </div>
         <div class="col-sm-4">
             <input asp-for="wound.wound_id" hidden />
             <div class="mb-2">
@@ -54,6 +49,11 @@
             </div>
             <div class="mb-2">
                 <input class="btn btn-primary" type="submit" value="Update">
+            </div>
+        </div>
+        <div class="col-sm-4 mt-4 mr-5">
+            <div class="border">
+                <img src="/photos/@Model.image.img_file" class="img-fluid" alt="Responsive image" style="width:100%; height:auto;" />
             </div>
         </div>
     </div>

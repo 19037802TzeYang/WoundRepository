@@ -541,11 +541,11 @@ namespace WoundImgRepo.Controllers
                     var getWound = DBUtl.GetList<Wound>($"SELECT * FROM wound WHERE wound_id={wr.woundid}")[0];
                     //wound table 
                     string wSql = @"INSERT INTO wound(name, wound_stage, remarks, 
-                                                      wound_category_id, wound_location_id, tissue_id, version_id, image_id)
-                                    VALUES('{0}','{1}','{2}',{3},{4},{5},{6},{7})";
+                                                      wound_category_id, wound_location_id, tissue_id, version_id, image_id, user_id)
+                                    VALUES('{0}','{1}','{2}',{3},{4},{5},{6},{7},{8})";
                     int wRowsAffected = DBUtl.ExecSQL(wSql, getWound.name, getWound.wound_stage, getWound.remarks,
                                                             getWound.wound_category_id, getWound.wound_location_id, getWound.tissue_id, 
-                                                            version.version_id, getWound.image_id);
+                                                            version.version_id, getWound.image_id, userDetail.user_id);
                     wound = DBUtl.GetList<Wound>("SELECT * FROM wound ORDER BY wound_id DESC")[0];
                 }
                 //image table
