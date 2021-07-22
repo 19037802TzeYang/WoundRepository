@@ -707,5 +707,88 @@ namespace WoundImgRepo.Controllers
             _env = environment;
         }
         #endregion
+        
+         #region Zoom()
+        public IActionResult Zoom(int id)
+        {
+            #region checkuserrole
+            int checktheuserrole = 0;
+            if (User.IsInRole("Admin"))
+            {
+                checktheuserrole = 1;
+            }
+            else if (User.IsInRole("Doctor"))
+            {
+                checktheuserrole = 2;
+            }
+            else if (User.IsInRole("Annotator"))
+            {
+                checktheuserrole = 3;
+            }
+            if (checktheuserrole == 0)
+            {
+                return View("~/Views/Account/Forbidden.cshtml");
+            }
+            #endregion
+
+            var wound = DBUtl.GetList<Wound>($"SELECT * FROM wound WHERE wound_id={id}")[0];
+            string selectWoundSql = @"SELECT w.wound_id as woundid, w.name as woundname, w.wound_stage as woundstage, w.remarks as woundremarks, 
+                                      wc.name as woundcategoryname, wl.name as woundlocationname, t.name as tissuename, 
+                                      v.name as versionname, v.version_id as versionid, i.img_file as imagefile, i.image_id as imageid
+                                      FROM wound w
+                                      INNER JOIN image i ON i.image_id = w.image_id
+                                      INNER JOIN wound_category wc ON wc.wound_category_id = w.wound_category_id
+                                      INNER JOIN wound_location wl ON wl.wound_location_id = w.wound_location_id
+                                      INNER JOIN tissue t ON t.tissue_id = w.tissue_id
+                                      INNER JOIN version v ON v.version_id = w.version_id
+                                      WHERE w.name='{0}'";
+            //retrieve all wound record
+            List<WoundRecord> recordFound = DBUtl.GetList<WoundRecord>(selectWoundSql, wound.name);
+            //create new list of WoundRecord
+            var woundRecordList = new List<WoundRecord>();
+            if (recordFound.Count > 0)
+            {
+                //check if any of the wound record that has been found has the same version name in the list
+                foreach (var woundRecord in recordFound)
+                {
+                    string selectAnnotationSql = @"SELECT i.img_file as annotationimagefile, im.img_file as maskimagefile, annotation_id as annotationid
+                                                   FROM annotation an
+                                                   INNER JOIN image i ON an.annotation_image_id = i.image_id
+                                                   INNER JOIN image im ON an.mask_image_id = im.image_id
+                                                   INNER JOIN wound w ON an.wound_id = w.wound_id
+                                                   WHERE w.wound_id={0} AND w.version_id={1}";
+                    List<AnnotationMaskImage> annotationMaskImageList = DBUtl.GetList<AnnotationMaskImage>(selectAnnotationSql, woundRecord.woundid, woundRecord.versionid);
+
+                    if (woundRecordList.Any(x => x.versionname.Equals(woundRecord.versionname, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        //get the wound record that has the same version name and add in the additional annotation/mask image
+                        var sameVersionNameWR = woundRecordList.FirstOrDefault(x => x.versionname.Equals(woundRecord.versionname, StringComparison.OrdinalIgnoreCase));
+                        sameVersionNameWR.annotationMaskImage.AddRange(annotationMaskImageList);
+                    }
+                    else
+                    {
+                        woundRecord.annotationMaskImage = new List<AnnotationMaskImage>();
+                        woundRecord.annotationMaskImage.AddRange(annotationMaskImageList);
+                        woundRecordList.Add(woundRecord);
+                    }
+                }
+                //set version data dropdown list
+                SetVersionViewData();
+                //assign value to properties and pass to view
+                var woundDetailsViewModel = new WoundDetailsViewModel()
+                {
+                    woundRecordList = woundRecordList,
+                    woundRecord = recordFound[0]
+                };
+                return View(woundDetailsViewModel);
+            }
+            else
+            {
+                TempData["Msg"] = "Wound record does not exist";
+                TempData["MsgType"] = "warning";
+                return RedirectToAction("Index");
+            }
+        }
+        #endregion
     }
 }
