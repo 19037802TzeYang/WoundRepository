@@ -196,6 +196,25 @@ namespace WoundImgRepo.Controllers
         #region TheWounds()
         public IActionResult TheWounds()
         {
+            #region checkuserrole
+            int checktheuserrole = 0;
+            if (User.IsInRole("Admin"))
+            {
+                checktheuserrole = 1;
+            }
+            else if (User.IsInRole("Doctor"))
+            {
+                checktheuserrole = 2;
+            }
+            else if (User.IsInRole("Annotator"))
+            {
+                checktheuserrole = 3;
+            }
+            if (checktheuserrole == 0)
+            {
+                return View("~/Views/Account/Forbidden.cshtml");
+            }
+            #endregion
             List<WoundRecord> list = DBUtl.GetList<WoundRecord>(@"SELECT w.wound_id as woundid, w.name as woundname, w.wound_stage as woundstage, w.remarks as woundremarks, 
              wc.name as woundcategoryname, wl.name as woundlocationname, t.name as tissuename,
              v.name as versionname, i.img_file as imagefile, i.image_id as imageid, u.username

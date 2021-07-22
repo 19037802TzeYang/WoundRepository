@@ -127,7 +127,7 @@ namespace WoundImgRepo.Controllers
                 
                 System.Diagnostics.Debug.WriteLine("login success!");
                 current_user = user.Username;
-                return RedirectToAction("Index", "Wound");
+                return RedirectToAction("TheWounds", "Wound");
             }
         }
 
@@ -136,6 +136,8 @@ namespace WoundImgRepo.Controllers
         {
             return View();
         }
+
+
 
         private bool AuthenticateUser(string usname, string pw,
 
