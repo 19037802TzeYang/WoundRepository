@@ -21,6 +21,7 @@
                     <h5 class="card-title">@row.woundname</h5>
                     <p class="card-text">@row.woundlocationname</p>
                     <a class="btn btn-primary btn-sm" asp-controller="Wound" asp-action="Details" asp-route-id="@row.woundid">Details</a>
+                    <a class="btn btn-primary btn-sm" asp-controller="Wound" asp-action="ZoomImage" asp-route-id="@row.woundid">Zoom Image</a>
                 </div>
             </div>
         </div>
