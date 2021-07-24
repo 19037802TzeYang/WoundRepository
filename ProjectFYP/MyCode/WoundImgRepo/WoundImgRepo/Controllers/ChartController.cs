@@ -82,9 +82,9 @@ namespace WoundImgRepo.Controllers
             {
                 version[i] = 0;
             }
-            foreach (WVersion wversion in list)
+            foreach (WoundRecord wversion in wrList)
             {
-                version[calculatePosition(wversion.version_id)]++;
+                version[calculatePosition(wversion.versionid)]++;
                 /*
                 if (wversion.version_id == 1) version[0]++;
                 else if (wversion.version_id == 2) version[1]++;
@@ -230,6 +230,13 @@ namespace WoundImgRepo.Controllers
             else if (role.Equals("Annotator")) return 1;
             else return 2;
 
+        }
+        private int findVersion(string version)
+        {
+            if (version.Equals("Version 1.16")) return 0;
+            else if (version.Equals("Version 1.17")) return 1;
+            else if (version.Equals("Version 1.18")) return 2;
+            else return 3;
         }
     }
 }
