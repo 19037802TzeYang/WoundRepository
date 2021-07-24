@@ -172,27 +172,6 @@ namespace WoundImgRepo.Controllers
         }
         #endregion
 
-        #region Details2()
-        public IActionResult Details2(int id)
-        {
-            string sql =
-                @"SELECT * FROM wound";
-
-            List<WoundRecord> woundRecords = DBUtl.GetList<WoundRecord>(sql, id);
-            if (woundRecords.Count == 1)
-            {
-                WoundRecord record = woundRecords[0];
-                return View("Details2", record);
-            }
-            else
-            {
-                TempData["Message"] = "Wound record does not exist";
-                TempData["MsgType"] = "warning";
-                return RedirectToAction("Index");
-            }
-        }
-        #endregion
-
         #region TheWounds()
         public IActionResult TheWounds()
         {
@@ -215,17 +194,37 @@ namespace WoundImgRepo.Controllers
                 return View("~/Views/Account/Forbidden.cshtml");
             }
             #endregion
+
             List<WoundRecord> list = DBUtl.GetList<WoundRecord>(@"SELECT w.wound_id as woundid, w.name as woundname, w.wound_stage as woundstage, w.remarks as woundremarks, 
-             wc.name as woundcategoryname, wl.name as woundlocationname, t.name as tissuename,
-             v.name as versionname, i.img_file as imagefile, i.image_id as imageid, u.username
-             FROM wound w
-             INNER JOIN image i ON i.image_id = w.image_id
-             INNER JOIN wound_category wc ON wc.wound_category_id = w.wound_category_id
-             INNER JOIN wound_location wl ON wl.wound_location_id = w.wound_location_id
-             INNER JOIN tissue t ON t.tissue_id = w.tissue_id
-             INNER JOIN version v ON v.version_id = w.version_id
-             INNER JOIN useracc u ON u.user_id = w.user_id");
+                                                                  wc.name as woundcategoryname, wl.name as woundlocationname, t.name as tissuename,
+                                                                  v.name as versionname, i.img_file as imagefile, i.image_id as imageid, u.username
+                                                                  FROM wound w
+                                                                  INNER JOIN image i ON i.image_id = w.image_id
+                                                                  INNER JOIN wound_category wc ON wc.wound_category_id = w.wound_category_id
+                                                                  INNER JOIN wound_location wl ON wl.wound_location_id = w.wound_location_id
+                                                                  INNER JOIN tissue t ON t.tissue_id = w.tissue_id
+                                                                  INNER JOIN version v ON v.version_id = w.version_id
+                                                                  INNER JOIN useracc u ON u.user_id = w.user_id");
             return View(list);
+        }
+        #endregion
+
+        #region ZoomImage()
+        public IActionResult ZoomImage(int id)
+        {
+            var wound = DBUtl.GetList<Wound>($"SELECT * FROM wound WHERE wound_id={id}")[0];
+            string selectWoundSql = @"SELECT w.wound_id as woundid, w.name as woundname, w.wound_stage as woundstage, w.remarks as woundremarks, 
+                                      wc.name as woundcategoryname, wl.name as woundlocationname, t.name as tissuename, 
+                                      v.name as versionname, v.version_id as versionid, i.img_file as imagefile, i.image_id as imageid
+                                      FROM wound w
+                                      INNER JOIN image i ON i.image_id = w.image_id
+                                      INNER JOIN wound_category wc ON wc.wound_category_id = w.wound_category_id
+                                      INNER JOIN wound_location wl ON wl.wound_location_id = w.wound_location_id
+                                      INNER JOIN tissue t ON t.tissue_id = w.tissue_id
+                                      INNER JOIN version v ON v.version_id = w.version_id
+                                      WHERE w.name='{0}'";
+            List<WoundRecord> recordFound = DBUtl.GetList<WoundRecord>(selectWoundSql, wound.name);
+            return View(recordFound);
         }
         #endregion
 
@@ -541,11 +540,11 @@ namespace WoundImgRepo.Controllers
                     var getWound = DBUtl.GetList<Wound>($"SELECT * FROM wound WHERE wound_id={wr.woundid}")[0];
                     //wound table 
                     string wSql = @"INSERT INTO wound(name, wound_stage, remarks, 
-                                                      wound_category_id, wound_location_id, tissue_id, version_id, image_id)
-                                    VALUES('{0}','{1}','{2}',{3},{4},{5},{6},{7})";
+                                                      wound_category_id, wound_location_id, tissue_id, version_id, image_id, user_id)
+                                    VALUES('{0}','{1}','{2}',{3},{4},{5},{6},{7},{8})";
                     int wRowsAffected = DBUtl.ExecSQL(wSql, getWound.name, getWound.wound_stage, getWound.remarks,
                                                             getWound.wound_category_id, getWound.wound_location_id, getWound.tissue_id, 
-                                                            version.version_id, getWound.image_id);
+                                                            version.version_id, getWound.image_id, userDetail.user_id);
                     wound = DBUtl.GetList<Wound>("SELECT * FROM wound ORDER BY wound_id DESC")[0];
                 }
                 //image table
@@ -725,8 +724,6 @@ namespace WoundImgRepo.Controllers
         {
             _env = environment;
         }
-        #endregion
-        
-       
+        #endregion  
     }
 }

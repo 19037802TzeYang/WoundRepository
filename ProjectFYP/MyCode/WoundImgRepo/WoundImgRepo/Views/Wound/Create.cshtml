@@ -1,6 +1,6 @@
 ﻿@model CombineClass
 <form asp-controller="Wound" asp-action="Create" method="post" enctype="multipart/form-data">
-    <div class="form-group row mt-4 mb-4">
+    <div class="form-group row mb-4">
         <div class="col-sm-6">
             <h2>Create Wound</h2>
         </div>
@@ -9,12 +9,12 @@
     <div class="form-group row">
         <div class="col-sm-4 mr-5">
             <div class="mb-2">
-                <label class="title" asp-for="wound.name">Wound Name: </label>
+                <label class="title" asp-for="wound.name">Name: </label>
                 <input class="form-control form-control-sm" asp-for="wound.name">
                 <span class="text-danger" asp-validation-for="wound.name"></span>
             </div>
             <div class="mb-2">
-                <label class="title" asp-for="wound.wound_stage">Wound Stage: </label>
+                <label class="title" asp-for="wound.wound_stage">Stage: </label>
                 <input class="form-control form-control-sm" asp-for="wound.wound_stage">
                 <span class="text-danger" asp-validation-for="wound.wound_stage"></span>
             </div>
@@ -24,26 +24,26 @@
                 <span class="text-danger" asp-validation-for="wound.remarks"></span>
             </div>
             <div class="mb-2">
-                <label class="title" asp-for="woundc.name">Wound Category: </label>
+                <label class="title" asp-for="woundc.name">Category: </label>
                 <select class="form-control form-control-sm" asp-items="@((SelectList)ViewData["woundCategory"])" asp-for="woundc.name">
                     <option value="">-SELECT-</option>
                 </select>
                 <span class="text-danger" asp-validation-for="woundc.name"></span>
             </div>
             <div class="mb-2">
-                <label class="title" asp-for="woundl.name">Wound Location: </label>
+                <label class="title" asp-for="woundl.name">Location: </label>
                 <input class="form-control form-control-sm" asp-for="woundl.name">
                 <span class="text-danger" asp-validation-for="woundl.name"></span>
             </div>
             <div class="mb-2">
-                <label class="title" asp-for="tissue.name">Wound Tissue: </label>
+                <label class="title" asp-for="tissue.name">Tissue: </label>
                 <select class="form-control form-control-sm" asp-items="@((SelectList)ViewData["tissue"])" asp-for="tissue.name">
                     <option value="">-SELECT-</option>
                 </select>
                 <span class="text-danger" asp-validation-for="tissue.name"></span>
             </div>
             <div class="mb-2">
-                <label class="title" asp-for="woundv.name">Image Version: </label>
+                <label class="title" asp-for="woundv.name">Version: </label>
                 <select class="form-control form-control-sm" asp-items="@((SelectList)ViewData["version"])" asp-for="woundv.name">
                     <option value="">-SELECT-</option>
                 </select>

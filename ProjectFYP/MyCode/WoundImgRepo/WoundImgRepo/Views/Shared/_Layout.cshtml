@@ -26,6 +26,12 @@
     <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
     <link href="~/css/SideBar.css" rel="stylesheet" />
     @RenderSection("MoreScripts", required: false)
+
+    <style>
+        .page-wrapper .page-content > div {
+            padding: 50px 60px;
+        }
+    </style>
 </head>
 <body>
 
@@ -97,12 +103,15 @@
                                 <div class="sidebar-submenu">
                                     <ul>
                                         <li>
-                                            <a href="~/Wound/TheWounds">View Wound #1</a>
+                                            <a href="~/Wound/TheWounds">View Wound</a>
                                         </li>
                                         @if (User.IsInRole("Admin") || User.IsInRole("Annotator"))
                                         {
                                             <li>
-                                                <a href="~/Wound/Index">View Wound #2</a>
+                                                <a href="~/Wound/Index">Wound Repository</a>
+                                            </li>
+                                            <li>
+                                                <a href="~/Wound/Create">Create Wound</a>
                                             </li>
                                             <li>
                                                 <a href="~/Wound/Create">Create Wound</a>
@@ -169,7 +178,7 @@
                                             <a href="~/Admin/Version">Version</a>
                                         </li>
                                         <li>
-                                            <a href="~/Admin/WoundCategory">Wound Category</a>
+                                            <a href="~/Admin/WoundCategory">Category</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -201,18 +210,10 @@
                 <footer class="text-center">
                     <div class="mb-2">
                         <small>
-                            � 2020 made with <i class="fa fa-heart" style="color:red"></i> by - <a target="_blank" rel="noopener noreferrer" href="https://azouaoui.netlify.com">
-                                Mohamed Azouaoui
+                            2020 made with <i class="fa fa-heart" style="color:red"></i> by - <a target="_blank" rel="noopener noreferrer" href="https://azouaoui.netlify.com">
+                                Grabiel
                             </a>
                         </small>
-                    </div>
-                    <div>
-                        <a href="https://github.com/azouaoui-med" target="_blank">
-                            <img alt="GitHub followers" src="https://img.shields.io/github/followers/azouaoui-med?label=github&style=social" />
-                        </a>
-                        <a href="https://twitter.com/azouaoui_med" target="_blank">
-                            <img alt="Twitter Follow" src="https://img.shields.io/twitter/follow/azouaoui_med?label=twitter&style=social" />
-                        </a>
                     </div>
                 </footer>
             </div>

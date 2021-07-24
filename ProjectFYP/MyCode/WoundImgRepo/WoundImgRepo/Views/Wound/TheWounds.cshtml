@@ -7,7 +7,7 @@
     </div>
 }
 
-<h2> View Wound </h2>
+<h2 class="mb-4">View Wound</h2>
 
 <div class="row">
     @foreach (WoundRecord row in Model)
@@ -15,33 +15,13 @@
         <div class="col-sm-4">
             <div class="card">
                 <a asp-controller="Wound" asp-action="Details2" asp-route-id="@row.woundid">
-                    <img src="/photos/@row.imagefile" class="card-img-top" alt="Responsive image" width="180" height="230" />
+                    <img src="/photos/@row.imagefile" class="card-img-top img-fluid" alt="Responsive image" />
                 </a>
                 <div class="card-body">
-                    <div class="card-title">
-                        @row.woundname
-                    </div>
-                    <div>
-                        <small>
-                            @row.woundlocationname    
-
-                        </small>
-                        <style>
-                            .btn-primary {
-                                border-color: #31353D;
-                                background-color: #31353D;
-                                color: #FFF;
-                            }
-
-                                .btn-primary:hover {
-                                    border-color: #31353D;
-                                    background-color: #31353D;
-                                }
-                        </style>
-                        <p></p>
-                        <a class="btn btn-primary" style="width: 80px" asp-controller="Wound" asp-action="Details" asp-route-id="@row.woundid"><small>Details</small></a>
-                       
-                    </div>
+                    <h5 class="card-title">@row.woundname</h5>
+                    <p class="card-text">@row.woundlocationname</p>
+                    <a class="btn btn-primary btn-sm" asp-controller="Wound" asp-action="Details" asp-route-id="@row.woundid">Details</a>
+                    <a class="btn btn-primary btn-sm" asp-controller="Wound" asp-action="ZoomImage" asp-route-id="@row.woundid">Zoom Image</a>
                 </div>
             </div>
         </div>

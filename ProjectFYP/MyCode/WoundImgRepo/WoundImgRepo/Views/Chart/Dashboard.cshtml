@@ -28,7 +28,18 @@
                 legend: {
                     display: @ViewData["ShowLegend"]
                },
-
+                    scales: {
+                  yAxes: [{
+                     display: @(ViewData["Chart"].ToString().Equals("pie")?"false":"true"),
+                     gridLines: {
+                        display: false,
+                     },
+                     ticks: {
+                        beginAtZero: true,
+                        stepSize: 1
+                     }
+                  }]
+               },
                title: {
                   display: true,
                   text: '@ViewData["Title"]'
@@ -81,6 +92,18 @@
                 legend: {
                     display: @ViewData["UserShowLegend"]
                },
+                scales: {
+                  yAxes: [{
+                     display: @(ViewData["UserChart"].ToString().Equals("pie")?"false":"true"),
+                     gridLines: {
+                        display: false,
+                     },
+                     ticks: {
+                        beginAtZero: true,
+                        stepSize: 1
+                     }
+                  }]
+               },
 
                title: {
                   display: true,
@@ -111,6 +134,44 @@
                title: {
                   display: true,
                   text: '@ViewData["VersionTitle"]'
+               }
+            }
+         });
+        });
+
+         $(document).ready(function () {
+         new Chart(document.getElementById("tissuechart"), {
+            type: '@ViewData["TissueChart"]',
+            data: {
+               labels: @Json.Serialize(ViewData["TissueLabels"]),
+               datasets: [{
+                  label: '@ViewData["TissueLegend"]',
+                  data: @Json.Serialize(ViewData["TissueData"]),
+                  backgroundColor: @Json.Serialize(ViewData["TissueColors"]),
+                  fill: false
+               }]
+            },
+             options: {
+               responsive: false,
+               scaleBeginAtZero: true,
+                legend: {
+                    display: @ViewData["TissueLegend"]
+               },
+                    scales: {
+                  yAxes: [{
+                     display: @(ViewData["TissueChart"].ToString().Equals("pie")?"false":"true"),
+                     gridLines: {
+                        display: false,
+                     },
+                     ticks: {
+                        beginAtZero: true,
+                        stepSize: 1
+                     }
+                  }]
+               },
+               title: {
+                  display: true,
+                  text: '@ViewData["TissueTitle"]'
                }
             }
          });
@@ -156,7 +217,7 @@
     </div>
     <div class="container-fluid">
         <div class="row">
-            <h1>Welcome to the dashboard</h1>
+            <h2 class="mb-4">Welcome to the dashboard</h2>
         </div>
         <div class="row">
             <div class="col-xl-3 col-md-6 mb-4">
@@ -224,6 +285,7 @@
                 <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Category">Wounds by category</a></li>
                 <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Users">Display Users</a></li>
                 <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Versions">Versions</a></li>
+                <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Tissues">Wound by Tissues</a></li>
             </ul>
         </div>
         
@@ -243,6 +305,10 @@
             <div id="Versions" class="tab-pane fade">
                 <h2>Display @ViewData["VersionTitle"]</h2>
                 <canvas id="VersionChart" width="600" height="300"></canvas>
+            </div>
+            <div id="Tissues" class="tab-pane fade">
+                <h2>Wound by @ViewData["TissueTitle"]</h2>
+                <canvas id="tissuechart" width="600" height="300"></canvas>
             </div>
         </div>
 
