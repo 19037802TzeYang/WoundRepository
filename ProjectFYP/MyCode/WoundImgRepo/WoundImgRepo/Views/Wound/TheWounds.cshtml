@@ -15,7 +15,7 @@
         <div class="col-sm-4">
             <div class="card">
                 <a asp-controller="Wound" asp-action="Details2" asp-route-id="@row.woundid">
-                    <img src="/photos/@row.imagefile" class="card-img-top" alt="Responsive image" width="200" height="230" />
+                    <img src="/photos/@row.imagefile" class="card-img-top" alt="Responsive image" width="180" height="230" />
                 </a>
                 <div class="card-body">
                     <div class="card-title">
@@ -28,18 +28,18 @@
                         </small>
                         <style>
                             .btn-primary {
-                                border-color: #000000;
-                                background-color: #656565;
+                                border-color: #31353D;
+                                background-color: #31353D;
                                 color: #FFF;
                             }
 
                                 .btn-primary:hover {
-                                    border-color: #000000;
-                                    background-color: #808080;
+                                    border-color: #31353D;
+                                    background-color: #31353D;
                                 }
                         </style>
                         <p></p>
-                        <a class="btn btn-primary" style="width: 150px" asp-controller="Wound" asp-action="Details" asp-route-id="@row.woundid"><small>Details</small></a>
+                        <a class="btn btn-primary" style="width: 80px" asp-controller="Wound" asp-action="Details" asp-route-id="@row.woundid"><small>Details</small></a>
                        
                     </div>
                 </div>

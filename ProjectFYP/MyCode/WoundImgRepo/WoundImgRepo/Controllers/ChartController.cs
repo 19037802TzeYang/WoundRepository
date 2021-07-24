@@ -27,7 +27,7 @@ namespace WoundImgRepo.Controllers
                                       FROM wound w
                                       
                                       INNER JOIN wound_location wl ON wl.wound_location_id = w.wound_location_id
-                                    GROUP BY wl.name HAVING Count(wl.name) >=1");
+                                    GROUP BY wl.name HAVING COUNT(wl.name) >=1");
             
             ViewData["Maximum"] = list[0].woundlocationname;
             List<WoundRecord> Users = DBUtl.GetList<WoundRecord>(@"SELECT TOP 1  u.username
@@ -137,9 +137,10 @@ namespace WoundImgRepo.Controllers
             if (x == 1)
             {
                 ViewData["Legend"] = "Wounds";
-                string[] knownColors = new string[3] { "grey", "brown", "black" };
+                string[] knownColors = new string[20] { "grey", "brown", "black","yellow","green","red","blue","purple","chocolate","peach","ultramarine","forestgreen","gold","ocher","bisque","crimson","aqua","redviolet","amethyst","eggplant"};
                 string[] colors = new string[wounds.Length];
                 string[] labels = new string[wounds.Length];
+                
                 for (int i = 0; i < colors.Length; i++)
                 {
 
@@ -167,10 +168,14 @@ namespace WoundImgRepo.Controllers
 
         private void WoundCategoryRecords(int x)
         {
-            int[] categories = new int[] { 0, 0, 0 };
+            
             List<Wound> list = DBUtl.GetList<Wound>("SELECT * FROM wound");
             List<WoundCategory> categoryList = DBUtl.GetList<WoundCategory>("SELECT * FROM wound_category");
-
+            int[] categories = new int[categoryList.Count];
+            for (int i = 0; i < categoryList.Count; i++)
+            {
+                categories[i] =0;
+            }
             foreach (Wound w in list)
             {
                 categories[calculatePosition(w.wound_category_id)]++;
@@ -179,7 +184,8 @@ namespace WoundImgRepo.Controllers
             if (x == 1)
             {
                 ViewData["CatLegend"] = "Wounds";
-                string[] knownColors = new string[3] { "grey", "brown", "black" };
+                string[] knownColors = new string[20] { "grey", "brown", "black", "yellow", "green", "red", "blue", "purple", "chocolate", "peach", "ultramarine", "forestgreen", "gold", "ocher", "bisque", "crimson", "aqua", "redviolet", "amethyst", "eggplant" };
+
                 string[] colors = new string[categories.Length];
                 string[] labels = new string[categories.Length];
                 for (int i = 0; i < colors.Length; i++)
