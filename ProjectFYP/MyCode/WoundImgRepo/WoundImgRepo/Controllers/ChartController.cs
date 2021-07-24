@@ -54,6 +54,10 @@ namespace WoundImgRepo.Controllers
             ViewData["UserChart"] = "bar";
             ViewData["UserTitle"] = "User Roles";
             ViewData["UserShowLegend"] = "false";
+            locateTissues(1);
+            ViewData["TissueChart"] = "bar";
+            ViewData["TissueTitle"] = "Tissues";
+            ViewData["TissueShowLegend"] = "false";
             return View();
         }
         public IActionResult WoundsLocationRecords()
@@ -217,7 +221,40 @@ namespace WoundImgRepo.Controllers
                 ViewData["UserData"] = users;
             }
         }
-        
+
+        private void locateTissues(int x)
+        {
+            List<Tissue> tissues = DBUtl.GetList<Tissue>("SELECT * FROM tissue");
+            List<Wound> wounds = DBUtl.GetList<Wound>("SELECT * FROM wound");
+            int[] tissuenames = new int[tissues.Count];
+            string[] knowncolors = new string[20] { "red", "blue", "yellow", "green", "orange", "black", "purple", "brown", "violet", "crimson", "grey", "maroon", "olive", "chocolate", "aquamarine", "Turquoise", "#437C17", "#ffdf00", "#614051", "#F70D1A" };
+
+            for (int i = 0; i < tissues.Count; i++)
+            {
+                tissuenames[i] = 0;
+            }
+            foreach (Wound w in wounds)
+            {
+                tissuenames[findTissue(w.tissue_id)]++;
+            }
+            if (x == 1)
+            {
+                string[] colors =new string[tissuenames.Length];
+                string[] labels = new string[tissuenames.Length];
+                for (int i = 0; i < colors.Length; i++)
+                {
+                    colors[i] = knowncolors[i];
+                }
+                for (int i = 0; i < tissues.Count; i++)
+                {
+                    labels[i] = tissues[i].name;
+                }
+                
+                ViewData["TissueColors"]=colors;
+                ViewData["TissueLabels"]=labels;
+                ViewData["TissueData"]=tissuenames;
+            }
+        }
         private int calculatePosition(int x)
         {
             if (x == 1) return 0;
@@ -231,11 +268,11 @@ namespace WoundImgRepo.Controllers
             else return 2;
 
         }
-        private int findVersion(string version)
+        private int findTissue(int id)
         {
-            if (version.Equals("Version 1.16")) return 0;
-            else if (version.Equals("Version 1.17")) return 1;
-            else if (version.Equals("Version 1.18")) return 2;
+            if (id == 1) return 0;
+            else if (id == 2) return 1;
+            else if (id == 3) return 2;
             else return 3;
         }
     }
