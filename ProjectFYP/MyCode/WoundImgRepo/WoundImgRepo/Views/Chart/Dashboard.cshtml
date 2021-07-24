@@ -28,7 +28,18 @@
                 legend: {
                     display: @ViewData["ShowLegend"]
                },
-
+                    scales: {
+                  yAxes: [{
+                     display: @(ViewData["Chart"].ToString().Equals("pie")?"false":"true"),
+                     gridLines: {
+                        display: false,
+                     },
+                     ticks: {
+                        beginAtZero: true,
+                        stepSize: 1
+                     }
+                  }]
+               },
                title: {
                   display: true,
                   text: '@ViewData["Title"]'
@@ -80,6 +91,18 @@
                scaleBeginAtZero: true,
                 legend: {
                     display: @ViewData["UserShowLegend"]
+               },
+                scales: {
+                  yAxes: [{
+                     display: @(ViewData["UserChart"].ToString().Equals("pie")?"false":"true"),
+                     gridLines: {
+                        display: false,
+                     },
+                     ticks: {
+                        beginAtZero: true,
+                        stepSize: 1
+                     }
+                  }]
                },
 
                title: {

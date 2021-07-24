@@ -52,7 +52,7 @@ namespace WoundImgRepo.Controllers
             ViewData["CatShowLegend"] = "true";
             DisplayUsers(1);
             ViewData["UserChart"] = "bar";
-            ViewData["UserTitle"] = "Category";
+            ViewData["UserTitle"] = "User Roles";
             ViewData["UserShowLegend"] = "false";
             return View();
         }
