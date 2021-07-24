@@ -256,7 +256,7 @@ namespace WoundImgRepo.Controllers
                 {
                     labels[i] = tissues[i].name;
                 }
-                ViewData["TissueLegend"] = "Tissue";
+                ViewData["TissueLegend"] = "Tissues";
                 ViewData["TissueColors"]=colors;
                 ViewData["TissueLabels"]=labels;
                 ViewData["TissueData"]=tissuenames;

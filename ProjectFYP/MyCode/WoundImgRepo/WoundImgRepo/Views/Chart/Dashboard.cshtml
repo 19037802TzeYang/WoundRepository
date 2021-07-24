@@ -130,7 +130,18 @@
                 legend: {
                     display: @ViewData["VersionShowLegend"]
                },
-
+                scales: {
+                  yAxes: [{
+                     display: @(ViewData["VersionChart"].ToString().Equals("pie")?"false":"true"),
+                     gridLines: {
+                        display: false,
+                     },
+                     ticks: {
+                        beginAtZero: true,
+                        stepSize: 1
+                     }
+                  }]
+               },
                title: {
                   display: true,
                   text: '@ViewData["VersionTitle"]'
@@ -157,7 +168,7 @@
                 legend: {
                     display: @ViewData["TissueLegend"]
                },
-                    scales: {
+                scales: {
                   yAxes: [{
                      display: @(ViewData["TissueChart"].ToString().Equals("pie")?"false":"true"),
                      gridLines: {
@@ -180,27 +191,7 @@
 
     
 }
-<style>
-    .sidenav {
-        height: 100%;
-        width: 160px;
-        position: fixed;
-        z-index: 1;
-        top: 0;
-        left: 0;
-        background-color: #111;
-        overflow-x: hidden;
-        padding-top: 20px;
-    }
 
-        .sidenav a {
-            padding: 6px 8px 6px 16px;
-            text-decoration: none;
-            font-size: 25px;
-            color: #818181;
-            display: block;
-        }
-</style>
 <head>
     <!-- style sheets references -->
     <link href="~/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
@@ -211,10 +202,7 @@
 
 </head>
 <body>
-    <div class="sidenav">
-        <a href="/Chart/Dashboard">Dashboard</a>
-        <a href="/Wound/Index">Main menu</a>
-    </div>
+    
     <div class="container-fluid">
         <div class="row">
             <h2 class="mb-4">Welcome to the dashboard</h2>
