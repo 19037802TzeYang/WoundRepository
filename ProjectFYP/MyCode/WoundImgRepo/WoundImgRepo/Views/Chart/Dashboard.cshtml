@@ -130,6 +130,18 @@
                 legend: {
                     display: @ViewData["VersionShowLegend"]
                },
+                scales: {
+                  yAxes: [{
+                     display: @(ViewData["VersionChart"].ToString().Equals("pie")?"false":"true"),
+                     gridLines: {
+                        display: false,
+                     },
+                     ticks: {
+                        beginAtZero: true,
+                        stepSize: 1
+                     }
+                  }]
+               },
 
                title: {
                   display: true,

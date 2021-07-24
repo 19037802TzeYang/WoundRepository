@@ -55,7 +55,7 @@ namespace WoundImgRepo.Controllers
             ViewData["UserTitle"] = "User Roles";
             ViewData["UserShowLegend"] = "false";
             locateTissues(1);
-            ViewData["TissueChart"] = "bar";
+            ViewData["TissueChart"] = "line";
             ViewData["TissueTitle"] = "Tissues";
             ViewData["TissueShowLegend"] = "false";
             return View();
@@ -239,6 +239,7 @@ namespace WoundImgRepo.Controllers
             }
             if (x == 1)
             {
+                ViewData["TissueLegend"] = "Tissues";
                 string[] colors =new string[tissuenames.Length];
                 string[] labels = new string[tissuenames.Length];
                 for (int i = 0; i < colors.Length; i++)
