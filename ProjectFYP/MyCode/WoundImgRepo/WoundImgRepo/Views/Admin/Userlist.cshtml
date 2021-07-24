@@ -44,14 +44,14 @@
         @foreach (User account in Model)
         {
         <tr>
-            <!--List normal user contents-->>
+            <!--List normal user contents-->
 
             <td> @account.user_id</td>
             <td> @account.username</td>
             <td> @account.email</td>
             <td> @account.user_role</td>
 
-            <!--show if account has logged in b4-->>
+            <!--show if account has logged in b4-->
             @if (@account.last_login.Year == 0001)
             {
                 <td>User has never logged in yet </td>
@@ -61,7 +61,7 @@
                 <td> @account.last_login</td>
             }
 
-            <!--show if account is activated or not-->>
+            <!--show if account is activated or not-->
             @if (@account.status == 1)
             {
                 <td> Activated</td>
