@@ -495,11 +495,13 @@ namespace WoundImgRepo.Controllers
                 return View("~/Views/Account/Forbidden.cshtml");
             }
             #endregion
-
-            string deletewoundandannotationSQL = "DELETE FROM annotation WHERE wound_id={0} DELETE FROM wound WHERE wound_id={0}";
-            if (DBUtl.ExecSQL(deletewoundandannotationSQL,id) == 1)
+            var getWound = DBUtl.GetList<Wound>($"SELECT * FROM wound WHERE wound_id={id}")[0];
+            string deletewoundandannotationSQL = "DELETE FROM annotation WHERE wound_id={0} DELETE FROM wound WHERE wound_id={0}";        
+            string deleteImageSql = "DELETE FROM image WHERE name='{0}'";
+            if (DBUtl.ExecSQL(deletewoundandannotationSQL, id) == 2 &&
+                DBUtl.ExecSQL(deleteImageSql, getWound.name) == 3)
             {
-                TempData["Msg"] = "Wound record deleted!";
+                TempData["Msg"] = "Wound record deleted";
                 TempData["MsgType"] = "success";
                 return RedirectToAction("Index");
             }
@@ -529,7 +531,7 @@ namespace WoundImgRepo.Controllers
                 var userDetail = DBUtl.GetList<User>("SELECT * FROM useracc WHERE username = '" + User.Identity.Name + "'")[0];
 
                 var version = DBUtl.GetList<WVersion>($"SELECT * FROM version WHERE name='{wr.versionname}'")[0];
-                var woundList = DBUtl.GetList<Wound>($"SELECT * FROM wound WHERE wound_id={wr.woundid} AND version_id={version.version_id}");
+                var woundList = DBUtl.GetList<Wound>($"SELECT * FROM wound WHERE name='{wr.woundname}' AND version_id={version.version_id}");
                 var wound = new Wound();
                 if (woundList.Any())
                 {
