@@ -742,5 +742,129 @@ namespace WoundImgRepo.Controllers
             _env = environment;
         }
         #endregion  
+        
+        #region MultiDeleteWounds()
+        [Authorize(Roles = "Admin, Annotator")]
+    
+        public IActionResult MultiDeleteWounds(IFormCollection col)
+        {
+            #region checkuserrole()
+            int checktheuserrole = 0;
+            if (User.IsInRole("Admin"))
+            {
+                checktheuserrole = 1;
+            }
+            
+            else if (User.IsInRole("Annotator"))
+            {
+                checktheuserrole = 3;
+            }
+            if (checktheuserrole == 0)
+            {
+                return View("~/Views/Account/Forbidden.cshtml");
+            }
+            #endregion
+            //----------------------------------------------------------------------------------------
+            string deletables = col["DBL"];    //fetches the list
+
+            int atfault = 0;    //make a fault counter
+
+            int checkiffirst = 0; // When setting SQL , we need this for formatting to ensure there wouldn't be an extra OR
+           
+            Regex NOT_numbers = new Regex(@"[^0-9]");    //It is a regex to check if a value isn't a number
+     
+            String[] ahreileast = deletables.Split(',');       //splits the string into an array of string
+
+            String SQLDeletables = " " ;   // used to store and reformat the Strings into usable SQL
+
+            string deletewoundandannotationSQL = "DELETE FROM annotation WHERE{0} DELETE FROM wound WHERE{0}"; // Sets the SQL
+
+            String finalSQLDelete = ""; //after string format
+
+
+            //check if user keyed in anything yet
+            if (deletables.Length == 0)
+            {
+                TempData["Msg"] = "No records selected.";
+                TempData["MsgType"] = "danger";
+
+
+
+                return RedirectToAction("Index");
+            }
+
+            //----------------------------------------------------------------------------------------
+            //check the strings one by one
+
+
+
+            foreach (var iD in ahreileast)
+            {
+                //check if this string has anything that is not a number
+                MatchCollection matchNnum = NOT_numbers.Matches(iD);
+                //if an error is encountered , skip the entire process
+                if(atfault == 1)
+                {
+                    Debug.WriteLine("error generated");
+                }
+                else { 
+                //if a non-number is found
+                if (matchNnum.Count > 0)
+                {
+                    atfault = 1;
+                   
+          
+                }
+                else
+                {
+                    if(checkiffirst == 1)
+                    {
+                        SQLDeletables += " OR wound_id = " + iD;
+
+                    }
+                    else
+                    {
+                        SQLDeletables += "wound_id = " + iD ;
+                        checkiffirst += 1;
+                    }
+                    
+                }
+                }
+
+            }
+            //----------------------------------------------------------------------------------------
+            //if there is no fault
+            if(atfault !=1)
+            {
+             //Create the string
+        
+      
+
+                if (DBUtl.ExecSQL(deletewoundandannotationSQL, SQLDeletables) == 1)
+                {
+                    TempData["Msg"] = "Wound records deleted!";
+                    TempData["MsgType"] = "success";
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    TempData["Msg"] = DBUtl.DB_Message;
+                    TempData["MsgType"] = "danger";
+                    return RedirectToAction("Index");
+                }
+            }
+            //if there is fault
+           
+                TempData["Msg"] = "unknown error occured.";
+                TempData["MsgType"] = "danger";
+
+
+            
+            return RedirectToAction("Index");
+        }
+        #endregion
+        
+        
+        
     }
 }
