@@ -130,7 +130,18 @@
                 legend: {
                     display: @ViewData["VersionShowLegend"]
                },
-
+                scales: {
+                  yAxes: [{
+                     display: @(ViewData["VersionChart"].ToString().Equals("pie")?"false":"true"),
+                     gridLines: {
+                        display: false,
+                     },
+                     ticks: {
+                        beginAtZero: true,
+                        stepSize: 1
+                     }
+                  }]
+               },
                title: {
                   display: true,
                   text: '@ViewData["VersionTitle"]'
@@ -157,7 +168,7 @@
                 legend: {
                     display: @ViewData["TissueLegend"]
                },
-                    scales: {
+                scales: {
                   yAxes: [{
                      display: @(ViewData["TissueChart"].ToString().Equals("pie")?"false":"true"),
                      gridLines: {
@@ -180,27 +191,7 @@
 
     
 }
-<style>
-    .sidenav {
-        height: 100%;
-        width: 160px;
-        position: fixed;
-        z-index: 1;
-        top: 0;
-        left: 0;
-        background-color: #111;
-        overflow-x: hidden;
-        padding-top: 20px;
-    }
 
-        .sidenav a {
-            padding: 6px 8px 6px 16px;
-            text-decoration: none;
-            font-size: 25px;
-            color: #818181;
-            display: block;
-        }
-</style>
 <head>
     <!-- style sheets references -->
     <link href="~/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
@@ -211,10 +202,7 @@
 
 </head>
 <body>
-    <div class="sidenav">
-        <a href="/Chart/Dashboard">Dashboard</a>
-        <a href="/Wound/Index">Main menu</a>
-    </div>
+    
     <div class="container-fluid">
         <div class="row">
             <h2 class="mb-4">Welcome to the dashboard</h2>
@@ -233,12 +221,14 @@
                                 </div>
                             </div>
                             <div class="col-auto">
-                                <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                                <i class="fas fa-book-medical fa-2x text-gray-300"></i>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            @if (User.IsInRole("Admin"))
+            {
             <div class="col-xl-3 col-md-6 mb-4">
                 <div class="card border-left-primary shadow h-100 py-2">
                     <div class="card-body">
@@ -252,7 +242,27 @@
                                 </div>
                             </div>
                             <div class="col-auto">
-                                <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                                <i class=" fas fa-user fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            }
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    Total Records
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                    @ViewData["TotalRecords"]
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
                             </div>
                         </div>
                     </div>
@@ -264,56 +274,103 @@
                         <div class="row no-gutters align-items-center">
                             <div class="col mr-2">
                                 <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                   Total Records
+                                    Total number of wounds containing remarks
                                 </div>
                                 <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                    @ViewData["TotalRecords"]
+                                    @ViewData["Remarks"]
                                 </div>
                             </div>
                             <div class="col-auto">
-                                <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                                <i class="fas fa-notes-medical fa-2x text-gray-300"></i>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    Frequent tissue type
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                    @ViewData["Tissue"]
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-notes-medical fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <div class=" row">
-            <ul class="nav nav-tabs">
-                <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Location">Wounds by location</a></li>
-                <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Category">Wounds by category</a></li>
-                <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Users">Display Users</a></li>
-                <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Versions">Versions</a></li>
-                <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Tissues">Wound by Tissues</a></li>
-            </ul>
-        </div>
-        
-        <div class="tab-content" style="margin-top:10px">
-            <div id="Location" class="tab-pane fade in active">
-                <h2>Wound by @ViewData["Title"]</h2>
-                <canvas id="chart" width="600" height="300"></canvas>
-            </div>
-            <div id="Category" class="tab-pane fade">
-                <h2>Wound by @ViewData["CatTitle"]</h2>
-                <canvas id="Catchart" width="600" height="300"></canvas>
-            </div>
-            <div id="Users" class="tab-pane fade">
-                <h2>Display @ViewData["UserTitle"]</h2>
-                <canvas id="UserChart" width="600" height="300"></canvas>
-            </div>
-            <div id="Versions" class="tab-pane fade">
-                <h2>Display @ViewData["VersionTitle"]</h2>
-                <canvas id="VersionChart" width="600" height="300"></canvas>
-            </div>
-            <div id="Tissues" class="tab-pane fade">
-                <h2>Wound by @ViewData["TissueTitle"]</h2>
-                <canvas id="tissuechart" width="600" height="300"></canvas>
-            </div>
-        </div>
+            <div class="col-12 col-xl-10 col-md-6 col-xl-4">
+                <div class="card">
+                    <div class="card-header">
+                <ul class="nav nav-tabs card-header-tabs">
+                    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Location">Wounds by location</a></li>
+                    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Category">Wounds by category</a></li>
+                    @if (User.IsInRole("Admin"))
+                    {
+                    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Users">Display Users</a></li>
+                    }
+                    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Versions">Versions</a></li>
+                    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Tissues">Wound by Tissues</a></li>
+                </ul>
+                    </div>
 
-        
-        
+                <div class="tab-content" style="margin-top:10px">
+                    <div id="Location" class="tab-pane fade in active">
+                        <div class="card-body">
+                        <h2 class="m-0 font-weight-bold text-primary">Wound by @ViewData["Title"]</h2>
+                            
+                        <canvas id="chart" width="600" height="300"></canvas>
+                        </div>
+                    </div>
+                    <div id="Category" class="tab-pane fade">
+                        <div class="card-body">
+                        <h2 class="m-0 font-weight-bold text-primary">Wound by @ViewData["CatTitle"]</h2>
+                            
+                        <canvas id="Catchart" width="600" height="300"></canvas>
+                            
+                        </div>
+                    </div>
+                    <div id="Users" class="tab-pane fade">
+                        <div class="card-body">
+                        <h2 class="m-0 font-weight-bold text-primary">Display @ViewData["UserTitle"]</h2>
+                            
+                        <canvas id="UserChart" width="600" height="300"></canvas>
+                                
+                        </div>
+                    </div>
+                    <div id="Versions" class="tab-pane fade">
+                        <div class="card-body">
+                        <h2 class="m-0 font-weight-bold text-primary">Display @ViewData["VersionTitle"]</h2>
+                            
+                        <canvas id="VersionChart" width="600" height="300"></canvas>
+                                
+                            </div>
+                    </div>
+                    <div id="Tissues" class="tab-pane fade">
+                        <div class="card-body">
+                        <h2 class="m-0 font-weight-bold text-primary">Wound by @ViewData["TissueTitle"]</h2>
+                            
+                        <canvas id="tissuechart" width="600" height="300"></canvas>
+                                
+                            </div>
+                    </div>
+                </div>
 
-    </div>
+
+
+            </div>
+            </div>
+        </div>
+        </div>
 </body>

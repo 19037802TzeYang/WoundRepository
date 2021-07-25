@@ -23,39 +23,63 @@ namespace WoundImgRepo.Controllers
         }
         public IActionResult Dashboard()
         {
-            List<WoundRecord> list = DBUtl.GetList<WoundRecord>(@"SELECT TOP 1 wl.name as woundlocationname
+            //List the most frequent wound location
+            List<WoundRecord> list = DBUtl.GetList<WoundRecord>(@"SELECT  wl.name as woundlocationname
                                       FROM wound w
                                       
                                       INNER JOIN wound_location wl ON wl.wound_location_id = w.wound_location_id
-                                    GROUP BY wl.name HAVING COUNT(wl.name) >=1");
+                                    GROUP BY wl.name HAVING COUNT(w.wound_location_id) >=1");
             
             ViewData["Maximum"] = list[0].woundlocationname;
+
+
+            //List the most frequent user
             List<WoundRecord> Users = DBUtl.GetList<WoundRecord>(@"SELECT TOP 1  u.username
                                       FROM wound w 
                                         INNER JOIN useracc u ON u.user_id = w.user_id 
-                                    GROUP BY u.username HAVING Count(u.username) >=1");
+                                    GROUP BY u.username HAVING Count(w.user_id) >=1");
             
             ViewData["MaximumUsers"] = Users[0].username;
+
+            //Count the number of remarks given in all the records
+            List<WoundRecord> remarks = DBUtl.GetList<WoundRecord>("SELECT * FROM wound WHERE remarks IS NOT NULL");
+            ViewData["Remarks"] = remarks.Count();
+
+            // Count the number of records in total
             List<Wound> total = DBUtl.GetList<Wound>("SELECT * FROM wound");
             ViewData["TotalRecords"] = total.Count();
+            
+            //List the most frequent tissue
+            List<Tissue> tissue = DBUtl.GetList<Tissue>("SELECT TOP 1 t.name FROM wound w  INNER JOIN tissue t  ON w.tissue_id=t.tissue_id GROUP BY t.name HAVING COUNT(w.tissue_id)>=1");
+            ViewData["Tissue"] = tissue[0].name;
+
+            //Prepare data for the legend chart
             PrepareData(1);
             ViewData["VersionChart"] = "line";
             ViewData["VersionTitle"] = "Version";
             ViewData["VersionShowLegend"] = "false";
+
+            //Prepare data for the Wound location chart
             PrepareWoundsData(1);
             ViewData["Chart"] = "bar";
             ViewData["Title"] = "Location";
             ViewData["ShowLegend"] = "false";
+
+            //Prepare data for the Wound category chart
             WoundCategoryRecords(1);
             ViewData["CatChart"] = "pie";
             ViewData["CatTitle"] = "Category";
             ViewData["CatShowLegend"] = "true";
+
+            //Prepare data for the user roles chart
             DisplayUsers(1);
             ViewData["UserChart"] = "bar";
             ViewData["UserTitle"] = "User Roles";
             ViewData["UserShowLegend"] = "false";
+
+            //Prepare data for the Tissue chart
             locateTissues(1);
-            ViewData["TissueChart"] = "bar";
+            ViewData["TissueChart"] = "line";
             ViewData["TissueTitle"] = "Tissues";
             ViewData["TissueShowLegend"] = "false";
             return View();
@@ -99,13 +123,15 @@ namespace WoundImgRepo.Controllers
             if (x == 1)
             {
                 ViewData["VersionLegend"] = "Wound Version";
-                ViewData["VersionColors"] = new string[3] { "grey", "brown", "black" };
+                string[] knowncolors = new string[23] { "#ff00bf", "#ff0000", "grey", "brown", "black" ,  "blue", "yellow", "green", "black", "purple", "brown", "violet", "crimson", "grey", "maroon", "olive", "chocolate", "aquamarine", "Turquoise", "#437C17", "#ffdf00", "#614051", "#F70D1A" };
+
+                
                 string[] colors = new string[version.Length];
                 string[] labels = new string[version.Length];
                 for (int i = 0; i < colors.Length; i++)
                 {
 
-                    colors[i] = colors[i];
+                    colors[i] = knowncolors[i];
 
                 }
                 for (int i = 0; i < list.Count; i++)
@@ -188,7 +214,7 @@ namespace WoundImgRepo.Controllers
             if (x == 1)
             {
                 ViewData["CatLegend"] = "Wounds";
-                string[] knownColors = new string[20] { "grey", "brown", "black", "yellow", "green", "red", "blue", "purple", "chocolate", "peach", "ultramarine", "forestgreen", "gold", "ocher", "bisque", "crimson", "aqua", "redviolet", "amethyst", "eggplant" };
+                string[] knownColors = new string[20] { "yellow", "green", "grey", "brown", "black", "red", "blue", "purple", "chocolate", "peach", "ultramarine", "forestgreen", "gold", "ocher", "bisque", "crimson", "aqua", "redviolet", "amethyst", "eggplant" };
 
                 string[] colors = new string[categories.Length];
                 string[] labels = new string[categories.Length];
@@ -233,7 +259,7 @@ namespace WoundImgRepo.Controllers
             List<Tissue> tissues = DBUtl.GetList<Tissue>("SELECT * FROM tissue");
             List<Wound> wounds = DBUtl.GetList<Wound>("SELECT * FROM wound");
             int[] tissuenames = new int[tissues.Count];
-            string[] knowncolors = new string[20] { "red", "blue", "yellow", "green", "orange", "black", "purple", "brown", "violet", "crimson", "grey", "maroon", "olive", "chocolate", "aquamarine", "Turquoise", "#437C17", "#ffdf00", "#614051", "#F70D1A" };
+            string[] knowncolors = new string[20] { "#ff0000", "blue", "yellow", "green", "orange", "black", "purple", "brown", "violet", "crimson", "grey", "maroon", "olive", "chocolate", "aquamarine", "Turquoise", "#437C17", "#ffdf00", "#614051", "#F70D1A" };
 
             for (int i = 0; i < tissues.Count; i++)
             {
@@ -245,6 +271,7 @@ namespace WoundImgRepo.Controllers
             }
             if (x == 1)
             {
+                
                 string[] colors =new string[tissuenames.Length];
                 string[] labels = new string[tissuenames.Length];
                 for (int i = 0; i < colors.Length; i++)
@@ -255,7 +282,7 @@ namespace WoundImgRepo.Controllers
                 {
                     labels[i] = tissues[i].name;
                 }
-                
+                ViewData["TissueLegend"] = "Tissues";
                 ViewData["TissueColors"]=colors;
                 ViewData["TissueLabels"]=labels;
                 ViewData["TissueData"]=tissuenames;
