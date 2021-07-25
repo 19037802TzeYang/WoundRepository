@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Hosting;
 using System.Diagnostics;
 using System.Dynamic;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 
 namespace WoundImgRepo.Controllers
 {
@@ -40,7 +41,7 @@ namespace WoundImgRepo.Controllers
                 return View("~/Views/Account/Forbidden.cshtml");
             }
             #endregion
-
+            ViewBag.showhidecheckchecker = 0;
             ViewBag.keyword = "";
             ViewBag.selection = "nothing";
             List<WoundRecord> list = DBUtl.GetList<WoundRecord>(@"SELECT w.wound_id as woundid, w.name as woundname, w.wound_stage as woundstage, w.remarks as woundremarks, 
@@ -82,7 +83,7 @@ namespace WoundImgRepo.Controllers
             Debug.WriteLine(listinput);
             ViewBag.keyword = searchedobj;
             ViewBag.selection = searchedsection;
-
+            ViewBag.showhidecheckchecker = 1;
             List<WoundRecord> list = DBUtl.GetList<WoundRecord>(listinput);
 
             return View("Index", list );
