@@ -44,15 +44,15 @@ namespace WoundImgRepo.Controllers
             ViewBag.keyword = "";
             ViewBag.selection = "nothing";
             List<WoundRecord> list = DBUtl.GetList<WoundRecord>(@"SELECT w.wound_id as woundid, w.name as woundname, w.wound_stage as woundstage, w.remarks as woundremarks, 
-                                      wc.name as woundcategoryname, wl.name as woundlocationname, t.name as tissuename,
-                                      v.name as versionname, i.img_file as imagefile, i.image_id as imageid, u.username
-                                      FROM wound w
-                                      INNER JOIN image i ON i.image_id = w.image_id
-                                      INNER JOIN wound_category wc ON wc.wound_category_id = w.wound_category_id
-                                      INNER JOIN wound_location wl ON wl.wound_location_id = w.wound_location_id
-                                      INNER JOIN tissue t ON t.tissue_id = w.tissue_id
-                                      INNER JOIN version v ON v.version_id = w.version_id
-                                        INNER JOIN useracc u ON u.user_id = w.user_id");
+                                                                  wc.name as woundcategoryname, wl.name as woundlocationname, t.name as tissuename,
+                                                                  v.name as versionname, i.img_file as imagefile, i.image_id as imageid, u.username
+                                                                  FROM wound w
+                                                                  INNER JOIN image i ON i.image_id = w.image_id
+                                                                  INNER JOIN wound_category wc ON wc.wound_category_id = w.wound_category_id
+                                                                  INNER JOIN wound_location wl ON wl.wound_location_id = w.wound_location_id
+                                                                  INNER JOIN tissue t ON t.tissue_id = w.tissue_id
+                                                                  INNER JOIN version v ON v.version_id = w.version_id
+                                                                  INNER JOIN useracc u ON u.user_id = w.user_id");
             return View("Index", list);
         }
         #endregion
@@ -66,16 +66,16 @@ namespace WoundImgRepo.Controllers
             Debug.WriteLine("doin index search with "+ searchedsection);
 
             String listinput = @"SELECT w.wound_id as woundid, w.name as woundname, w.wound_stage as woundstage, w.remarks as woundremarks, 
-                                      wc.name as woundcategoryname, wl.name as woundlocationname, t.name as tissuename,
-                                      v.name as versionname, i.img_file as imagefile, i.image_id as imageid, u.username
-                                      FROM wound w
-                                      INNER JOIN image i ON i.image_id = w.image_id
-                                      INNER JOIN wound_category wc ON wc.wound_category_id = w.wound_category_id
-                                      INNER JOIN wound_location wl ON wl.wound_location_id = w.wound_location_id
-                                      INNER JOIN tissue t ON t.tissue_id = w.tissue_id
-                                      INNER JOIN version v ON v.version_id = w.version_id
-                                        INNER JOIN useracc u ON u.user_id = w.user_id
-                                        WHERE "+ searchedsection + " LIKE '%" + searchedobj + "%'";
+                                wc.name as woundcategoryname, wl.name as woundlocationname, t.name as tissuename,
+                                v.name as versionname, i.img_file as imagefile, i.image_id as imageid, u.username
+                                FROM wound w
+                                INNER JOIN image i ON i.image_id = w.image_id
+                                INNER JOIN wound_category wc ON wc.wound_category_id = w.wound_category_id
+                                INNER JOIN wound_location wl ON wl.wound_location_id = w.wound_location_id
+                                INNER JOIN tissue t ON t.tissue_id = w.tissue_id
+                                INNER JOIN version v ON v.version_id = w.version_id
+                                INNER JOIN useracc u ON u.user_id = w.user_id
+                                WHERE "+ searchedsection + " LIKE '%" + searchedobj + "%'";
 
 
 
@@ -495,11 +495,26 @@ namespace WoundImgRepo.Controllers
                 return View("~/Views/Account/Forbidden.cshtml");
             }
             #endregion
+
             var getWound = DBUtl.GetList<Wound>($"SELECT * FROM wound WHERE wound_id={id}")[0];
+            var getTissue = DBUtl.GetList<Tissue>($"SELECT * FROM tissue WHERE tissue_id={getWound.tissue_id}")[0];
+            var getCategory = DBUtl.GetList<WoundCategory>($"SELECT * FROM wound_category WHERE wound_category_id={getWound.wound_category_id}")[0];
+            var getLocation = DBUtl.GetList<WoundLocation>($"SELECT * FROM wound_location WHERE wound_location_id={getWound.wound_location_id}")[0];
+            var getVersion = DBUtl.GetList<WVersion>($"SELECT * FROM version WHERE version_id={getWound.version_id}")[0];
+
             string deletewoundandannotationSQL = "DELETE FROM annotation WHERE wound_id={0} DELETE FROM wound WHERE wound_id={0}";        
             string deleteImageSql = "DELETE FROM image WHERE name='{0}'";
+            string deleteTissueSql = "DELETE FROM tissue WHERE name='{0}'";
+            string deleteCategorySql = "DELETE FROM wound_category WHERE name='{0}'";
+            string deleteLocationSql = "DELETE FROM wound_location WHERE name='{0}'";
+            string deleteVersionSql = "DELETE FROM version WHERE name='{0}'";
             if (DBUtl.ExecSQL(deletewoundandannotationSQL, id) == 2 &&
-                DBUtl.ExecSQL(deleteImageSql, getWound.name) == 3)
+                DBUtl.ExecSQL(deleteImageSql, getWound.name) == 3 &&
+                DBUtl.ExecSQL(deleteTissueSql, getTissue.name) == 1 &&
+                DBUtl.ExecSQL(deleteCategorySql, getCategory.name) == 1 &&
+                DBUtl.ExecSQL(deleteLocationSql, getLocation.name) == 1 &&
+                DBUtl.ExecSQL(deleteVersionSql, getVersion.name) == 1
+                )
             {
                 TempData["Msg"] = "Wound record deleted";
                 TempData["MsgType"] = "success";
