@@ -1,4 +1,9 @@
 ﻿@model CombineClass
+<style>
+    .title {
+        font-weight: 500;
+    }
+</style>
 <form asp-controller="Wound" asp-action="Create" method="post" enctype="multipart/form-data">
     <div class="form-group row mb-4">
         <div class="col-sm-6">
@@ -44,7 +49,7 @@
                 </select>
                 <span class="text-danger" asp-validation-for="woundv.name"></span>
             </div>
-            <div class="mb-2">
+            <div class="mb-0">
                 <label class="title" asp-for="wound.remarks">Remarks: </label>
                 <input class="form-control form-control-sm" asp-for="wound.remarks" autocomplete="off">
                 <span class="text-danger" asp-validation-for="wound.remarks"></span>
