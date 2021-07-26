@@ -1,4 +1,4 @@
-﻿using WoundImgRepo.Models;
+using WoundImgRepo.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -45,50 +45,255 @@ namespace WoundImgRepo.Controllers
             ViewBag.keyword = "";
             ViewBag.selection = "nothing";
             List<WoundRecord> list = DBUtl.GetList<WoundRecord>(@"SELECT w.wound_id as woundid, w.name as woundname, w.wound_stage as woundstage, w.remarks as woundremarks, 
-                                                                  wc.name as woundcategoryname, wl.name as woundlocationname, t.name as tissuename,
-                                                                  v.name as versionname, i.img_file as imagefile, i.image_id as imageid, u.username
-                                                                  FROM wound w
-                                                                  INNER JOIN image i ON i.image_id = w.image_id
-                                                                  INNER JOIN wound_category wc ON wc.wound_category_id = w.wound_category_id
-                                                                  INNER JOIN wound_location wl ON wl.wound_location_id = w.wound_location_id
-                                                                  INNER JOIN tissue t ON t.tissue_id = w.tissue_id
-                                                                  INNER JOIN version v ON v.version_id = w.version_id
-                                                                  INNER JOIN useracc u ON u.user_id = w.user_id");
+                                      wc.name as woundcategoryname, wl.name as woundlocationname, t.name as tissuename,
+                                      v.name as versionname, i.img_file as imagefile, i.image_id as imageid, u.username
+                                      FROM wound w
+                                      INNER JOIN image i ON i.image_id = w.image_id
+                                      INNER JOIN wound_category wc ON wc.wound_category_id = w.wound_category_id
+                                      INNER JOIN wound_location wl ON wl.wound_location_id = w.wound_location_id
+                                      INNER JOIN tissue t ON t.tissue_id = w.tissue_id
+                                      INNER JOIN version v ON v.version_id = w.version_id
+                                        INNER JOIN useracc u ON u.user_id = w.user_id");
             return View("Index", list);
+        }
+        #endregion
+        [Authorize(Roles = "Admin, Annotator")]
+    
+        public IActionResult MultiDeleteWounds(IFormCollection col)
+        {
+            #region checkuserrole()
+            int checktheuserrole = 0;
+            if (User.IsInRole("Admin"))
+            {
+                checktheuserrole = 1;
+            }
+            
+            else if (User.IsInRole("Annotator"))
+            {
+                checktheuserrole = 3;
+            }
+            if (checktheuserrole == 0)
+            {
+                return View("~/Views/Account/Forbidden.cshtml");
+            }
+            #endregion
+            //----------------------------------------------------------------------------------------
+            string deletables = col["DBL"];    //fetches the list
+
+            int atfault = 0;    //make a fault counter
+
+            int checkiffirst = 0; // When setting SQL , we need this for formatting to ensure there wouldn't be an extra OR
+           
+            Regex NOT_numbers = new Regex(@"[^0-9]");    //It is a regex to check if a value isn't a number
+     
+            String[] ahreileast = deletables.Split(',');       //splits the string into an array of string
+
+            String SQLDeletablesWID = " " ;   // used to store and reformat the Strings into usable SQL
+
+            string deletewoundandannotationSQL = "DELETE FROM annotation WHERE{0} DELETE FROM wound WHERE{0}"; // Sets the SQL
+
+            String finalSQLDelete = ""; //after string format
+
+
+            //check if user keyed in anything yet
+            if (deletables.Length == 0)
+            {
+                TempData["Msg"] = "No records selected.";
+                TempData["MsgType"] = "danger";
+
+
+
+                return RedirectToAction("Index");
+            }
+
+            //----------------------------------------------------------------------------------------
+            //check the strings one by one
+
+
+
+            foreach (var iD in ahreileast)
+            {
+                //check if this string has anything that is not a number
+                MatchCollection matchNnum = NOT_numbers.Matches(iD);
+                //if an error is encountered , skip the entire process
+                if(atfault == 1)
+                {
+                    Debug.WriteLine("error generated");
+                }
+                else { 
+                //if a non-number is found
+                if (matchNnum.Count > 0)
+                {
+                    atfault = 1;
+                   
+          
+                }
+                else
+                {
+                    if(checkiffirst == 1)
+                    {
+                        SQLDeletablesWID += " OR wound_id = " + iD;
+
+                    }
+                    else
+                    {
+                            SQLDeletablesWID += "wound_id = " + iD ;
+                        checkiffirst += 1;
+                    }
+                    
+                }
+                }
+
+            }
+            //----------------------------------------------------------------------------------------
+            //if there is no fault
+            if(atfault !=1)
+            {
+             //Create the string
+        
+      
+
+                if (DBUtl.ExecSQL(deletewoundandannotationSQL, SQLDeletablesWID) == 1)
+                {
+                    TempData["Msg"] = "Wound records deleted!";
+                    TempData["MsgType"] = "success";
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    TempData["Msg"] = DBUtl.DB_Message;
+                    TempData["MsgType"] = "danger";
+                    return RedirectToAction("Index");
+                }
+            }
+            //if there is fault
+            if(atfault == 1)
+            {
+                TempData["Msg"] = "unknown error occured.";
+                TempData["MsgType"] = "danger";
+
+
+
+                return RedirectToAction("Index");
+            }
+            return RedirectToAction("Index");
+        }
+
+        #region Delete()
+        public IActionResult Delete(int id)
+        {
+            #region checkuserrole
+            int checktheuserrole = 0;
+            if (User.IsInRole("Admin"))
+            {
+                checktheuserrole = 1;
+            }
+            else if (User.IsInRole("Doctor"))
+            {
+                checktheuserrole = 2;
+            }
+            else if (User.IsInRole("Annotator"))
+            {
+                checktheuserrole = 3;
+            }
+            if (checktheuserrole == 0)
+            {
+                return View("~/Views/Account/Forbidden.cshtml");
+            }
+            #endregion
+
+            #region Getid()
+            //-------------------------------------------------------------------------------------
+            string getpicid = ""; //store id of pictures
+
+            string tableid = @" SELECT  w.image_id AS woundid, i.image_id AS versionid , im.image_id AS imageid
+                                                   FROM annotation an
+                                                   INNER JOIN image i ON an.annotation_image_id = i.image_id
+                                                   INNER JOIN image im ON an.mask_image_id = im.image_id
+                                                   INNER JOIN wound w ON an.wound_id = w.wound_id
+                                                   WHERE w.wound_id = {0} ;";
+
+
+
+
+            //do note that w.image_id , im.image_id & i.image_id are STILL picture id , however they are just different now
+            List<WoundRecord> gotallidw = DBUtl.GetList<WoundRecord>(tableid, id);
+            gotallidw.ToArray();
+            //add the saved values as a usable SQL string
+            foreach (WoundRecord iD in gotallidw)
+            {
+                getpicid = "image_id =" + iD.woundid + " OR image_id =" + iD.versionid + " OR image_id=" + iD.imageid;
+               
+            }
+            #endregion
+
+            //---------------------------------------------------------------------------------------
+            string deletewoundandannotationSQL = "DELETE FROM annotation WHERE wound_id={0} DELETE FROM wound WHERE wound_id={0}   {1}";
+            string deleteallpictures = "DELETE FROM image WHERE {0}"; //formats off the images to delete
+            string FDP = string.Format(deleteallpictures, getpicid); //combines the sentences
+   
+           //checks if the excecutions of Delete statements worked
+            if (DBUtl.ExecSQL(deletewoundandannotationSQL, id , FDP) == 1 ) 
+            {
+               
+                TempData["Msg"] = "Wound record deleted!";
+                    TempData["MsgType"] = "success";
+                    return RedirectToAction("Index");
+                
+                   
+            }
+            else
+            {
+                TempData["Msg"] = DBUtl.DB_Message;
+                TempData["MsgType"] = "danger";
+                return RedirectToAction("Index");
+            }
         }
         #endregion
 
         #region Indexpost()
-        public IActionResult Indexpost( )
+        public IActionResult Indexpost()
         {
             IFormCollection form = HttpContext.Request.Form;
             string searchedsection = form["searchedsection"].ToString();
             string searchedobj = form["searchedobj"].ToString().Trim();
             Debug.WriteLine("doin index search with "+ searchedsection);
-
+            
             String listinput = @"SELECT w.wound_id as woundid, w.name as woundname, w.wound_stage as woundstage, w.remarks as woundremarks, 
-                                wc.name as woundcategoryname, wl.name as woundlocationname, t.name as tissuename,
-                                v.name as versionname, i.img_file as imagefile, i.image_id as imageid, u.username
-                                FROM wound w
-                                INNER JOIN image i ON i.image_id = w.image_id
-                                INNER JOIN wound_category wc ON wc.wound_category_id = w.wound_category_id
-                                INNER JOIN wound_location wl ON wl.wound_location_id = w.wound_location_id
-                                INNER JOIN tissue t ON t.tissue_id = w.tissue_id
-                                INNER JOIN version v ON v.version_id = w.version_id
-                                INNER JOIN useracc u ON u.user_id = w.user_id
-                                WHERE "+ searchedsection + " LIKE '%" + searchedobj + "%'";
+                                      wc.name as woundcategoryname, wl.name as woundlocationname, t.name as tissuename,
+                                      v.name as versionname, i.img_file as imagefile, i.image_id as imageid, u.username
+                                      FROM wound w
+                                      INNER JOIN image i ON i.image_id = w.image_id
+                                      INNER JOIN wound_category wc ON wc.wound_category_id = w.wound_category_id
+                                      INNER JOIN wound_location wl ON wl.wound_location_id = w.wound_location_id
+                                      INNER JOIN tissue t ON t.tissue_id = w.tissue_id
+                                      INNER JOIN version v ON v.version_id = w.version_id
+                                        INNER JOIN useracc u ON u.user_id = w.user_id
+                                        WHERE "+ searchedsection + " LIKE '%" + searchedobj + "%'";
 
 
-
+            ViewBag.showhidecheckchecker = 1;
             Debug.WriteLine(listinput);
             ViewBag.keyword = searchedobj;
             ViewBag.selection = searchedsection;
-            ViewBag.showhidecheckchecker = 1;
+
             List<WoundRecord> list = DBUtl.GetList<WoundRecord>(listinput);
 
             return View("Index", list );
         }
         #endregion
+
+
+
+
+     
+
+
+
+
+
+
+
 
         #region Details()
         public IActionResult Details(int id)
@@ -474,61 +679,6 @@ namespace WoundImgRepo.Controllers
         }
         #endregion
 
-        #region Delete()
-        public IActionResult Delete(int id)
-        {
-            #region checkuserrole
-            int checktheuserrole = 0;
-            if (User.IsInRole("Admin"))
-            {
-                checktheuserrole = 1;
-            }
-            else if (User.IsInRole("Doctor"))
-            {
-                checktheuserrole = 2;
-            }
-            else if (User.IsInRole("Annotator"))
-            {
-                checktheuserrole = 3;
-            }
-            if (checktheuserrole == 0)
-            {
-                return View("~/Views/Account/Forbidden.cshtml");
-            }
-            #endregion
-
-            var getWound = DBUtl.GetList<Wound>($"SELECT * FROM wound WHERE wound_id={id}")[0];
-            var getTissue = DBUtl.GetList<Tissue>($"SELECT * FROM tissue WHERE tissue_id={getWound.tissue_id}")[0];
-            var getCategory = DBUtl.GetList<WoundCategory>($"SELECT * FROM wound_category WHERE wound_category_id={getWound.wound_category_id}")[0];
-            var getLocation = DBUtl.GetList<WoundLocation>($"SELECT * FROM wound_location WHERE wound_location_id={getWound.wound_location_id}")[0];
-            var getVersion = DBUtl.GetList<WVersion>($"SELECT * FROM version WHERE version_id={getWound.version_id}")[0];
-
-            string deletewoundandannotationSQL = "DELETE FROM annotation WHERE wound_id={0} DELETE FROM wound WHERE wound_id={0}";        
-            string deleteImageSql = "DELETE FROM image WHERE name='{0}'";
-            string deleteTissueSql = "DELETE FROM tissue WHERE name='{0}'";
-            string deleteCategorySql = "DELETE FROM wound_category WHERE name='{0}'";
-            string deleteLocationSql = "DELETE FROM wound_location WHERE name='{0}'";
-            string deleteVersionSql = "DELETE FROM version WHERE name='{0}'";
-            if (DBUtl.ExecSQL(deletewoundandannotationSQL, id) == 2 &&
-                DBUtl.ExecSQL(deleteImageSql, getWound.name) == 3 &&
-                DBUtl.ExecSQL(deleteTissueSql, getTissue.name) == 1 &&
-                DBUtl.ExecSQL(deleteCategorySql, getCategory.name) == 1 &&
-                DBUtl.ExecSQL(deleteLocationSql, getLocation.name) == 1 &&
-                DBUtl.ExecSQL(deleteVersionSql, getVersion.name) == 1
-                )
-            {
-                TempData["Msg"] = "Wound record deleted";
-                TempData["MsgType"] = "success";
-                return RedirectToAction("Index");
-            }
-            else
-            {
-                TempData["Msg"] = DBUtl.DB_Message;
-                TempData["MsgType"] = "danger";
-                return RedirectToAction("Index");
-            }
-        }
-        #endregion
 
         #region UpdateAnnotationMaskImage()
         [HttpPost]
@@ -547,7 +697,7 @@ namespace WoundImgRepo.Controllers
                 var userDetail = DBUtl.GetList<User>("SELECT * FROM useracc WHERE username = '" + User.Identity.Name + "'")[0];
 
                 var version = DBUtl.GetList<WVersion>($"SELECT * FROM version WHERE name='{wr.versionname}'")[0];
-                var woundList = DBUtl.GetList<Wound>($"SELECT * FROM wound WHERE name='{wr.woundname}' AND version_id={version.version_id}");
+                var woundList = DBUtl.GetList<Wound>($"SELECT * FROM wound WHERE wound_id={wr.woundid} AND version_id={version.version_id}");
                 var wound = new Wound();
                 if (woundList.Any())
                 {
@@ -743,129 +893,5 @@ namespace WoundImgRepo.Controllers
             _env = environment;
         }
         #endregion  
-        
-        #region MultiDeleteWounds()
-        [Authorize(Roles = "Admin, Annotator")]
-    
-        public IActionResult MultiDeleteWounds(IFormCollection col)
-        {
-            #region checkuserrole()
-            int checktheuserrole = 0;
-            if (User.IsInRole("Admin"))
-            {
-                checktheuserrole = 1;
-            }
-            
-            else if (User.IsInRole("Annotator"))
-            {
-                checktheuserrole = 3;
-            }
-            if (checktheuserrole == 0)
-            {
-                return View("~/Views/Account/Forbidden.cshtml");
-            }
-            #endregion
-            //----------------------------------------------------------------------------------------
-            string deletables = col["DBL"];    //fetches the list
-
-            int atfault = 0;    //make a fault counter
-
-            int checkiffirst = 0; // When setting SQL , we need this for formatting to ensure there wouldn't be an extra OR
-           
-            Regex NOT_numbers = new Regex(@"[^0-9]");    //It is a regex to check if a value isn't a number
-     
-            String[] ahreileast = deletables.Split(',');       //splits the string into an array of string
-
-            String SQLDeletables = " " ;   // used to store and reformat the Strings into usable SQL
-
-            string deletewoundandannotationSQL = "DELETE FROM annotation WHERE{0} DELETE FROM wound WHERE{0}"; // Sets the SQL
-
-            String finalSQLDelete = ""; //after string format
-
-
-            //check if user keyed in anything yet
-            if (deletables.Length == 0)
-            {
-                TempData["Msg"] = "No records selected.";
-                TempData["MsgType"] = "danger";
-
-
-
-                return RedirectToAction("Index");
-            }
-
-            //----------------------------------------------------------------------------------------
-            //check the strings one by one
-
-
-
-            foreach (var iD in ahreileast)
-            {
-                //check if this string has anything that is not a number
-                MatchCollection matchNnum = NOT_numbers.Matches(iD);
-                //if an error is encountered , skip the entire process
-                if(atfault == 1)
-                {
-                    Debug.WriteLine("error generated");
-                }
-                else { 
-                //if a non-number is found
-                if (matchNnum.Count > 0)
-                {
-                    atfault = 1;
-                   
-          
-                }
-                else
-                {
-                    if(checkiffirst == 1)
-                    {
-                        SQLDeletables += " OR wound_id = " + iD;
-
-                    }
-                    else
-                    {
-                        SQLDeletables += "wound_id = " + iD ;
-                        checkiffirst += 1;
-                    }
-                    
-                }
-                }
-
-            }
-            //----------------------------------------------------------------------------------------
-            //if there is no fault
-            if(atfault !=1)
-            {
-             //Create the string
-        
-      
-
-                if (DBUtl.ExecSQL(deletewoundandannotationSQL, SQLDeletables) == 1)
-                {
-                    TempData["Msg"] = "Wound records deleted!";
-                    TempData["MsgType"] = "success";
-                    return RedirectToAction("Index");
-                }
-                else
-                {
-                    TempData["Msg"] = DBUtl.DB_Message;
-                    TempData["MsgType"] = "danger";
-                    return RedirectToAction("Index");
-                }
-            }
-            //if there is fault
-           
-                TempData["Msg"] = "unknown error occured.";
-                TempData["MsgType"] = "danger";
-
-
-            
-            return RedirectToAction("Index");
-        }
-        #endregion
-        
-        
-        
     }
 }

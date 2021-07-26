@@ -41,9 +41,7 @@ namespace WoundImgRepo.Controllers
             
             ViewData["MaximumUsers"] = Users[0].username;
 
-            //Count the number of remarks given in all the records
-            List<WoundRecord> remarks = DBUtl.GetList<WoundRecord>("SELECT * FROM wound WHERE remarks IS NOT NULL");
-            ViewData["Remarks"] = remarks.Count();
+            
 
             // Count the number of records in total
             List<Wound> total = DBUtl.GetList<Wound>("SELECT * FROM wound");
