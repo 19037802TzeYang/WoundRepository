@@ -225,6 +225,9 @@ namespace WoundImgRepo.Controllers
        #region Delete()
         public IActionResult Delete(int id)
         {
+            int nopic = 0;
+
+            int multipleimagescheck = 0;
             #region checkuserrole
             int checktheuserrole = 0;
             if (User.IsInRole("Admin"))
@@ -261,27 +264,49 @@ namespace WoundImgRepo.Controllers
 
 
 
-            //do note that w.image_id , im.image_id & i.image_id are STILL picture id , however they are just using a different name
+            //do note that w.image_id , im.image_id & i.image_id are STILL picture id , however they are just different now
             List<WoundRecord> gotallidw = DBUtl.GetList<WoundRecord>(tableid, id);
 
             gotallidw.ToArray(); //converts DB list to an array
 
             //add the saved values as a usable SQL string
             foreach (WoundRecord iD in gotallidw)
-            {
-                getpicid += "image_id =" + iD.woundid ;
+            {if(multipleimagescheck == 0)
+                {
+                    getpicid += "image_id =" + iD.imageid;
+                    multipleimagescheck += 1;
+                }
+                else
+                {
+                    getpicid += "OR image_id =" + iD.imageid;
+                }
 
                 //if the registered record has a annotation or a mask id , then add it in
-                if(iD.versionid > 0)
+                if (iD.woundid > 0)
+                {
+                    
+
+                    getpicid += " OR image_id =" + iD.woundid;
+                }
+                else
+                {
+                    nopic = 1 ;
+                }
+                if (iD.versionid > 0)
                 {
                     getpicid += " OR image_id =" + iD.versionid;
                 }
-                if (iD.imageid>0)
+                else
                 {
-                    getpicid += " OR image_id =" + iD.imageid;
+                    nopic = 1;
                 }
-
-
+                                
+            }
+            if(nopic == 1)
+            {
+                TempData["Msg"] = "All records must have a mask or annotation before deleting";
+                TempData["MsgType"] = "danger";
+                return RedirectToAction("Index");
             }
             #endregion
             //----------------------------------------------------------------------------------------------
@@ -300,7 +325,7 @@ namespace WoundImgRepo.Controllers
                 categoryid += iD.woundid;
                 break;
             }
-            String deletethelocationid = "DELETE FROM wound_location WHERE wound_location_id ={0}"; //sql for deleting
+            String deletethelocationid = "DELETE FROM wound_location WHERE wound_location_id ={0}";
             string deletecategoryidF = string.Format(deletethelocationid, categoryid);
             Debug.WriteLine(deletecategoryidF);
 
@@ -308,15 +333,16 @@ namespace WoundImgRepo.Controllers
             //---------------------------------------------------------------------------------------
             //                                    String for annotation                       String for wound                    string for picture deletion
             string deletewoundandannotationSQL = "DELETE FROM annotation WHERE wound_id={0} DELETE FROM wound WHERE wound_id={0}   {1} {2}";
-                                                                                                                                      //string for location deletion
+            //string for location deletion
             string deleteallpictures = "DELETE FROM image WHERE {0}"; //formats off the images to delete
 
-            string FDP = string.Format(deleteallpictures, getpicid ); //combines the sentences
+            string FDP = string.Format(deleteallpictures, getpicid); //combines the sentences
 
 
             //checks if the excecutions of Delete statements worked
             //Putting everthing together
-            if (DBUtl.ExecSQL(deletewoundandannotationSQL, id, FDP , deletecategoryidF) == 1)
+            Debug.WriteLine(string.Format(deletewoundandannotationSQL, id, FDP, deletecategoryidF));
+            if (DBUtl.ExecSQL(deletewoundandannotationSQL, id, FDP, deletecategoryidF) == 1)
             {
 
                 TempData["Msg"] = "Wound record deleted!";
@@ -333,7 +359,6 @@ namespace WoundImgRepo.Controllers
             }
         }
         #endregion
-
         #region Indexpost()
         public IActionResult Indexpost()
         {
