@@ -9,45 +9,45 @@
     <div class="form-group row">
         <div class="col-sm-4 mr-5">
             <div class="mb-2">
-                <label class="title" asp-for="wound.name">Name: </label>
-                <input class="form-control form-control-sm" asp-for="wound.name">
+                <label class="title" asp-for="wound.name">Wound Name: </label>
+                <input class="form-control form-control-sm" asp-for="wound.name" autocomplete="off">
                 <span class="text-danger" asp-validation-for="wound.name"></span>
             </div>
             <div class="mb-2">
-                <label class="title" asp-for="wound.wound_stage">Stage: </label>
-                <input class="form-control form-control-sm" asp-for="wound.wound_stage">
+                <label class="title" asp-for="wound.wound_stage">Wound Stage: </label>
+                <input class="form-control form-control-sm" asp-for="wound.wound_stage" autocomplete="off">
                 <span class="text-danger" asp-validation-for="wound.wound_stage"></span>
             </div>
             <div class="mb-2">
-                <label class="title" asp-for="wound.remarks">Remarks: </label>
-                <input class="form-control form-control-sm" asp-for="wound.remarks">
-                <span class="text-danger" asp-validation-for="wound.remarks"></span>
+                <label class="title" asp-for="woundl.name">Wound Location: </label>
+                <input class="form-control form-control-sm" asp-for="woundl.name" autocomplete="off">
+                <span class="text-danger" asp-validation-for="woundl.name"></span>
             </div>
             <div class="mb-2">
-                <label class="title" asp-for="woundc.name">Category: </label>
+                <label class="title" asp-for="woundc.name">Wound Category: </label>
                 <select class="form-control form-control-sm" asp-items="@((SelectList)ViewData["woundCategory"])" asp-for="woundc.name">
                     <option value="">-SELECT-</option>
                 </select>
                 <span class="text-danger" asp-validation-for="woundc.name"></span>
             </div>
             <div class="mb-2">
-                <label class="title" asp-for="woundl.name">Location: </label>
-                <input class="form-control form-control-sm" asp-for="woundl.name">
-                <span class="text-danger" asp-validation-for="woundl.name"></span>
-            </div>
-            <div class="mb-2">
-                <label class="title" asp-for="tissue.name">Tissue: </label>
+                <label class="title" asp-for="tissue.name">Wound Tissue: </label>
                 <select class="form-control form-control-sm" asp-items="@((SelectList)ViewData["tissue"])" asp-for="tissue.name">
                     <option value="">-SELECT-</option>
                 </select>
                 <span class="text-danger" asp-validation-for="tissue.name"></span>
             </div>
             <div class="mb-2">
-                <label class="title" asp-for="woundv.name">Version: </label>
+                <label class="title" asp-for="woundv.name">Image Version: </label>
                 <select class="form-control form-control-sm" asp-items="@((SelectList)ViewData["version"])" asp-for="woundv.name">
                     <option value="">-SELECT-</option>
                 </select>
                 <span class="text-danger" asp-validation-for="woundv.name"></span>
+            </div>
+            <div class="mb-2">
+                <label class="title" asp-for="wound.remarks">Remarks: </label>
+                <input class="form-control form-control-sm" asp-for="wound.remarks" autocomplete="off">
+                <span class="text-danger" asp-validation-for="wound.remarks"></span>
             </div>
         </div>
         <div class="col-sm-2">

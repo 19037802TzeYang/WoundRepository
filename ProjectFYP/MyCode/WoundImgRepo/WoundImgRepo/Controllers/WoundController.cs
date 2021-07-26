@@ -149,9 +149,11 @@ namespace WoundImgRepo.Controllers
             //if there is no fault
             if(atfault !=1)
             {
-             //Create the string
-        
-      
+                //Create the string
+
+                string FFR = string.Format(deletewoundandannotationSQL, SQLDeletablesWID);
+                Debug.WriteLine(FFR);
+
 
                 if (DBUtl.ExecSQL(deletewoundandannotationSQL, SQLDeletablesWID) == 1)
                 {
@@ -543,9 +545,9 @@ namespace WoundImgRepo.Controllers
                 var wound = DBUtl.GetList<Wound>($"SELECT * FROM wound");
                 if (wound.Any(x => x.name.Equals(cc.wound.name, StringComparison.OrdinalIgnoreCase)))
                 {
-                    TempData["Msg"] = "Wound name already exist. Try giving unique name";
+                    TempData["Msg"] = "Wound name already exist! Try giving unique name.";
                     TempData["MsgType"] = "warning";
-                    return View("Create");
+                    return RedirectToAction("Index");
                 }
 
                 //useracc table
@@ -615,7 +617,7 @@ namespace WoundImgRepo.Controllers
                     wRowsAffected == 1 &&
                     anRowsAffected == 1)
                 {
-                    TempData["Msg"] = "New wound created";
+                    TempData["Msg"] = "New wound created!";
                     TempData["MsgType"] = "success";
                     return RedirectToAction("Index");
                 }

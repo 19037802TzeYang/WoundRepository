@@ -507,13 +507,14 @@ else
                 <th scope="col">Id</th>
                 <th scope="col">Name</th>
                 <th scope="col">Stage</th>
-                <th scope="col">Remarks</th>
-                <th scope="col">Category</th>
                 <th scope="col">Location</th>
                 <th scope="col">Wound Image</th>
+                <th scope="col">Category</th>
                 <th scope="col">Tissue</th>
                 <th scope="col">Version</th>
+                <th scope="col">Remarks</th>
                 <th scope="col">Details</th>
+
                 @if (User.IsInRole("Admin") || User.IsInRole("Annotator"))
                 {
                     <th scope="col">Username</th>
@@ -525,34 +526,35 @@ else
         <tbody>
             @foreach (WoundRecord w in Model)
             {
-                <tr scope="row">
-                    <td>@w.woundid</td>
-                    <td>@w.woundname</td>
-                    <td>@w.woundstage</td>
-                    <td>@w.woundremarks</td>
-                    <td>@w.woundcategoryname</td>
-                    <td>@w.woundlocationname</td>
-                    <td><img src="~/photos/@w.imagefile"></td>
-                    <td>@w.tissuename</td>
-                    <td>@w.versionname</td>
+            <tr scope="row">
+                <td>@w.woundid</td>
+                <td>@w.woundname</td>
+                <td>@w.woundstage</td>
+                <td>@w.woundlocationname</td>
+                <td><img src="~/photos/@w.imagefile"></td>
+                <td>@w.woundcategoryname</td>
+                <td>@w.tissuename</td>
+                <td>@w.versionname</td>
+                <td>@w.woundremarks</td>
+
+                <td>
+                    <a asp-controller="Wound" asp-action="Details" asp-route-id="@w.woundid">Details</a>
+                    | <a asp-controller="Wound" asp-action="ZoomImage" asp-route-id="@w.woundid">Zoom </a>
+                </td>
+                <td>@w.username</td>
+
+                @if (User.IsInRole("Admin") || User.IsInRole("Annotator"))
+                {
                     <td>
-                        <a asp-controller="Wound" asp-action="Details" asp-route-id="@w.woundid">Details</a>
-                        | <a asp-controller="Wound" asp-action="ZoomImage" asp-route-id="@w.woundid">Zoom </a>
+
+                        <a asp-controller="Wound" asp-action="Update" asp-route-id="@w.woundid">Edit</a> |
+                        <a asp-controller="Wound" asp-action="Delete" asp-route-id="@w.woundid"
+                           onclick="return confirm('Delete Wound [@w.woundname] ?')">Delete</a>
                     </td>
-                    <td>@w.username</td>
+                    <td><input type="checkbox" id="Listtododelete" for="Listtododelete" onclick="addtodeletelist('@w.woundid')" /></td>
 
-                    @if (User.IsInRole("Admin") || User.IsInRole("Annotator"))
-                    {
-                        <td>
-
-                            <a asp-controller="Wound" asp-action="Update" asp-route-id="@w.woundid">Edit</a> |
-                            <a asp-controller="Wound" asp-action="Delete" asp-route-id="@w.woundid"
-                               onclick="return confirm('Delete Wound [@w.woundname] ?')">Delete</a>
-                        </td>
-                        <td><input type="checkbox" id="Listtododelete" for="Listtododelete" onclick="addtodeletelist('@w.woundid')" /></td>
-
-                    }
-                </tr>
+                }
+            </tr>
             }
         </tbody>
     </table>
@@ -563,7 +565,7 @@ else
 
        <input id="DBL" name="DBL" for="DBL" class="form-control" hidden/>
 
-        <input  type="submit" class="btn btn-primary" onclick="return confirm('Delete confirmation : The number of wounds deleted CANNOT BE UNDONE')" value="Innitiate mass Deletion" />
+        <input  type="submit" class="btn btn-primary" onclick="return confirm('Delete confirmation: The number of wounds deleted CANNOT BE UNDONE!')" value="Innitiate mass Deletion" />
     </form>
 
    

@@ -16,22 +16,22 @@
         <div class="form-group row">
             <label asp-for="Username" class="control-label">Username: </label>
             <label asp-for="Username" for="Username" class="sr-only" >username</label>
-            <input asp-for="Username" id="Username" class="form-control"  placeholder="Username" autofocus="">
+            <input asp-for="Username" id="Username" class="form-control"  placeholder="Username" autofocus="" autocomplete="off">
             <span asp-validation-for="Username" class="text-danger"></span>
         </div>
 
 
         @*password fill in*@
         <div class="form-group row">
-            <label asp-for="Password" class="control-label">password: </label>
+            <label asp-for="Password" class="control-label">Password: </label>
             <label asp-for="Password" for="Password" class="sr-only" >password</label>
-            <input asp-for="Password" id="Password" class="form-control" placeholder="password" autofocus="">
+            <input asp-for="Password" id="Password" class="form-control" placeholder="password" autofocus="" autocomplete="off">
             <span asp-validation-for="Password" class="text-danger"></span>
         </div>
         @*Remember me*@
         <div class="form-group row">
            <div class="form-check">
-               <input asp-for="RememberMe" class="form-check-input"/>
+               <input asp-for="RememberMe" class="form-check-input" autocomplete="off"/>
                <label asp-for="RememberMe" class="form-chck-label" >
                Remember Me
                </label>

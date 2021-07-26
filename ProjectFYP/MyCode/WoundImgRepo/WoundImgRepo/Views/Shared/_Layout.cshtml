@@ -43,11 +43,14 @@
 
             <div class="sidebar-content">
                 <div class="sidebar-brand">
-                    <a href="~/Wound/TheWounds">Wound Image Repository</a>
-                    <div id="close-sidebar">
-                        <i class="fas fa-times"></i>
+                    @if (User.IsInRole("Admin") || User.IsInRole("Annotator") || User.IsInRole("Doctor"))
+                    {
+                        <a href="~/Wound/TheWounds">Wound Image Repository</a>
+                    }
+                        <div id="close-sidebar">
+                            <i class="fas fa-times"></i>
+                        </div>
                     </div>
-                </div>
 
 
                 <div class="sidebar-header">
@@ -151,13 +154,6 @@
                                 </div>
                             </li>
                         }
-                        else
-                        {
-                            <!-- insert forbidden page -->
-
-                        }
-
-
 
                         @if (User.IsInRole("Admin"))
                         {
