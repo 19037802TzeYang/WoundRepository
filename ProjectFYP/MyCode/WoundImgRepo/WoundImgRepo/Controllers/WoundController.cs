@@ -80,6 +80,20 @@ namespace WoundImgRepo.Controllers
             //----------------------------------------------------------------------------------------
             string deletables = col["DBL"];    //fetches the list
 
+            //gets the list of ids for pictures
+            string tableidpic = @" SELECT  w.image_id AS woundid, i.image_id AS versionid , im.image_id AS imageid
+                                                   FROM annotation an
+                                                   INNER JOIN image i ON an.annotation_image_id = i.image_id
+                                                   INNER JOIN image im ON an.mask_image_id = im.image_id
+                                                   INNER JOIN wound w ON an.wound_id = w.wound_id
+                                                   WHERE {0};";
+
+            string PicIDfind = "";   //get the list of wound ids TO FIND the corresponding picture IDs
+
+           int PicIDFirstcount = 0; // allows the system to reformat the string properly if more than 1 entry is deduced
+
+            string PicIDstore = ""; //stores the list of picture IDs
+
             int atfault = 0;    //make a fault counter
 
             int checkiffirst = 0; // When setting SQL , we need this for formatting to ensure there wouldn't be an extra OR
@@ -90,10 +104,9 @@ namespace WoundImgRepo.Controllers
 
             String SQLDeletablesWID = " " ;   // used to store and reformat the Strings into usable SQL
 
-            string deletewoundandannotationSQL = "DELETE FROM annotation WHERE{0} DELETE FROM wound WHERE{0}"; // Sets the SQL
+            string deletewoundandannotationSQL = "DELETE FROM annotation WHERE{0} DELETE FROM wound WHERE{0} {1}"; // Sets the SQL
 
-            String finalSQLDelete = ""; //after string format
-
+            string deleteallpictures = "DELETE FROM image WHERE {0}"; //The string for deleting all the pictures (needs formatting)
 
             //check if user keyed in anything yet
             if (deletables.Length == 0)
@@ -132,11 +145,13 @@ namespace WoundImgRepo.Controllers
                 {
                     if(checkiffirst == 1)
                     {
+                            PicIDfind += " OR w.wound_id =" + iD;
                         SQLDeletablesWID += " OR wound_id = " + iD;
 
                     }
                     else
                     {
+                            PicIDfind += "w.wound_id =" + iD;
                             SQLDeletablesWID += "wound_id = " + iD ;
                         checkiffirst += 1;
                     }
@@ -147,13 +162,40 @@ namespace WoundImgRepo.Controllers
             }
             //----------------------------------------------------------------------------------------
             //if there is no fault
-            if(atfault !=1)
+            
+               
+              
+           
+            if (atfault !=1)
             {
-             //Create the string
-        
-      
+                //----------------------------------------------------------------------------------------
+                //we need to get all the picture ids first
 
-                if (DBUtl.ExecSQL(deletewoundandannotationSQL, SQLDeletablesWID) == 1)
+                List<WoundRecord> gotallidw = DBUtl.GetList<WoundRecord>(tableidpic, PicIDfind);
+
+
+
+                gotallidw.ToArray(); //converts DB list to an array
+
+                //add the saved values as a usable SQL string
+                foreach (WoundRecord iD in gotallidw)
+                {
+                    if (PicIDFirstcount <1) { 
+                    PicIDstore += ("image_id =" + iD.woundid + " OR image_id =" + iD.versionid + " OR image_id=" + iD.imageid);
+                        PicIDFirstcount = 7;
+                    }
+                    else
+                    {
+                        
+                           PicIDstore += (" OR image_id =" + iD.woundid + " OR image_id =" + iD.versionid + " OR image_id=" + iD.imageid);
+                    }
+                }
+
+                Debug.WriteLine("this is ASUTDUTFDU " + PicIDstore);
+                string deletedPicFOrmattedString = string.Format(deleteallpictures, PicIDstore); // this is the complete string of picture SQL to delete
+                Debug.WriteLine(deletedPicFOrmattedString);
+                //----------------------------------------------------------------------------------------
+                if (DBUtl.ExecSQL(deletewoundandannotationSQL, SQLDeletablesWID , deletedPicFOrmattedString) == 1)
                 {
                     TempData["Msg"] = "Wound records deleted!";
                     TempData["MsgType"] = "success";
@@ -206,6 +248,8 @@ namespace WoundImgRepo.Controllers
             //-------------------------------------------------------------------------------------
             string getpicid = ""; //store id of pictures
 
+            //gets the list of ids for pictures
+            //do note that w.image_id , im.image_id & i.image_id are STILL picture id , however they are just different now
             string tableid = @" SELECT  w.image_id AS woundid, i.image_id AS versionid , im.image_id AS imageid
                                                    FROM annotation an
                                                    INNER JOIN image i ON an.annotation_image_id = i.image_id
@@ -217,22 +261,29 @@ namespace WoundImgRepo.Controllers
 
 
             //do note that w.image_id , im.image_id & i.image_id are STILL picture id , however they are just different now
-            List<WoundRecord> gotallidw = DBUtl.GetList<WoundRecord>(tableid, id);
-            gotallidw.ToArray();
+            List<WoundRecord> gotallidw = DBUtl.GetList<WoundRecord>(tableid, id); 
+
+            gotallidw.ToArray(); //converts DB list to an array
+
             //add the saved values as a usable SQL string
             foreach (WoundRecord iD in gotallidw)
             {
-                getpicid = "image_id =" + iD.woundid + " OR image_id =" + iD.versionid + " OR image_id=" + iD.imageid;
+                getpicid += ("image_id =" + iD.woundid + " OR image_id =" + iD.versionid + " OR image_id=" + iD.imageid);
                
             }
             #endregion
 
             //---------------------------------------------------------------------------------------
+            //                                    String for annotation                       String for wound                    string for picture deletion
             string deletewoundandannotationSQL = "DELETE FROM annotation WHERE wound_id={0} DELETE FROM wound WHERE wound_id={0}   {1}";
+            
             string deleteallpictures = "DELETE FROM image WHERE {0}"; //formats off the images to delete
+            
             string FDP = string.Format(deleteallpictures, getpicid); //combines the sentences
-   
+                   
+
            //checks if the excecutions of Delete statements worked
+                            //Putting everthing together
             if (DBUtl.ExecSQL(deletewoundandannotationSQL, id , FDP) == 1 ) 
             {
                
