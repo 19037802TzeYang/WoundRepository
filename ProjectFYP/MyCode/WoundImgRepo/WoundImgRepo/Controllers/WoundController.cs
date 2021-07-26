@@ -509,6 +509,7 @@ namespace WoundImgRepo.Controllers
                                                                   INNER JOIN tissue t ON t.tissue_id = w.tissue_id
                                                                   INNER JOIN version v ON v.version_id = w.version_id
                                                                   INNER JOIN useracc u ON u.user_id = w.user_id");
+            list = list.GroupBy(x => x.woundname).Select(y => y.FirstOrDefault())?.ToList();
             return View(list);
         }
         #endregion
@@ -528,6 +529,7 @@ namespace WoundImgRepo.Controllers
                                       INNER JOIN version v ON v.version_id = w.version_id
                                       WHERE w.name='{0}'";
             List<WoundRecord> recordFound = DBUtl.GetList<WoundRecord>(selectWoundSql, wound.name);
+            recordFound = recordFound.GroupBy(x => x.woundname).Select(y => y.FirstOrDefault())?.ToList();
             return View(recordFound);
         }
         #endregion
