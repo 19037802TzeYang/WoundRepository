@@ -628,6 +628,26 @@ namespace hostrepository.Controllers
         #region add/edit/delete version table
         public IActionResult Version()
         {
+            #region checkuserrole
+            int checktheuserrole = 0;
+            if (User.IsInRole("Admin"))
+            {
+                checktheuserrole = 1;
+            }
+            else if (User.IsInRole("Doctor"))
+            {
+                checktheuserrole = 0;
+            }
+            else if (User.IsInRole("Annotator"))
+            {
+                checktheuserrole = 0;
+            }
+            if (checktheuserrole == 0)
+            {
+                return View("~/Views/Account/Forbidden.cshtml");
+            }
+            #endregion
+
             var versions = DBUtl.GetList<WVersion>($"SELECT * FROM version");
             return View(versions);
         }
@@ -732,6 +752,26 @@ namespace hostrepository.Controllers
         #region add/edit/delete wound category table
         public IActionResult WoundCategory()
         {
+            #region checkuserrole
+            int checktheuserrole = 0;
+            if (User.IsInRole("Admin"))
+            {
+                checktheuserrole = 1;
+            }
+            else if (User.IsInRole("Doctor"))
+            {
+                checktheuserrole = 0;
+            }
+            else if (User.IsInRole("Annotator"))
+            {
+                checktheuserrole = 0;
+            }
+            if (checktheuserrole == 0)
+            {
+                return View("~/Views/Account/Forbidden.cshtml");
+            }
+            #endregion
+
             var woundCategories = DBUtl.GetList<WoundCategory>($"SELECT * FROM wound_category");
             return View(woundCategories);
         }
@@ -836,8 +876,28 @@ namespace hostrepository.Controllers
         #region add/edit/delete tissue table
         public IActionResult Tissue()
         {
+            #region checkuserrole
+            int checktheuserrole = 0;
+            if (User.IsInRole("Admin"))
+            {
+                checktheuserrole = 1;
+            }
+            else if (User.IsInRole("Doctor"))
+            {
+                checktheuserrole = 0;
+            }
+            else if (User.IsInRole("Annotator"))
+            {
+                checktheuserrole = 0;
+            }
+            if (checktheuserrole == 0)
+            {
+                return View("~/Views/Account/Forbidden.cshtml");
+            }
+            #endregion
             var tissues = DBUtl.GetList<Tissue>($"SELECT * FROM tissue");
             return View(tissues);
+            
         }
 
         public IActionResult AddTissue(string name)

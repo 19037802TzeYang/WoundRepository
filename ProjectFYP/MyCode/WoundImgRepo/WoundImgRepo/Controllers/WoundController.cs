@@ -664,7 +664,7 @@ namespace WoundImgRepo.Controllers
             }
             else if (User.IsInRole("Doctor"))
             {
-                checktheuserrole = 2;
+                checktheuserrole = 0;
             }
             else if (User.IsInRole("Annotator"))
             {
@@ -938,7 +938,7 @@ namespace WoundImgRepo.Controllers
             }
             else if (User.IsInRole("Doctor"))
             {
-                checktheuserrole = 2;
+                checktheuserrole = 0;
             }
             else if (User.IsInRole("Annotator"))
             {

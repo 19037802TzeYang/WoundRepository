@@ -35,22 +35,19 @@
                 <select class="form-control" asp-items="@((SelectList)ViewData["tissue"])" asp-for="tissue.name">
                     <option value="">-SELECT-</option>
                 </select>
-             <div class="mb-4">
-                    <label class="title" asp-for="woundv.name">Image Version: </label>
-                    <input type="hidden" asp-for="woundv.version_id" />
-                    <select class="form-control" asp-items="@((SelectList)ViewData["version"])" asp-for="woundv.name">
-                        <option value="">-SELECT-</option>
-                    </select>
-              </div>
-             <div class="mb-2">
-                    <label class="title" asp-for="wound.remarks">Remarks: </label>
-                    <input class="form-control" asp-for="wound.remarks" autocomplete="off">
-             </div>
-
-
-
             </div>
-            
+            <div class="mb-4">
+                <label class="title" asp-for="woundv.name">Image Version: </label>
+                <input type="hidden" asp-for="woundv.version_id" />
+                <select class="form-control" asp-items="@((SelectList)ViewData["version"])" asp-for="woundv.name">
+                    <option value="">-SELECT-</option>
+                </select>
+            </div>
+            <div class="mb-2">
+                <label class="title" asp-for="wound.remarks">Remarks: </label>
+                <input class="form-control" asp-for="wound.remarks" autocomplete="off">
+            </div>
+
             <div class="mb-2">
                 <input class="btn btn-primary" type="submit" value="Update">
             </div>
