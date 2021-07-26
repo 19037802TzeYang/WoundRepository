@@ -260,7 +260,7 @@ namespace WoundImgRepo.Controllers
 
 
 
-            //do note that w.image_id , im.image_id & i.image_id are STILL picture id , however they are just different now
+            //do note that w.image_id , im.image_id & i.image_id are STILL picture id , however they are just using a different name
             List<WoundRecord> gotallidw = DBUtl.GetList<WoundRecord>(tableid, id);
 
             gotallidw.ToArray(); //converts DB list to an array
