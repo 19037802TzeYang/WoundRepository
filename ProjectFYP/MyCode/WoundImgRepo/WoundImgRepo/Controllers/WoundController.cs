@@ -61,6 +61,7 @@ namespace WoundImgRepo.Controllers
     
         public IActionResult MultiDeleteWounds(IFormCollection col)
         {
+        
             #region checkuserrole()
             int checktheuserrole = 0;
             if (User.IsInRole("Admin"))
