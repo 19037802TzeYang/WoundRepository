@@ -864,7 +864,7 @@ namespace WoundImgRepo.Controllers
                 var userDetail = DBUtl.GetList<User>("SELECT * FROM useracc WHERE username = '" + User.Identity.Name + "'")[0];
 
                 var version = DBUtl.GetList<WVersion>($"SELECT * FROM version WHERE name='{wr.versionname}'")[0];
-                var woundList = DBUtl.GetList<Wound>($"SELECT * FROM wound WHERE name={wr.woundname} AND version_id={version.version_id}");
+                var woundList = DBUtl.GetList<Wound>($"SELECT * FROM wound WHERE name='{wr.woundname}' AND version_id={version.version_id}");
                 var wound = new Wound();
                 if (woundList.Any())
                 {
