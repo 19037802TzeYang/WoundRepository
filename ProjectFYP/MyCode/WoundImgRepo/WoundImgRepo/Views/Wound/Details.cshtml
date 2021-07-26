@@ -14,6 +14,10 @@
     button {
         margin-top: 10px;
     }
+
+    .woundSec a {
+        font-size: 30px;
+    }
 </style>
 
 @if (TempData["Msg"] != null)
@@ -184,10 +188,7 @@
         </div>
     </div>
 </div>
-<button class="btn btn-primary" onclick="goBack()">Go Back</button>
-
-<script>
-    function goBack() {
-        window.history.back();
-    }
-</script>
+<div class="mb-2 woundSec">
+    <a type="button" title="Previous Wound" asp-controller="Wound" asp-action="PreviousOrNextWound" asp-route-woundId="@Model.woundRecord.woundid" asp-route-previous="true" id="previous" class="previous"><i class="fas fa-arrow-circle-left"></i></a>
+    <a type="button" title="Previous Wound" asp-controller="Wound" asp-action="PreviousOrNextWound" asp-route-woundId="@Model.woundRecord.woundid" id="next" class="next"><i class="fas fa-arrow-circle-right"></i></a>
+</div>

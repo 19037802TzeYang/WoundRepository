@@ -59,10 +59,10 @@ namespace WoundImgRepo.Controllers
         }
         #endregion
 
+        #region MultiDeleteWounds()
         [Authorize(Roles = "Admin, Annotator")]
         public IActionResult MultiDeleteWounds(IFormCollection col)
         {
-        
             #region checkuserrole()
             int checktheuserrole = 0;
             if (User.IsInRole("Admin"))
@@ -222,8 +222,9 @@ namespace WoundImgRepo.Controllers
             }
             return RedirectToAction("Index");
         }
+        #endregion 
 
-         #region Delete()
+        #region Delete()
         public IActionResult Delete(int id)
         {
             string nopic = "";
@@ -484,6 +485,47 @@ namespace WoundImgRepo.Controllers
                 TempData["MsgType"] = "warning";
                 return RedirectToAction("Index");
             }
+        }
+        #endregion
+
+        #region PreviousOrNextWound() / GetPreviousOrNextWound()
+        public IActionResult PreviousOrNextWound(int woundId, bool previous = false)
+        {
+            var woundList = DBUtl.GetList<Wound>($"SELECT * FROM wound")?.GroupBy(x => x.name)?.Select(y => y.FirstOrDefault());
+            var valid = previous ? woundList.First().wound_id != woundId : woundList.Last().wound_id != woundId;
+            if (valid)
+            {
+                var wound = DBUtl.GetList<Wound>($"SELECT * FROM wound WHERE wound_id={woundId}")[0];
+                var previousOrNextWound = GetPreviousOrNextWound(wound.name, previous, woundId);
+                if (previousOrNextWound != null)
+                {
+                    return RedirectToAction("Details", new { id = previousOrNextWound.wound_id });
+                }
+            }
+            TempData["Msg"] = (previous ? "Previous" : "Next") + " wound record does not exist";
+            TempData["MsgType"] = "warning";
+            return RedirectToAction("Details", new { id = woundId });
+        }
+
+        private Wound GetPreviousOrNextWound(string name, bool previous, int woundId = 0)
+        {
+
+            var wound = DBUtl.GetList<Wound>($"SELECT * FROM wound WHERE name='{name}'")[0];
+            var id = 0;
+            if (wound.wound_id == woundId)
+            {
+                id = previous ? wound.wound_id - 1 : wound.wound_id + 1;
+            }
+            else
+            {
+                id = previous ? woundId - 1 : woundId + 1;
+            }
+            var previousWound = DBUtl.GetList<Wound>($"SELECT * FROM wound WHERE wound_id={id} and name != '{name}'");
+            if (!previousWound.Any())
+            {
+                return GetPreviousOrNextWound(name, previous, id);
+            }
+            return previousWound[0];
         }
         #endregion
 
@@ -807,7 +849,7 @@ namespace WoundImgRepo.Controllers
                 var userDetail = DBUtl.GetList<User>("SELECT * FROM useracc WHERE username = '" + User.Identity.Name + "'")[0];
 
                 var version = DBUtl.GetList<WVersion>($"SELECT * FROM version WHERE name='{wr.versionname}'")[0];
-                var woundList = DBUtl.GetList<Wound>($"SELECT * FROM wound WHERE wound_id={wr.woundid} AND version_id={version.version_id}");
+                var woundList = DBUtl.GetList<Wound>($"SELECT * FROM wound WHERE name={wr.woundname} AND version_id={version.version_id}");
                 var wound = new Wound();
                 if (woundList.Any())
                 {
