@@ -221,7 +221,7 @@ namespace WoundImgRepo.Controllers
             return RedirectToAction("Index");
         }
 
-        #region Delete()
+       #region Delete()
         public IActionResult Delete(int id)
         {
             #region checkuserrole
@@ -261,37 +261,68 @@ namespace WoundImgRepo.Controllers
 
 
             //do note that w.image_id , im.image_id & i.image_id are STILL picture id , however they are just different now
-            List<WoundRecord> gotallidw = DBUtl.GetList<WoundRecord>(tableid, id); 
+            List<WoundRecord> gotallidw = DBUtl.GetList<WoundRecord>(tableid, id);
 
             gotallidw.ToArray(); //converts DB list to an array
 
             //add the saved values as a usable SQL string
             foreach (WoundRecord iD in gotallidw)
             {
-                getpicid += ("image_id =" + iD.woundid + " OR image_id =" + iD.versionid + " OR image_id=" + iD.imageid);
-               
+                getpicid += "image_id =" + iD.woundid ;
+
+                //if the registered record has a annotation or a mask id , then add it in
+                if(iD.versionid > 0)
+                {
+                    getpicid += " OR image_id =" + iD.versionid;
+                }
+                if (iD.imageid>0)
+                {
+                    getpicid += " OR image_id =" + iD.imageid;
+                }
+
+
             }
             #endregion
+            //----------------------------------------------------------------------------------------------
+            //Gets the wound_location _id for deletion
 
+            String getthelocationid = "SELECT wound_location_id AS woundid FROM wound WHERE wound_id ={0}"; //sql string to get id
+
+            String categoryid = ""; //stores in category ID
+
+            List<WoundRecord> gotWLid = DBUtl.GetList<WoundRecord>(getthelocationid, id);
+
+            gotWLid.ToArray(); //converts DB list to an array
+
+            foreach (WoundRecord iD in gotWLid)
+            {
+                categoryid += iD.woundid;
+                break;
+            }
+            String deletethelocationid = "DELETE FROM wound_location WHERE wound_location_id ={0}"; //sql for deleting
+            string deletecategoryidF = string.Format(deletethelocationid, categoryid);
+            Debug.WriteLine(deletecategoryidF);
+
+            Debug.WriteLine(categoryid);
             //---------------------------------------------------------------------------------------
             //                                    String for annotation                       String for wound                    string for picture deletion
-            string deletewoundandannotationSQL = "DELETE FROM annotation WHERE wound_id={0} DELETE FROM wound WHERE wound_id={0}   {1}";
-            
+            string deletewoundandannotationSQL = "DELETE FROM annotation WHERE wound_id={0} DELETE FROM wound WHERE wound_id={0}   {1} {2}";
+                                                                                                                                      //string for location deletion
             string deleteallpictures = "DELETE FROM image WHERE {0}"; //formats off the images to delete
-            
-            string FDP = string.Format(deleteallpictures, getpicid); //combines the sentences
-                   
 
-           //checks if the excecutions of Delete statements worked
-                            //Putting everthing together
-            if (DBUtl.ExecSQL(deletewoundandannotationSQL, id , FDP) == 1 ) 
+            string FDP = string.Format(deleteallpictures, getpicid ); //combines the sentences
+
+
+            //checks if the excecutions of Delete statements worked
+            //Putting everthing together
+            if (DBUtl.ExecSQL(deletewoundandannotationSQL, id, FDP , deletecategoryidF) == 1)
             {
-               
+
                 TempData["Msg"] = "Wound record deleted!";
-                    TempData["MsgType"] = "success";
-                    return RedirectToAction("Index");
-                
-                   
+                TempData["MsgType"] = "success";
+                return RedirectToAction("Index");
+
+
             }
             else
             {
