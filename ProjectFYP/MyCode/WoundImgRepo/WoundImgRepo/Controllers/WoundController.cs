@@ -223,10 +223,10 @@ namespace WoundImgRepo.Controllers
             return RedirectToAction("Index");
         }
 
-        #region Delete()
+         #region Delete()
         public IActionResult Delete(int id)
         {
-            int nopic = 0;
+            string nopic = "";
 
             int multipleimagescheck = 0;
             #region checkuserrole
@@ -289,26 +289,33 @@ namespace WoundImgRepo.Controllers
 
                     getpicid += " OR image_id =" + iD.woundid;
                 }
-                else
-                {
-                    nopic = 1 ;
-                }
+                
                 if (iD.versionid > 0)
                 {
+                    nopic = iD.versionid.ToString();
                     getpicid += " OR image_id =" + iD.versionid;
                 }
-                else
-                {
-                    nopic = 1;
-                }
-                                
+                      
             }
-            if(nopic == 1)
+
+
+
+            //------------------------------------------------------------------------------------------------
+            //error occurs only if there is no annotation or mask , if that's the case:
+            Debug.WriteLine("nopic is" + nopic);
+
+            if(nopic.Length == 0)
             {
-                TempData["Msg"] = "All records must have a mask or annotation before deleting";
-                TempData["MsgType"] = "danger";
-                return RedirectToAction("Index");
+                string getsinglepicid = "SELECT image_id AS imageid FROM wound  WHERE wound_id = {0}"; // gets only the picture id
+                List<WoundRecord> gotoneid = DBUtl.GetList<WoundRecord>(getsinglepicid, id);
+
+                gotoneid.ToArray();
+                foreach (WoundRecord iD in gotoneid)
+                {
+                    getpicid = "image_id =" + iD.imageid;
+                }
             }
+
             #endregion
             //----------------------------------------------------------------------------------------------
             //Gets the wound_location _id for deletion
@@ -354,7 +361,11 @@ namespace WoundImgRepo.Controllers
             }
             else
             {
-                TempData["Msg"] = DBUtl.DB_Message;
+                
+                    TempData["Msg"] =  "All records must have a mask or annotation before deleting ";
+                
+                    TempData["Msg"] = DBUtl.DB_Message;
+                
                 TempData["MsgType"] = "danger";
                 return RedirectToAction("Index");
             }
