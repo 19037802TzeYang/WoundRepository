@@ -11,15 +11,16 @@
             <input asp-for="wound.wound_id" hidden />
             <div class="mb-2">
                 <label class="title" asp-for="wound.name">Wound Name: </label>
-                <input class="form-control" asp-for="wound.name" readonly>
+                <input class="form-control" asp-for="wound.name" readonly autocomplete="off">
             </div>
             <div class="mb-2">
                 <label class="title" asp-for="wound.wound_stage">Wound Stage: </label>
-                <input class="form-control" asp-for="wound.wound_stage">
+                <input class="form-control" asp-for="wound.wound_stage" autocomplete="off">
             </div>
             <div class="mb-2">
-                <label class="title" asp-for="wound.remarks">Remarks: </label>
-                <input class="form-control" asp-for="wound.remarks">
+                <label class="title" asp-for="woundl.name">Wound Location: </label>
+                <input type="hidden" asp-for="woundl.wound_location_id" autocomplete="off">
+                <input class="form-control" asp-for="woundl.name">
             </div>
             <div class="mb-2">
                 <label class="title" asp-for="woundc.name">Wound Category: </label>
@@ -29,24 +30,27 @@
                 </select>
             </div>
             <div class="mb-2">
-                <label class="title" asp-for="woundl.name">Wound Location: </label>
-                <input type="hidden" asp-for="woundl.wound_location_id" />
-                <input class="form-control" asp-for="woundl.name">
-            </div>
-            <div class="mb-2">
                 <label class="title" asp-for="tissue.name">Wound Tissue: </label>
                 <input type="hidden" asp-for="tissue.tissue_id" />
                 <select class="form-control" asp-items="@((SelectList)ViewData["tissue"])" asp-for="tissue.name">
                     <option value="">-SELECT-</option>
                 </select>
+             <div class="mb-4">
+                    <label class="title" asp-for="woundv.name">Image Version: </label>
+                    <input type="hidden" asp-for="woundv.version_id" />
+                    <select class="form-control" asp-items="@((SelectList)ViewData["version"])" asp-for="woundv.name">
+                        <option value="">-SELECT-</option>
+                    </select>
+              </div>
+             <div class="mb-2">
+                    <label class="title" asp-for="wound.remarks">Remarks: </label>
+                    <input class="form-control" asp-for="wound.remarks" autocomplete="off">
+             </div>
+
+
+
             </div>
-            <div class="mb-4">
-                <label class="title" asp-for="woundv.name">Image Version: </label>
-                <input type="hidden" asp-for="woundv.version_id" />
-                <select class="form-control" asp-items="@((SelectList)ViewData["version"])" asp-for="woundv.name">
-                    <option value="">-SELECT-</option>
-                </select>
-            </div>
+            
             <div class="mb-2">
                 <input class="btn btn-primary" type="submit" value="Update">
             </div>

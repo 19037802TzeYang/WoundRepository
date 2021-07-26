@@ -698,7 +698,7 @@ namespace WoundImgRepo.Controllers
                 {
                     TempData["Msg"] = "Wound name already exist. Try giving unique name";
                     TempData["MsgType"] = "warning";
-                    return View("Create");
+                    return RedirectToAction("Index");
                 }
 
                 //useracc table
