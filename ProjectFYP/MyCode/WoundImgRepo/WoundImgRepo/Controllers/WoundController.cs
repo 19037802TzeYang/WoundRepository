@@ -45,20 +45,21 @@ namespace WoundImgRepo.Controllers
             ViewBag.keyword = "";
             ViewBag.selection = "nothing";
             List<WoundRecord> list = DBUtl.GetList<WoundRecord>(@"SELECT w.wound_id as woundid, w.name as woundname, w.wound_stage as woundstage, w.remarks as woundremarks, 
-                                      wc.name as woundcategoryname, wl.name as woundlocationname, t.name as tissuename,
-                                      v.name as versionname, i.img_file as imagefile, i.image_id as imageid, u.username
-                                      FROM wound w
-                                      INNER JOIN image i ON i.image_id = w.image_id
-                                      INNER JOIN wound_category wc ON wc.wound_category_id = w.wound_category_id
-                                      INNER JOIN wound_location wl ON wl.wound_location_id = w.wound_location_id
-                                      INNER JOIN tissue t ON t.tissue_id = w.tissue_id
-                                      INNER JOIN version v ON v.version_id = w.version_id
-                                        INNER JOIN useracc u ON u.user_id = w.user_id");
+                                                                  wc.name as woundcategoryname, wl.name as woundlocationname, t.name as tissuename,
+                                                                  v.name as versionname, i.img_file as imagefile, i.image_id as imageid, u.username
+                                                                  FROM wound w
+                                                                  INNER JOIN image i ON i.image_id = w.image_id
+                                                                  INNER JOIN wound_category wc ON wc.wound_category_id = w.wound_category_id
+                                                                  INNER JOIN wound_location wl ON wl.wound_location_id = w.wound_location_id
+                                                                  INNER JOIN tissue t ON t.tissue_id = w.tissue_id
+                                                                  INNER JOIN version v ON v.version_id = w.version_id
+                                                                  INNER JOIN useracc u ON u.user_id = w.user_id");
+            list = list.GroupBy(x => x.woundname).Select(y => y.FirstOrDefault())?.ToList();
             return View("Index", list);
         }
         #endregion
+
         [Authorize(Roles = "Admin, Annotator")]
-    
         public IActionResult MultiDeleteWounds(IFormCollection col)
         {
         
@@ -222,7 +223,7 @@ namespace WoundImgRepo.Controllers
             return RedirectToAction("Index");
         }
 
-       #region Delete()
+        #region Delete()
         public IActionResult Delete(int id)
         {
             int nopic = 0;
@@ -359,6 +360,7 @@ namespace WoundImgRepo.Controllers
             }
         }
         #endregion
+
         #region Indexpost()
         public IActionResult Indexpost()
         {
@@ -390,18 +392,6 @@ namespace WoundImgRepo.Controllers
             return View("Index", list );
         }
         #endregion
-
-
-
-
-     
-
-
-
-
-
-
-
 
         #region Details()
         public IActionResult Details(int id)
@@ -786,7 +776,6 @@ namespace WoundImgRepo.Controllers
             return RedirectToAction("Details", new { id = woundid });
         }
         #endregion
-
 
         #region UpdateAnnotationMaskImage()
         [HttpPost]
