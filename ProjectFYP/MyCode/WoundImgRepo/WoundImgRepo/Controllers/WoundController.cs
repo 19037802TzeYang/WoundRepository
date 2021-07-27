@@ -1084,34 +1084,7 @@ namespace WoundImgRepo.Controllers
             }
             #endregion
 
-            Debug.WriteLine(""+ annotationid);
-
-            //count the number of annotations
-            int countanno =0;
-
-            //find multiple annotations
-            string findmultiple = @"SELECT *
-                                                   FROM annotation an
-                                                   INNER JOIN image i ON an.annotation_image_id = i.image_id
-                                                   INNER JOIN image im ON an.mask_image_id = im.image_id
-                                                   INNER JOIN wound w ON an.wound_id = w.wound_id
-
-                           WHERE w.wound_id = {0}";
-
-
-            List<WoundRecord> getmultiAnnotation = DBUtl.GetList<WoundRecord>(findmultiple , woundid);
-
-            foreach(WoundRecord iD in getmultiAnnotation)
-            {
-                countanno += 1;
-            }
-            if((countanno >1) == false)
-            {
-                TempData["Msg"] ="each record must have an annotation , add one before deleting";
-                TempData["MsgType"] = "danger";
-                return RedirectToAction("Details", new { id = woundid });
-            }
-
+           
             var getAnnotation = DBUtl.GetList<Annotation>($"SELECT * FROM annotation WHERE annotation_id={annotationid}")[0];
 
             string annotationSql = "DELETE FROM annotation WHERE annotation_id={0}";
