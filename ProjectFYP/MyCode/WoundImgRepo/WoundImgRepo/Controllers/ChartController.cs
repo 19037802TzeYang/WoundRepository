@@ -51,6 +51,18 @@ namespace WoundImgRepo.Controllers
             List<Tissue> tissue = DBUtl.GetList<Tissue>("SELECT TOP 1 t.name FROM wound w  INNER JOIN tissue t  ON w.tissue_id=t.tissue_id GROUP BY t.name HAVING COUNT(w.tissue_id)>=1");
             ViewData["Tissue"] = tissue[0].name;
 
+            //List the total number of Original images in the database currently
+            List<Image> originalimages = DBUtl.GetList<Image>("SELECT * FROM image WHERE type='Original Wound Image'");
+            ViewData["TotalOriginalImages"] = originalimages.Count();
+
+            //List the total number of images in the database currently
+            List<Image> annotatedimages = DBUtl.GetList<Image>("SELECT * FROM image WHERE type='Annotation Image'");
+            ViewData["TotalAnnotatedImages"] = annotatedimages.Count();
+
+            //List the total number of images in the database currently
+            List<Image> maskimages = DBUtl.GetList<Image>("SELECT * FROM image WHERE type='Mask Image'");
+            ViewData["TotalMaskImages"] = maskimages.Count();
+
             //Prepare data for the legend chart
             PrepareData(1);
             ViewData["VersionChart"] = "line";
@@ -80,6 +92,12 @@ namespace WoundImgRepo.Controllers
             ViewData["TissueChart"] = "line";
             ViewData["TissueTitle"] = "Tissues";
             ViewData["TissueShowLegend"] = "false";
+
+            //Prepare image data for all types
+            displayImageData(1);
+            ViewData["ImageChart"] = "pie";
+            ViewData["ImageTitle"] = "Tissues";
+            ViewData["ImageShowLegend"] = "true";
             return View();
         }
         public IActionResult WoundsLocationRecords()
@@ -266,7 +284,7 @@ namespace WoundImgRepo.Controllers
             }
             foreach (Wound w in wounds)
             {
-                tissuenames[findTissue(w.tissue_id)]++;
+                tissuenames[findTissue(w.tissue_id,tissuenames.Length)]++;
             }
             if (x == 1)
             {
@@ -285,6 +303,29 @@ namespace WoundImgRepo.Controllers
                 ViewData["TissueColors"]=colors;
                 ViewData["TissueLabels"]=labels;
                 ViewData["TissueData"]=tissuenames;
+            }
+        }
+
+        private void displayImageData(int x)
+        {
+            List<Image> images = DBUtl.GetList<Image>("SELECT * FROM image");
+            int[] imageTypes = new int[3] { 0, 0, 0 };
+           
+            
+            foreach (Image i in images)
+            {
+                imageTypes[locatePosition(i.type)]++;
+            }
+            if (x == 1)
+            {
+                string[] colors = new string[3] { "red","green","pink"};
+                string[] labels = new string[3] { "Original Wound Image","Annotation Image","Mask Image"};
+                
+                
+                ViewData["ImageLegend"] = "Image";
+                ViewData["ImageColors"] = colors;
+                ViewData["ImageLabels"] = labels;
+                ViewData["ImageData"] = imageTypes;
             }
         }
         private int calculateVersionPosition(int x,int max)
@@ -310,38 +351,16 @@ namespace WoundImgRepo.Controllers
             else return 2;
 
         }
-        private int findTissue(int id)
+        private int findTissue(int id,int max)
         {
-            if (id == 1) return 0;
-            else if (id == 2) return 1;
-            else if (id == 3) return 2;
-            else if (id == 4) return 3;
-            else if (id == 5) return 4;
-            else if (id == 6) return 5;
-            else if (id == 7) return 6;
-            else if (id == 8) return 7;
-            else if (id == 9) return 8;
-            else if (id == 10) return 9;
-            else if (id == 11) return 10;
-            else if (id == 12) return 11;
-            else if (id == 13) return 12;
-            else if (id == 14) return 13;
-            else if (id == 15) return 14;
-            else if (id == 16) return 15;
-            else if (id == 17) return 16;
-            else if (id == 18) return 17;
-            else if (id == 19) return 18;
-            else if (id == 20) return 19;
-            else if (id == 21) return 20;
-            else if (id == 22) return 21;
-            else if (id == 23) return 22;
-            else if (id == 24) return 23;
-            else if (id == 25) return 24;
-            else if (id == 26) return 25;
-            else if (id == 27) return 26;
-            else if (id == 28) return 27;
-            else if (id == 29) return 28;
-            else return 29;
+            if (id < max) return id - 1;
+            else return max - 1;
+        }
+        private int locatePosition(string type)
+        {
+            if (type.Equals("Original Wound Image")) return 0;
+            else if (type.Equals("Annotation Image")) return 1;
+            else return 2;
         }
     }
 }
