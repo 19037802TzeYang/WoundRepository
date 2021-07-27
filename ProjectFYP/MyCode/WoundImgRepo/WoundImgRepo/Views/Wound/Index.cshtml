@@ -549,7 +549,7 @@ else
 
                         <a asp-controller="Wound" asp-action="Update" asp-route-id="@w.woundid">Edit</a> |
                         <a asp-controller="Wound" asp-action="Delete" asp-route-id="@w.woundid"
-                           onclick="return confirm('Delete Wound [@w.woundname] ?')">Delete</a>
+                           onclick="return confirm('Delete Wound [@w.woundname] ? their versions will cease as well')">Delete</a>
                     </td>
                     <td><input type="checkbox" id="Listtododelete" for="Listtododelete" onclick="addtodeletelist('@w.woundid')" /></td>
 
@@ -565,7 +565,7 @@ else
 
        <input id="DBL" name="DBL" for="DBL" class="form-control" hidden/>
 
-        <input  type="submit" class="btn btn-primary" onclick="return confirm('Delete confirmation: The number of wounds deleted CANNOT BE UNDONE!')" value="Innitiate mass Deletion" />
+        <input  type="submit" class="btn btn-primary" onclick="return confirm('Delete confirmation: The number of wounds deleted CANNOT BE UNDONE and their versions will cease as well!')" value="Innitiate mass Deletion" />
     </form>
 
    
