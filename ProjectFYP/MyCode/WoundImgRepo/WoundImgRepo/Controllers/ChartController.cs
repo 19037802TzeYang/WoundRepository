@@ -112,7 +112,7 @@ namespace WoundImgRepo.Controllers
             }
             foreach (Wound wversion in wrList)
             {
-                version[calculateVersionPosition(wversion.version_id)]++;
+                version[calculateVersionPosition(wversion.version_id,version.Length)]++;
                 /*
                 if (wversion.version_id == 1) version[0]++;
                 else if (wversion.version_id == 2) version[1]++;
@@ -160,7 +160,7 @@ namespace WoundImgRepo.Controllers
             int[] wounds = new int[wLocation.Count];
             foreach (Wound w in list)
             {
-                wounds[calculatePosition(w.wound_location_id)]++;
+                wounds[calculatePosition(w.wound_location_id,wounds.Length)]++;
             }
 
             if (x == 1)
@@ -207,7 +207,7 @@ namespace WoundImgRepo.Controllers
             }
             foreach (Wound w in list)
             {
-                categories[calculateCategoryPosition(w.wound_category_id)]++;
+                categories[calculateCategoryPosition(w.wound_category_id,categories.Length)]++;
 
             }
             if (x == 1)
@@ -287,25 +287,21 @@ namespace WoundImgRepo.Controllers
                 ViewData["TissueData"]=tissuenames;
             }
         }
-        private int calculateVersionPosition(int x)
+        private int calculateVersionPosition(int x,int max)
         {
-            int y = x;
-            if (x == y) return x-1;
-            else return x;
-            
-        }
-        private int calculatePosition(int x)
-        {
+            if (x < max) return x - 1;
+            else return max-1;
 
-            int y = x;
-            if (x == y) return x - 1;
-            else return x;
         }
-        private int calculateCategoryPosition(int x)
+        private int calculatePosition(int x,int max)
         {
-            int y = x;
-            if (x == y) return x - 1;
-            else return x;
+            if (x < max) return x - 1;
+            else return max-1;
+        }
+        private int calculateCategoryPosition(int x,int max)
+        {
+            if (x < max) return x - 1;
+            else return max-1;
         }
         private int findRole(string role)
         {
@@ -316,9 +312,36 @@ namespace WoundImgRepo.Controllers
         }
         private int findTissue(int id)
         {
-            int y = id;
-            if (id == y) return id - 1;
-            else return id;
+            if (id == 1) return 0;
+            else if (id == 2) return 1;
+            else if (id == 3) return 2;
+            else if (id == 4) return 3;
+            else if (id == 5) return 4;
+            else if (id == 6) return 5;
+            else if (id == 7) return 6;
+            else if (id == 8) return 7;
+            else if (id == 9) return 8;
+            else if (id == 10) return 9;
+            else if (id == 11) return 10;
+            else if (id == 12) return 11;
+            else if (id == 13) return 12;
+            else if (id == 14) return 13;
+            else if (id == 15) return 14;
+            else if (id == 16) return 15;
+            else if (id == 17) return 16;
+            else if (id == 18) return 17;
+            else if (id == 19) return 18;
+            else if (id == 20) return 19;
+            else if (id == 21) return 20;
+            else if (id == 22) return 21;
+            else if (id == 23) return 22;
+            else if (id == 24) return 23;
+            else if (id == 25) return 24;
+            else if (id == 26) return 25;
+            else if (id == 27) return 26;
+            else if (id == 28) return 27;
+            else if (id == 29) return 28;
+            else return 29;
         }
     }
 }
