@@ -153,7 +153,7 @@ namespace WoundImgRepo.Controllers
             string getpicid = ""; //store id of pictures
 
             //gets the list of ids for pictures
-            //do note that w.image_id , im.image_id & i.image_id are STILL picture id , however they are just different now
+            //do note that w.image_id , im.image_id & i.image_id are STILL picture id , however they are just named different now
             string tableid = @" SELECT  w.image_id AS woundid, i.image_id AS versionid , im.image_id AS imageid
                                                    FROM annotation an
                                                    INNER JOIN image i ON an.annotation_image_id = i.image_id
@@ -272,6 +272,7 @@ namespace WoundImgRepo.Controllers
         }
         #endregion
 
+        //Delete function for multi delete
         #region DeleteFunction()
         public void deletefunction(String id)
         {
@@ -295,7 +296,7 @@ namespace WoundImgRepo.Controllers
 
 
 
-            //do note that w.image_id , im.image_id & i.image_id are STILL picture id , however they are just different now
+            //do note that w.image_id , im.image_id & i.image_id are STILL picture id , however they are just named different now
             List<WoundRecord> gotallidw = DBUtl.GetList<WoundRecord>(tableid, id);
 
             gotallidw.ToArray(); //converts DB list to an array
