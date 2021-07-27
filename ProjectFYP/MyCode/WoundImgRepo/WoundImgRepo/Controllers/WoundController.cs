@@ -201,25 +201,24 @@ namespace WoundImgRepo.Controllers
                 }
 
             }
-
-            mainpictureID = gotallidw[0].woundid.ToString();
-            Debug.WriteLine("The picture's ID wound be " + mainpictureID);
+            
             //------------------------------------------------------------------------------------------------
             //error occurs only if there is no annotation or mask , if that's the case:
             Debug.WriteLine("nopic is" + nopic);
 
-            if (nopic.Length == 0)
-            {
+          
                 string getsinglepicid = "SELECT image_id AS imageid FROM wound  WHERE wound_id = {0}"; // gets only the picture id
                 List<WoundRecord> gotoneid = DBUtl.GetList<WoundRecord>(getsinglepicid, id);
 
                 gotoneid.ToArray();
+            if (nopic.Length == 0)
+            {
                 foreach (WoundRecord iD in gotoneid)
                 {
                     getpicid = "image_id =" + iD.imageid;
                 }
             }
-
+            mainpictureID = gotoneid[0].imageid.ToString();
             #endregion
             //----------------------------------------------------------------------------------------------
             //Gets the wound_location _id for deletion
@@ -253,7 +252,7 @@ namespace WoundImgRepo.Controllers
 
                            WHERE w.Image_id = {0}";
             String allAnnotation = ""; //stores in the annotation id relating to wounds and their corresponding versions
-            mainpictureID = gotallidw[0].woundid.ToString();
+         
             Debug.WriteLine("the main picture is in annotation " + mainpictureID + " and also + "+ DBUtl.ExecSQL(GetALlAnnotationid, mainpictureID));
          
                 Debug.WriteLine("the main picture is" + mainpictureID);
@@ -375,12 +374,10 @@ namespace WoundImgRepo.Controllers
         #region DeleteFunction()
         public void deletefunction(String id)
         {
-
-
             string nopic = "";
             String mainpictureID = ""; //gets the main picture ID , it can be used to track down other record versions
             int multipleimagescheck = 0;
-            
+           
 
             #region Getid()
             //-------------------------------------------------------------------------------------
@@ -436,24 +433,23 @@ namespace WoundImgRepo.Controllers
 
             }
 
-            mainpictureID = gotallidw[0].woundid.ToString();
-            Debug.WriteLine("The picture's ID wound be " + mainpictureID);
             //------------------------------------------------------------------------------------------------
             //error occurs only if there is no annotation or mask , if that's the case:
             Debug.WriteLine("nopic is" + nopic);
 
+
+            string getsinglepicid = "SELECT image_id AS imageid FROM wound  WHERE wound_id = {0}"; // gets only the picture id
+            List<WoundRecord> gotoneid = DBUtl.GetList<WoundRecord>(getsinglepicid, id);
+
+            gotoneid.ToArray();
             if (nopic.Length == 0)
             {
-                string getsinglepicid = "SELECT image_id AS imageid FROM wound  WHERE wound_id = {0}"; // gets only the picture id
-                List<WoundRecord> gotoneid = DBUtl.GetList<WoundRecord>(getsinglepicid, id);
-
-                gotoneid.ToArray();
                 foreach (WoundRecord iD in gotoneid)
                 {
                     getpicid = "image_id =" + iD.imageid;
                 }
             }
-
+            mainpictureID = gotoneid[0].imageid.ToString();
             #endregion
             //----------------------------------------------------------------------------------------------
             //Gets the wound_location _id for deletion
@@ -487,7 +483,7 @@ namespace WoundImgRepo.Controllers
 
                            WHERE w.Image_id = {0}";
             String allAnnotation = ""; //stores in the annotation id relating to wounds and their corresponding versions
-            mainpictureID = gotallidw[0].woundid.ToString();
+
             Debug.WriteLine("the main picture is in annotation " + mainpictureID + " and also + " + DBUtl.ExecSQL(GetALlAnnotationid, mainpictureID));
 
             Debug.WriteLine("the main picture is" + mainpictureID);
@@ -582,15 +578,14 @@ namespace WoundImgRepo.Controllers
 
             //checks if the excecutions of Delete statements worked
             //Putting everthing together
+            Debug.WriteLine(string.Format(deletewoundandannotationSQL, id, FDP, deletecategoryidF, allAnnotation, allRelatedWoundRec));
             DBUtl.ExecSQL(deletewoundandannotationSQL, id, FDP, deletecategoryidF, allAnnotation, allRelatedWoundRec);
 
         }
         #endregion
 
-
-
-
-        //Gets the id for other pictures to delete for wound records of other versions
+        //deletefunction for seperate functions
+        #region picturedeletefunction()
         public String picturedelete(string id)
         {
             String nopic = ""; //stores in as a checkpoint , check if the picture doesn't have a annotation /mask
@@ -650,6 +645,7 @@ namespace WoundImgRepo.Controllers
             return getpicid;
 
         }
+        #endregion
 
         #region Indexpost()
         public IActionResult Indexpost()
@@ -1060,7 +1056,7 @@ namespace WoundImgRepo.Controllers
         }
         #endregion
 
-        //push
+     
         #region DeleteAnnotationMaskImage()
         public IActionResult DeleteAnnotationMaskImage(int woundid, int annotationid)
         {
@@ -1084,7 +1080,8 @@ namespace WoundImgRepo.Controllers
             }
             #endregion
 
-           
+            Debug.WriteLine(""+ annotationid);
+
             var getAnnotation = DBUtl.GetList<Annotation>($"SELECT * FROM annotation WHERE annotation_id={annotationid}")[0];
 
             string annotationSql = "DELETE FROM annotation WHERE annotation_id={0}";
