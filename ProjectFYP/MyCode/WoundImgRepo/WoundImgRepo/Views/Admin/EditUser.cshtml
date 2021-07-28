@@ -25,11 +25,11 @@
                 <!--However it is important to display back the name if the data keyed in is empty-->
                 @if (TempData["usernamecurrently"] == "presentnamefirst" || TempData["usernamecurrently"] == "" || TempData["usernamecurrently"] == null)
                 {
-                    <input asp-for="username" id="username" class="form-control" placeholder="Username" autofocus="" value=@TempData["username"] autocomplete="off">
+                    <input asp-for="username" id="username" class="form-control" placeholder="Username" autofocus="" value=@TempData["username"] autocomplete="off" disabled>
                 }
                 else
                 {
-                    <input asp-for="username" id="username" class="form-control" placeholder="Username" autofocus="" value=@TempData["usernamecurrently"] autocomplete="off">
+                    <input asp-for="username" id="username" class="form-control" placeholder="Username" autofocus="" value=@TempData["usernamecurrently"] autocomplete="off" disabled>
                 }
 
                 <span asp-validation-for="username" class="text-danger"></span>
@@ -63,13 +63,24 @@
                 <span asp-validation-for="UserPw2" class="text-danger"></span>
             </div>
 
+            @if (TempData["username"].ToString() == User.Identity.Name)
+            {@*email*@
+            <div class="form-group row">
+                <label asp-for="email" class="control-label">Email: </label>
+                <label asp-for="email" for="email" class="sr-only">Email</label>
+                <input asp-for="email" type="email" id="email" class="form-control" placeholder="Email" autofocus="" value=@TempData["email"] autocomplete="off" disabled>
+                <span asp-validation-for="email" class="text-danger"></span>
+            </div>}
+        else
+        {
             @*email*@
             <div class="form-group row">
                 <label asp-for="email" class="control-label">Email: </label>
                 <label asp-for="email" for="email" class="sr-only">Email</label>
-                <input asp-for="email" type="email" id="email" class="form-control" placeholder="Email" autofocus="" value=@TempData["email"] autocomplete="off">
+                <input asp-for="email" type="email" id="email" class="form-control" placeholder="Email" autofocus="" value=@TempData["email"] autocomplete="off" >
                 <span asp-validation-for="email" class="text-danger"></span>
             </div>
+        }
 
             <!--selection for roles-->
             <div class="form-group row">
@@ -77,28 +88,46 @@
                 <div class="col-sm-5">
 
                     <div class="form-check form-check-inline">
-                        <input type="radio" class="form-check-input" id="rb1"
-                               asp-for="user_role" value=@TempData["role"] checked />
-                        <label class="form-check-label" for="rb1">No change</label>
-                        <!--selection for user's normal role-->
-                    </div>
+                        @if (TempData["role"].ToString() == "Doctor")
+                        {
+                            <input type="radio" class="form-check-input" id="rb1"
+                                   asp-for="user_role" value="Doctor" checked />
+                        }
+                        else
+                        {
+                            <input type="radio" class="form-check-input" id="rb1"
+                                   asp-for="user_role" value="Doctor" />
+                        }
 
-                    <div class="form-check form-check-inline">
-                        <input type="radio" class="form-check-input" id="rb1"
-                               asp-for="user_role" value="Doctor" />
                         <label class="form-check-label" for="rb2">Doctor</label>
                         <!--selection for doctor-->
                     </div>
                     <div class="form-check form-check-inline">
-                        <input type="radio" class="form-check-input" id="rb2"
-                               asp-for="user_role" value="Annotator" />
+                        @if (TempData["role"].ToString() == "Annotator")
+                        {
+                            <input type="radio" class="form-check-input" id="rb2"
+                                   asp-for="user_role" value="Annotator" checked />
+                        }
+                        else
+                        {
+                            <input type="radio" class="form-check-input" id="rb2"
+                                   asp-for="user_role" value="Annotator" />}
+
                         <label class="form-check-label" for="rb3">Annotator</label>
                         <!--selection for Annotator-->
                     </div>
 
                     <div class="form-check form-check-inline">
-                        <input type="radio" class="form-check-input" id="rb3"
-                               asp-for="user_role" value="Admin" />
+                        @if (TempData["role"].ToString() == "Admin")
+                        {
+                            <input type="radio" class="form-check-input" id="rb3"
+                                   asp-for="user_role" value="Admin" checked />
+                        }
+                        else
+                        {
+                            <input type="radio" class="form-check-input" id="rb3"
+                                   asp-for="user_role" value="Admin" />}
+
                         <label class="form-check-label" for="rb4">Admin</label>
                         <!--selection for Admin-->
                     </div>
@@ -120,7 +149,7 @@
             <div id="Arb1" asp-for="user_id" value=@TempData["id"]></div>
 
 
-          
+
 
 
         </div>
