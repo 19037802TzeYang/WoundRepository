@@ -51,6 +51,18 @@ namespace WoundImgRepo.Controllers
             List<Tissue> tissue = DBUtl.GetList<Tissue>("SELECT TOP 1 t.name FROM wound w  INNER JOIN tissue t  ON w.tissue_id=t.tissue_id GROUP BY t.name HAVING COUNT(w.tissue_id)>=1");
             ViewData["Tissue"] = tissue[0].name;
 
+            //List the total number of Original images in the database currently
+            List<Image> originalimages = DBUtl.GetList<Image>("SELECT * FROM image WHERE type='Original Wound Image'");
+            ViewData["TotalOriginalImages"] = originalimages.Count();
+
+            //List the total number of images in the database currently
+            List<Image> annotatedimages = DBUtl.GetList<Image>("SELECT * FROM image WHERE type='Annotation Image'");
+            ViewData["TotalAnnotatedImages"] = annotatedimages.Count();
+
+            //List the total number of images in the database currently
+            List<Image> maskimages = DBUtl.GetList<Image>("SELECT * FROM image WHERE type='Mask Image'");
+            ViewData["TotalMaskImages"] = maskimages.Count();
+
             //Prepare data for the legend chart
             PrepareData(1);
             ViewData["VersionChart"] = "line";
@@ -80,6 +92,12 @@ namespace WoundImgRepo.Controllers
             ViewData["TissueChart"] = "line";
             ViewData["TissueTitle"] = "Tissues";
             ViewData["TissueShowLegend"] = "false";
+
+            //Prepare image data for all types
+            displayImageData(1);
+            ViewData["ImageChart"] = "pie";
+            ViewData["ImageTitle"] = "Tissues";
+            ViewData["ImageShowLegend"] = "true";
             return View();
         }
         public IActionResult WoundsLocationRecords()
@@ -102,15 +120,17 @@ namespace WoundImgRepo.Controllers
         {
             
             List<WVersion> list = DBUtl.GetList<WVersion>("SELECT * FROM version");
-            List<WoundRecord> wrList = DBUtl.GetList<WoundRecord>("SELECT * FROM wound");
+            List<Wound> wrList = DBUtl.GetList<Wound>("SELECT * FROM wound");
+            string[] knowncolors = new string[23] { "#ff00bf", "#ff0000", "grey", "brown", "black", "blue", "yellow", "green", "black", "purple", "brown", "violet", "crimson", "grey", "maroon", "olive", "chocolate", "aquamarine", "Turquoise", "#437C17", "#ffdf00", "#614051", "#F70D1A" };
+
             int[] version = new int[list.Count];
             for (int i = 0; i < version.Length; i++)
             {
                 version[i] = 0;
             }
-            foreach (WoundRecord wversion in wrList)
+            foreach (Wound wversion in wrList)
             {
-                version[calculatePosition(wversion.versionid)]++;
+                version[calculateVersionPosition(wversion.version_id,version.Length)]++;
                 /*
                 if (wversion.version_id == 1) version[0]++;
                 else if (wversion.version_id == 2) version[1]++;
@@ -121,7 +141,6 @@ namespace WoundImgRepo.Controllers
             if (x == 1)
             {
                 ViewData["VersionLegend"] = "Wound Version";
-                string[] knowncolors = new string[23] { "#ff00bf", "#ff0000", "grey", "brown", "black" ,  "blue", "yellow", "green", "black", "purple", "brown", "violet", "crimson", "grey", "maroon", "olive", "chocolate", "aquamarine", "Turquoise", "#437C17", "#ffdf00", "#614051", "#F70D1A" };
 
                 
                 string[] colors = new string[version.Length];
@@ -159,7 +178,7 @@ namespace WoundImgRepo.Controllers
             int[] wounds = new int[wLocation.Count];
             foreach (Wound w in list)
             {
-                wounds[calculatePosition(w.wound_location_id)]++;
+                wounds[calculatePosition(w.wound_location_id,wounds.Length)]++;
             }
 
             if (x == 1)
@@ -206,7 +225,7 @@ namespace WoundImgRepo.Controllers
             }
             foreach (Wound w in list)
             {
-                categories[calculatePosition(w.wound_category_id)]++;
+                categories[calculateCategoryPosition(w.wound_category_id,categories.Length)]++;
 
             }
             if (x == 1)
@@ -265,7 +284,7 @@ namespace WoundImgRepo.Controllers
             }
             foreach (Wound w in wounds)
             {
-                tissuenames[findTissue(w.tissue_id)]++;
+                tissuenames[findTissue(w.tissue_id,tissuenames.Length)]++;
             }
             if (x == 1)
             {
@@ -286,11 +305,44 @@ namespace WoundImgRepo.Controllers
                 ViewData["TissueData"]=tissuenames;
             }
         }
-        private int calculatePosition(int x)
+
+        private void displayImageData(int x)
         {
-            if (x == 1) return 0;
-            else if (x == 2) return 1;
-            else return 2;
+            List<Image> images = DBUtl.GetList<Image>("SELECT * FROM image");
+            int[] imageTypes = new int[3] { 0, 0, 0 };
+           
+            
+            foreach (Image i in images)
+            {
+                imageTypes[locatePosition(i.type)]++;
+            }
+            if (x == 1)
+            {
+                string[] colors = new string[3] { "red","green","pink"};
+                string[] labels = new string[3] { "Original Wound Image","Annotation Image","Mask Image"};
+                
+                
+                ViewData["ImageLegend"] = "Image";
+                ViewData["ImageColors"] = colors;
+                ViewData["ImageLabels"] = labels;
+                ViewData["ImageData"] = imageTypes;
+            }
+        }
+        private int calculateVersionPosition(int x,int max)
+        {
+            if (x < max) return x - 1;
+            else return max-1;
+
+        }
+        private int calculatePosition(int x,int max)
+        {
+            if (x < max) return x - 1;
+            else return max-1;
+        }
+        private int calculateCategoryPosition(int x,int max)
+        {
+            if (x < max) return x - 1;
+            else return max-1;
         }
         private int findRole(string role)
         {
@@ -299,12 +351,16 @@ namespace WoundImgRepo.Controllers
             else return 2;
 
         }
-        private int findTissue(int id)
+        private int findTissue(int id,int max)
         {
-            if (id == 1) return 0;
-            else if (id == 2) return 1;
-            else if (id == 3) return 2;
-            else return 3;
+            if (id < max) return id - 1;
+            else return max - 1;
+        }
+        private int locatePosition(string type)
+        {
+            if (type.Equals("Original Wound Image")) return 0;
+            else if (type.Equals("Annotation Image")) return 1;
+            else return 2;
         }
     }
 }

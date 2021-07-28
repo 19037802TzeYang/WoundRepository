@@ -15,7 +15,7 @@
     <link href="~/lib/datatables/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
     <script src="~/lib/datatables/js/jquery.dataTables.min.js"></script>
     <script src="~/lib/datatables/js/dataTables.bootstrap5.min.js"></script>
-    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    @*<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">*@
     <script>
         let rightbaropened = 0; // check if right bar is opened or closed
 
@@ -171,7 +171,7 @@ else
         <P><p>
             <button onclick="ResizeColumn()">Resize Columns.</button>
     </div>
-    <button class="btn btn-primary btn-sm" onclick="rightbarcheck()">Hide column feature&#700;</button>
+    <button class="btn btn-primary btn-sm mb-2" onclick="rightbarcheck()">Hide column feature&#700;</button>
 </body>
 <!--#endregion right sidebar-->
 <body>
@@ -549,7 +549,7 @@ else
 
                         <a asp-controller="Wound" asp-action="Update" asp-route-id="@w.woundid">Edit</a> |
                         <a asp-controller="Wound" asp-action="Delete" asp-route-id="@w.woundid"
-                           onclick="return confirm('Delete Wound [@w.woundname] ?')">Delete</a>
+                           onclick="return confirm('Delete Wound [@w.woundname] ? their versions will cease as well')">Delete</a>
                     </td>
                     <td><input type="checkbox" id="Listtododelete" for="Listtododelete" onclick="addtodeletelist('@w.woundid')" /></td>
 
@@ -565,7 +565,7 @@ else
 
        <input id="DBL" name="DBL" for="DBL" class="form-control" hidden/>
 
-        <input  type="submit" class="btn btn-primary" onclick="return confirm('Delete confirmation: The number of wounds deleted CANNOT BE UNDONE!')" value="Innitiate mass Deletion" />
+        <input  type="submit" class="btn btn-primary" onclick="return confirm('Delete confirmation: The number of wounds deleted CANNOT BE UNDONE and their versions will cease as well!')" value="Innitiate mass Deletion" />
     </form>
 
    

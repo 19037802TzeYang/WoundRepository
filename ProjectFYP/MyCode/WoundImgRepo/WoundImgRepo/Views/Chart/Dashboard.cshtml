@@ -186,6 +186,44 @@
                }
             }
          });
+         });
+
+         $(document).ready(function () {
+         new Chart(document.getElementById("imagechart"), {
+            type: '@ViewData["ImageChart"]',
+            data: {
+               labels: @Json.Serialize(ViewData["ImageLabels"]),
+               datasets: [{
+                  label: '@ViewData["ImageLegend"]',
+                  data: @Json.Serialize(ViewData["ImageData"]),
+                  backgroundColor: @Json.Serialize(ViewData["ImageColors"]),
+                  fill: false
+               }]
+            },
+             options: {
+               responsive: false,
+               scaleBeginAtZero: true,
+                legend: {
+                    display: @ViewData["ImageLegend"]
+               },
+                scales: {
+                  yAxes: [{
+                     display: @(ViewData["ImageChart"].ToString().Equals("pie")?"false":"true"),
+                     gridLines: {
+                        display: false,
+                     },
+                     ticks: {
+                        beginAtZero: true,
+                        stepSize: 1
+                     }
+                  }]
+               },
+               title: {
+                  display: true,
+                  text: '@ViewData["ImageTitle"]'
+               }
+            }
+         });
       });
     </script>
 
@@ -229,25 +267,25 @@
             </div>
             @if (User.IsInRole("Admin"))
             {
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-primary shadow h-100 py-2">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                    Most frequent user
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-primary shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        Most frequent user
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        @ViewData["MaximumUsers"]
+                                    </div>
                                 </div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                    @ViewData["MaximumUsers"]
+                                <div class="col-auto">
+                                    <i class=" fas fa-user fa-2x text-gray-300"></i>
                                 </div>
-                            </div>
-                            <div class="col-auto">
-                                <i class=" fas fa-user fa-2x text-gray-300"></i>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
             }
             <div class="col-xl-3 col-md-6 mb-4">
                 <div class="card border-left-primary shadow h-100 py-2">
@@ -268,7 +306,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-xl-3 col-md-6 mb-4">
                 <div class="card border-left-primary shadow h-100 py-2">
                     <div class="card-body">
@@ -289,65 +327,144 @@
                 </div>
             </div>
 
+            @if (User.IsInRole("Admin"))
+            {
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-primary shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        Total number of Original Images
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        @ViewData["TotalOriginalImages"]
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-photo-video fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (User.IsInRole("Admin"))
+            {
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-primary shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        Total number Annotated Images
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        @ViewData["TotalAnnotatedImages"]
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-photo-video fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (User.IsInRole("Admin"))
+            {
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-primary shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        Total number of Mask images
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        @ViewData["TotalMaskImages"]
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-photo-video text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
         </div>
 
         <div class=" row">
             <div class="col-12 col-xl-10 col-md-6 col-xl-4">
                 <div class="card">
                     <div class="card-header">
-                <ul class="nav nav-tabs card-header-tabs">
-                    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Location">Wounds by location</a></li>
-                    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Category">Wounds by category</a></li>
-                    @if (User.IsInRole("Admin"))
-                    {
-                    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Users">Display Users</a></li>
-                    }
-                    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Versions">Versions</a></li>
-                    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Tissues">Wound by Tissues</a></li>
-                </ul>
+                        <ul class="nav nav-tabs card-header-tabs">
+                            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Location">Wounds by location</a></li>
+                            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Category">Wounds by category</a></li>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Users">Display Users</a></li>
+                            }
+                            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Versions">Versions</a></li>
+                            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Tissues">Wound by Tissues</a></li>
+                            @if (User.IsInRole("Admin"))
+                            {
+                            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Images">Images</a></li>
+                            }
+                        </ul>
                     </div>
 
-                <div class="tab-content" style="margin-top:10px">
-                    <div id="Location" class="tab-pane fade in active">
-                        <div class="card-body">
-                        <h2 class="m-0 font-weight-bold text-primary">Wound by @ViewData["Title"]</h2>
-                            
-                        <canvas id="chart" width="600" height="300"></canvas>
-                        </div>
-                    </div>
-                    <div id="Category" class="tab-pane fade">
-                        <div class="card-body">
-                        <h2 class="m-0 font-weight-bold text-primary">Wound by @ViewData["CatTitle"]</h2>
-                            
-                        <canvas id="Catchart" width="600" height="300"></canvas>
-                            
-                        </div>
-                    </div>
-                    <div id="Users" class="tab-pane fade">
-                        <div class="card-body">
-                        <h2 class="m-0 font-weight-bold text-primary">Display @ViewData["UserTitle"]</h2>
-                            
-                        <canvas id="UserChart" width="600" height="300"></canvas>
-                                
-                        </div>
-                    </div>
-                    <div id="Versions" class="tab-pane fade">
-                        <div class="card-body">
-                        <h2 class="m-0 font-weight-bold text-primary">Display @ViewData["VersionTitle"]</h2>
-                            
-                        <canvas id="VersionChart" width="600" height="300"></canvas>
-                                
+                    <div class="tab-content" style="margin-top:10px">
+                        <div id="Location" class="tab-pane fade in active">
+                            <div class="card-body">
+                                <h2 class="m-0 font-weight-bold text-primary">Wound by @ViewData["Title"]</h2>
+
+                                <canvas id="chart" width="600" height="300"></canvas>
                             </div>
-                    </div>
-                    <div id="Tissues" class="tab-pane fade">
-                        <div class="card-body">
-                        <h2 class="m-0 font-weight-bold text-primary">Wound by @ViewData["TissueTitle"]</h2>
-                            
-                        <canvas id="tissuechart" width="600" height="300"></canvas>
-                                
+                        </div>
+                        <div id="Category" class="tab-pane fade">
+                            <div class="card-body">
+                                <h2 class="m-0 font-weight-bold text-primary">Wound by @ViewData["CatTitle"]</h2>
+
+                                <canvas id="Catchart" width="600" height="300"></canvas>
+
                             </div>
+                        </div>
+                        <div id="Users" class="tab-pane fade">
+                            <div class="card-body">
+                                <h2 class="m-0 font-weight-bold text-primary">Display @ViewData["UserTitle"]</h2>
+
+                                <canvas id="UserChart" width="600" height="300"></canvas>
+
+                            </div>
+                        </div>
+                        <div id="Versions" class="tab-pane fade">
+                            <div class="card-body">
+                                <h2 class="m-0 font-weight-bold text-primary">Display @ViewData["VersionTitle"]</h2>
+
+                                <canvas id="VersionChart" width="600" height="300"></canvas>
+
+                            </div>
+                        </div>
+                        <div id="Tissues" class="tab-pane fade">
+                            <div class="card-body">
+                                <h2 class="m-0 font-weight-bold text-primary">Wound by @ViewData["TissueTitle"]</h2>
+
+                                <canvas id="tissuechart" width="600" height="300"></canvas>
+
+                            </div>
+                        </div>
+
+                        <div id="Images" class="tab-pane fade">
+                            <div class="card-body">
+                                <h2 class="m-0 font-weight-bold text-primary">Wound by @ViewData["ImageTitle"]</h2>
+
+                                <canvas id="imagechart" width="600" height="300"></canvas>
+
+                            </div>
+                        </div>
                     </div>
-                </div>
 
 
 

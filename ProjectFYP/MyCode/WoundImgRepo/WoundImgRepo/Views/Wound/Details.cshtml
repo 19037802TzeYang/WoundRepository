@@ -1,18 +1,25 @@
 @model WoundDetailsViewModel
 <style>
     .box {
-        margin: 0px 0px 10px 0px;
+        margin: 0px 0px 30px 0px;
+    }
+
+    .wbox {
+        margin: 0px 0px 5px 0px;
     }
 
     div > p {
         display: inline-block;
         margin-right: 10px;
-        margin-bottom: 10px;
-        font-weight: 600;
+        margin-bottom: 5px;
+        font-weight: 500;
     }
 
-    button {
-        margin-top: 10px;
+    .line {
+        border-bottom: 1px solid black;
+        padding-bottom: 1px;
+        padding-top: 10px;
+        border-color: lightgray;
     }
 
     .woundSec a {
@@ -53,7 +60,7 @@
     }
 </ul>
 
-<!-- each wound record has same wound image with multiple annotation/mask image in different version -->
+<!-- each wound record has same wound image with multiple annotation/mask image in different version (changes - each wound record has one wound image with multiple annotation/mask image in one version) -->
 <!-- versions navigation tab content -->
 <div class="tab-content" id="myTabContent">
     <!-- get this wound record -->
@@ -66,22 +73,22 @@
         var showActive = count == 1 ? "show active" : "";
         <div class="tab-pane fade @showActive" id="@versionId" role="tabpanel" aria-labelledby="@versionTab">
             <div class="row mt-4">
-                <div class="col-xs-6 col-sm-4 box">
-                    <h5>Wound</h5>
+                <div class="col-xs-6 col-sm-4 wbox">
+                    <h6>Wound</h6>
                     <div class="border">
                         <!-- get this wound image -->
                         <img src="/photos/@woundRecord.imagefile" class="img-fluid" alt="Responsive image" />
                     </div>
                 </div>
             </div>
-            <div class="row mt-4">
+            <div class="row mt-2">
                 @if (woundRecord.annotationMaskImage.Count > 0)
                 {
                     <div class="col-xs-6 col-sm-4">
-                        <h5>Annotations</h5>
+                        <h6>Annotations</h6>
                     </div>
                     <div class="col-xs-6 col-sm-4">
-                        <h5>Masks</h5>
+                        <h6>Masks</h6>
                     </div>
                     <div class="col-xs-6 col-sm-2">
                     </div>
@@ -115,22 +122,23 @@
                     </div>
                 }
 
-                <div class="col-xs-12 col-sm-12 mt-4">
-                    <div><p>Name:</p><span>@Model.woundRecord.woundname</span></div>
-                    <div><p>Stage:</p><span>@Model.woundRecord.woundstage</span></div>
-                    <div><p>Remarks:</p><span>@Model.woundRecord.woundremarks</span></div>
-                    <div><p>Category:</p><span>@Model.woundRecord.woundcategoryname</span></div>
-                    <div><p>Location:</p><span>@Model.woundRecord.woundlocationname</span></div>
-                    <div><p>Tissue:</p><span>@Model.woundRecord.tissuename</span></div>
+                <div class="col-xs-12 col-sm-4 mt-2">
+                    <div class="line"><p>Wound Name:</p><span>@Model.woundRecord.woundname</span></div>
+                    <div class="line"><p>Wound Stage:</p><span>@Model.woundRecord.woundstage</span></div>
+                    <div class="line"><p>Wound Location:</p><span>@Model.woundRecord.woundlocationname</span></div>
+                    <div class="line"><p>WoundCategory:</p><span>@Model.woundRecord.woundcategoryname</span></div>
+                    <div class="line"><p>Wound Tissue:</p><span>@Model.woundRecord.tissuename</span></div>
                     <!-- get this wound version name -->
-                    <div><p>Version:</p><span>@woundRecord.versionname</span></div>
+                    <div class="line"><p>Image Version:</p><span>@woundRecord.versionname</span></div>
+                    <div class="line"><p>Remarks:</p><span>@Model.woundRecord.woundremarks</span></div>
                     @if (User.IsInRole("Admin") || User.IsInRole("Annotator"))
                     {
-                        <button type="button" class="btn btn-primary mt-0 mr-1" data-toggle="modal" data-target="#annotationMaskModal">
+                        <a type="button" class="btn btn-primary mt-3 mb-1 mr-1" asp-controller="Wound" asp-action="TheWounds">Go Back</a>
+                        <button type="button" class="btn btn-primary mt-3 mb-1 mr-1" data-toggle="modal" data-target="#annotationMaskModal">
                             Upload
                         </button>
                         <a type="button"
-                           class="btn btn-primary mr-1"
+                           class="btn btn-primary mt-3 mb-1 mr-1"
                            asp-controller="Wound"
                            asp-action="Update"
                            asp-route-id="@Model.woundRecord.woundid">
@@ -169,15 +177,16 @@
                             <input type="file" asp-for="@Model.woundRecord.maskimage" required>
                         </div>
                     </div>
-                    <div class="form-group row">
+                    @*(not needed since 1 wound record can only have 1 version)*@
+                    @*<div class="form-group row">
                         <label class="col-sm-4">Image Version:</label>
                         <div class="col-sm-6">
                             <input type="hidden" asp-for="@Model.woundRecord.versionid" />
                             <select class="form-control" asp-for="@Model.woundRecord.versionname" asp-items="@((SelectList)ViewData["version"])">
-                                <option value="0">--Select--</option>
+                                    <option value="0">--Select--</option>
                             </select>
                         </div>
-                    </div>
+                    </div>*@
                     <div class="form-group row">
                         <div class="offset-sm-4 col-sm-6">
                             <input class="btn btn-primary" type="submit" value="Upload">
