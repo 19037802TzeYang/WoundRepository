@@ -176,16 +176,16 @@
                             <input type="file" asp-for="@Model.woundRecord.maskimage" required>
                         </div>
                     </div>
-                    <div class="form-group row">
+                    @*(not needed since 1 wound record can only have 1 version)*@
+                    @*<div class="form-group row">
                         <label class="col-sm-4">Image Version:</label>
                         <div class="col-sm-6">
                             <input type="hidden" asp-for="@Model.woundRecord.versionid" />
-                            <input class="form-control" asp-for="@Model.woundRecord.versionname" readonly>
-                            @*<select class="form-control" asp-for="@Model.woundRecord.versionname" asp-items="@((SelectList)ViewData["version"])">
+                            <select class="form-control" asp-for="@Model.woundRecord.versionname" asp-items="@((SelectList)ViewData["version"])">
                                     <option value="0">--Select--</option>
-                                </select>*@
+                            </select>
                         </div>
-                    </div>
+                    </div>*@
                     <div class="form-group row">
                         <div class="offset-sm-4 col-sm-6">
                             <input class="btn btn-primary" type="submit" value="Upload">

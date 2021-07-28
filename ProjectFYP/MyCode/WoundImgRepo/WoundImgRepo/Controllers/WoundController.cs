@@ -719,7 +719,7 @@ namespace WoundImgRepo.Controllers
             var woundRecordList = new List<WoundRecord>();
             if (recordFound.Count > 0)
             {
-                //check if any of the wound record that has been found has the same version name in the list
+                //check if any of the wound record that has been found has the same version name in the list (not needed since 1 wound record can only have 1 version)
                 foreach (var woundRecord in recordFound)
                 {
                     string selectAnnotationSql = @"SELECT i.img_file as annotationimagefile, im.img_file as maskimagefile, annotation_id as annotationid
@@ -732,7 +732,7 @@ namespace WoundImgRepo.Controllers
 
                     if (woundRecordList.Any(x => x.versionname.Equals(woundRecord.versionname, StringComparison.OrdinalIgnoreCase)))
                     {
-                        //get the wound record that has the same version name and add in the additional annotation/mask image
+                        //get the wound record that has the same version name and add in the additional annotation/mask image (not needed since 1 wound record can only have 1 version)
                         var sameVersionNameWR = woundRecordList.FirstOrDefault(x => x.versionname.Equals(woundRecord.versionname, StringComparison.OrdinalIgnoreCase));
                         sameVersionNameWR.annotationMaskImage.AddRange(annotationMaskImageList);
                     }
@@ -743,8 +743,9 @@ namespace WoundImgRepo.Controllers
                         woundRecordList.Add(woundRecord);
                     }
                 }
-                //set version data dropdown list
-                SetVersionViewData();
+                //set version data dropdown list (not needed since 1 wound record can only have 1 version)
+                //SetVersionViewData();
+
                 //assign value to properties and pass to view
                 var woundDetailsViewModel = new WoundDetailsViewModel()
                 {
@@ -1124,7 +1125,7 @@ namespace WoundImgRepo.Controllers
                 //useracc table
                 var userDetail = DBUtl.GetList<User>("SELECT * FROM useracc WHERE username = '" + User.Identity.Name + "'")[0];
 
-                //(changes - each wound record has one wound image with multiple annotation/mask image in one version)
+                //(not needed since 1 wound record can only have 1 version)
                 //var version = DBUtl.GetList<WVersion>($"SELECT * FROM version WHERE name='{wr.versionname}'")[0];
                 //var woundList = DBUtl.GetList<Wound>($"SELECT * FROM wound WHERE name='{wr.woundname}' AND version_id={version.version_id}");
                 //var wound = new Wound();
@@ -1241,7 +1242,8 @@ namespace WoundImgRepo.Controllers
                 };
                 //set wound category, tissue, version data dropdown list
                 SetWoundCategoryViewData();
-                SetVersionViewData();
+                //(not needed since 1 wound record can only have 1 version)
+                //SetVersionViewData();
                 SetTissueViewData();
                 return View(record);
             }
