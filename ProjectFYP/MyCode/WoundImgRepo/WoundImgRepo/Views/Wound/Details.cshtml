@@ -60,7 +60,7 @@
     }
 </ul>
 
-<!-- each wound record has same wound image with multiple annotation/mask image in different version -->
+<!-- each wound record has same wound image with multiple annotation/mask image in different version (changes - each wound record has one wound image with multiple annotation/mask image in one version) -->
 <!-- versions navigation tab content -->
 <div class="tab-content" id="myTabContent">
     <!-- get this wound record -->
@@ -180,9 +180,10 @@
                         <label class="col-sm-4">Image Version:</label>
                         <div class="col-sm-6">
                             <input type="hidden" asp-for="@Model.woundRecord.versionid" />
-                            <select class="form-control" asp-for="@Model.woundRecord.versionname" asp-items="@((SelectList)ViewData["version"])">
-                                <option value="0">--Select--</option>
-                            </select>
+                            <input class="form-control" asp-for="@Model.woundRecord.versionname" readonly>
+                            @*<select class="form-control" asp-for="@Model.woundRecord.versionname" asp-items="@((SelectList)ViewData["version"])">
+                                    <option value="0">--Select--</option>
+                                </select>*@
                         </div>
                     </div>
                     <div class="form-group row">

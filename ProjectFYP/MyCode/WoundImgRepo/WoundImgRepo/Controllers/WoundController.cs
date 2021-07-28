@@ -1055,8 +1055,7 @@ namespace WoundImgRepo.Controllers
             }
         }
         #endregion
-
-     
+  
         #region DeleteAnnotationMaskImage()
         public IActionResult DeleteAnnotationMaskImage(int woundid, int annotationid)
         {
@@ -1125,25 +1124,27 @@ namespace WoundImgRepo.Controllers
                 //useracc table
                 var userDetail = DBUtl.GetList<User>("SELECT * FROM useracc WHERE username = '" + User.Identity.Name + "'")[0];
 
-                var version = DBUtl.GetList<WVersion>($"SELECT * FROM version WHERE name='{wr.versionname}'")[0];
-                var woundList = DBUtl.GetList<Wound>($"SELECT * FROM wound WHERE name='{wr.woundname}' AND version_id={version.version_id}");
-                var wound = new Wound();
-                if (woundList.Any())
-                {
-                    wound = woundList.FirstOrDefault();
-                }
-                else
-                {
-                    var getWound = DBUtl.GetList<Wound>($"SELECT * FROM wound WHERE wound_id={wr.woundid}")[0];
-                    //wound table 
-                    string wSql = @"INSERT INTO wound(name, wound_stage, remarks, 
-                                                      wound_category_id, wound_location_id, tissue_id, version_id, image_id, user_id)
-                                    VALUES('{0}','{1}','{2}',{3},{4},{5},{6},{7},{8})";
-                    int wRowsAffected = DBUtl.ExecSQL(wSql, getWound.name, getWound.wound_stage, getWound.remarks,
-                                                            getWound.wound_category_id, getWound.wound_location_id, getWound.tissue_id,
-                                                            version.version_id, getWound.image_id, userDetail.user_id);
-                    wound = DBUtl.GetList<Wound>("SELECT * FROM wound ORDER BY wound_id DESC")[0];
-                }
+                //(changes - each wound record has one wound image with multiple annotation/mask image in one version)
+                //var version = DBUtl.GetList<WVersion>($"SELECT * FROM version WHERE name='{wr.versionname}'")[0];
+                //var woundList = DBUtl.GetList<Wound>($"SELECT * FROM wound WHERE name='{wr.woundname}' AND version_id={version.version_id}");
+                //var wound = new Wound();
+                //if (woundList.Any())
+                //{
+                //    wound = woundList.FirstOrDefault();
+                //}
+                //else
+                //{
+                //    var getWound = DBUtl.GetList<Wound>($"SELECT * FROM wound WHERE wound_id={wr.woundid}")[0];
+                //    //wound table 
+                //    string wSql = @"INSERT INTO wound(name, wound_stage, remarks, 
+                //                                      wound_category_id, wound_location_id, tissue_id, version_id, image_id, user_id)
+                //                    VALUES('{0}','{1}','{2}',{3},{4},{5},{6},{7},{8})";
+                //    int wRowsAffected = DBUtl.ExecSQL(wSql, getWound.name, getWound.wound_stage, getWound.remarks,
+                //                                            getWound.wound_category_id, getWound.wound_location_id, getWound.tissue_id,
+                //                                            version.version_id, getWound.image_id, userDetail.user_id);
+                //    wound = DBUtl.GetList<Wound>("SELECT * FROM wound ORDER BY wound_id DESC")[0];
+                //}
+
                 //image table
                 string anpicfilename = DoPhotoUpload(wr.annotationimage);
                 string animageSql = @"INSERT INTO image(name, type, img_file)
@@ -1166,7 +1167,7 @@ namespace WoundImgRepo.Controllers
                     {
                         string anSql = @"INSERT INTO annotation(mask_image_id, wound_id, annotation_image_id, user_id)
                                          VALUES({0},{1},{2},{3})";
-                        anRowsAffected = DBUtl.ExecSQL(anSql, maskImg[imgCount].image_id, wound.wound_id, img.image_id, userDetail.user_id);
+                        anRowsAffected = DBUtl.ExecSQL(anSql, maskImg[imgCount].image_id, wr.woundid, img.image_id, userDetail.user_id);
                         imgCount += 1;
                     });
                 }
