@@ -7,7 +7,7 @@
         @TempData["Msg"]
     </div>}
 @{string lisD; }
-    @section MoreScripts {
+@section MoreScripts {
     @*
         <link href="~/lib/datatables/css/jquery.dataTables.min.css" rel="stylesheet" />
     *@
@@ -18,31 +18,24 @@
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <script>
         let rightbaropened = 0; // check if right bar is opened or closed
-
         function rightbarcheck() {
             /if right bar is opened/
             if (rightbaropened == 0) {
                 rightbaropened = 1;
                 openRightMenu();
-
             }
-
             else {
                 //if right bar is closed
                 rightbaropened = 0;
                 closeRightMenu();
             }
-
         }
-
         function openRightMenu() {
             document.getElementById("rightMenu").style.display = "block";
         }
-
         function closeRightMenu() {
             document.getElementById("rightMenu").style.display = "none";
         }
-
         function ConfirmDelete() {
             if (confirm("Are you sure you want to delete? This will remove all records with the annotation as well.") == false) {
                 event.preventDefault();
@@ -63,11 +56,8 @@
                     {
                         "targets": [12],
                         "visible": false,
-
                     }
                 ]
-
-
             });
         });
         $(document).ready(function () {
@@ -100,36 +90,26 @@ else
 <label for="MultiDelete">On Multi-delete</label>
 <p></p>
 <script>
-
-
     //show or hide the search foundry
     function showhidesearchfoundry() {
         if (document.getElementById('showhidefilterfoundry').checked) {
             document.getElementById('filterfoundry').style.display = 'block';
-
         } else {
             document.getElementById('filterfoundry').style.display = 'none';
-
         }
     }
-
     function showhideMultiDeletetwo() {
         my_table = jQuery('#jsWoundsTable').DataTable();
         var x = document.getElementById("MultiDelete").checked;
         if (x == false) {
-
             my_table.column(12).visible(0);
-
         } else {
             my_table.column(12).visible(1);
         }
     }
-
 </script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-
-
     .content {
         padding: 0 18px;
         display: none;
@@ -151,17 +131,17 @@ else
         <P><p>
             <input type="checkbox" onclick="ResizeColumn()" id="Hidewoundstage"> <label>Stage</label>
         <P><p>
-            <input type="checkbox" onclick="ResizeColumn()" id="HideRemarks"> <label>Remarks </label>
+            <input type="checkbox" onclick="ResizeColumn()" id="HideRemarks"> <label>Location </label>
         <P><p>
-            <input type="checkbox" onclick="ResizeColumn()" id="HideCategory"> <label>Category  </label>
+            <input type="checkbox" onclick="ResizeColumn()" id="HideCategory"> <label>Wound Image</label>
         <P><p>
-            <input type="checkbox" onclick="ResizeColumn()" id="HideLocation"> <label>Location</label>
+            <input type="checkbox" onclick="ResizeColumn()" id="HideLocation"> <label>Category</label>
         <P><p>
-            <input type="checkbox" onclick="ResizeColumn()" id="HideOriginalWoundImage"> <label>Wound Image</label>
+            <input type="checkbox" onclick="ResizeColumn()" id="HideOriginalWoundImage"> <label>Tissue</label>
         <P><p>
-            <input type="checkbox" onclick="ResizeColumn()" id="HideTissue"> <label>Tissue  </label>
+            <input type="checkbox" onclick="ResizeColumn()" id="HideTissue"> <label>Version  </label>
         <P><p>
-            <input type="checkbox" onclick="ResizeColumn()" id="HideVersion"> <label>Version </label>
+            <input type="checkbox" onclick="ResizeColumn()" id="HideVersion"> <label>Remarks </label>
         <P><p>
             <input type="checkbox" onclick="ResizeColumn()" id="HideDetails"> <label>Details </label>
         <P><p>
@@ -181,11 +161,9 @@ else
 <!--scripts for hiding columns and setting arrays-->
 <script>
     let EnD = "EditNdelete";
-
     const deletelist = [];
     let message = "Warning ! ";
     let coderun = "no"
-
     function addtodeletelist(num) {
         let pushmarkz = 1;
         //if the list is empty , we push a number in first
@@ -196,10 +174,8 @@ else
         else {
             //if the list is has something , we check for duplicates
             if (deletelist.length > 0) {
-
                 for (let i = 0; i < deletelist.length; i++) {
                     //if a duplicate is found , we delete it
-
                     if (deletelist[i] == num) {
                         deletelist.splice(i, 1);
                         //we have to tell the system not to push
@@ -208,7 +184,6 @@ else
                     }
                 }
             }
-
         }
         //finally , we get the system to check for the push flag , if it is good , push the value
         if (pushmarkz == 1) {
@@ -219,29 +194,23 @@ else
             document.getElementById("demo").innerHTML = deletelist;
         } else {
             document.getElementById("demo").innerHTML = "No Ids selected.";
-
         }
-
         let Listtostring = deletelist.toString();
-        
 
         document.getElementById("DBL").setAttribute('value', Listtostring);
     }// end of program function
 
-
-
-
+  
     function Hidewoundid() {
         my_table = jQuery('#jsWoundsTable').DataTable();
         var x = document.getElementById("Hidewoundid").checked;
         if (x == true) {
-
             my_table.column(0).visible(0);
-
         } else {
             my_table.column(0).visible(1);
         }
     }
+    
     function Hidename() {
         my_table = jQuery('#jsWoundsTable').DataTable();
         var x = document.getElementById("Hidename").checked;
@@ -251,6 +220,7 @@ else
             my_table.column(1).visible(1);
         }
     }
+
     function Hidewoundstage() {
         my_table = jQuery('#jsWoundsTable').DataTable();
         var x = document.getElementById("Hidewoundstage").checked;
@@ -260,7 +230,8 @@ else
             my_table.column(2).visible(1);
         }
     }
-    function HideRemarks() {
+
+    function HideLocation() {
         my_table = jQuery('#jsWoundsTable').DataTable();
         var x = document.getElementById("HideRemarks").checked;
         if (x == true) {
@@ -269,7 +240,8 @@ else
             my_table.column(3).visible(1);
         }
     }
-    function HideCategory() {
+
+    function HideOriginalWoundImage() {
         my_table = jQuery('#jsWoundsTable').DataTable();
         var x = document.getElementById("HideCategory").checked;
         if (x == true) {
@@ -278,7 +250,8 @@ else
             my_table.column(4).visible(1);
         }
     }
-    function HideLocation() {
+
+    function HideCategory() {
         my_table = jQuery('#jsWoundsTable').DataTable();
         var x = document.getElementById("HideLocation").checked;
         if (x == true) {
@@ -287,7 +260,8 @@ else
             my_table.column(5).visible(1);
         }
     }
-    function HideOriginalWoundImage() {
+
+    function HideTissue() {
         my_table = jQuery('#jsWoundsTable').DataTable();
         var x = document.getElementById("HideOriginalWoundImage").checked;
         if (x == true) {
@@ -296,7 +270,8 @@ else
             my_table.column(6).visible(1);
         }
     }
-    function HideTissue() {
+  
+    function HideVersion() {
         my_table = jQuery('#jsWoundsTable').DataTable();
         var x = document.getElementById("HideTissue").checked;
         if (x == true) {
@@ -305,7 +280,8 @@ else
             my_table.column(7).visible(1);
         }
     }
-    function HideVersion() {
+   
+    function HideRemarks() {
         my_table = jQuery('#jsWoundsTable').DataTable();
         var x = document.getElementById("HideVersion").checked;
         if (x == true) {
@@ -321,7 +297,6 @@ else
             my_table.column(9).visible(0);
         } else {
             my_table.column(9).visible(1);
-
         }
     }
     function HideUsername() {
@@ -331,7 +306,6 @@ else
             my_table.column(10).visible(0);
         } else {
             my_table.column(10).visible(1);
-
         }
     }
     function editNdelete() {
@@ -343,8 +317,6 @@ else
             my_table.column(11).visible(1);
         }
     }
-
-
     function HideallCol() {
         my_table = jQuery('#jsWoundsTable').DataTable();
         my_table.column(0).visible(0);
@@ -362,26 +334,23 @@ else
         my_table.column(12).visible(0);
     }
     function ResizeColumn() {
-
         HideallCol();
         Hidewoundid();
         Hidename();
         Hidewoundstage();
-        HideRemarks();
-        HideCategory();
         HideLocation();
         HideOriginalWoundImage();
+        HideCategory();
         HideTissue();
         HideVersion();
+        HideRemarks();
         HideDetails();
         HideUsername();
         editNdelete();
         my_table = jQuery('#jsWoundsTable').DataTable();
         var x = document.getElementById("MultiDelete").checked;
         if (x == false) {
-
             my_table.column(12).visible(0);
-
         } else {
             my_table.column(12).visible(1);
         }
@@ -389,7 +358,6 @@ else
 </script>
 
 <!--#endregion-->
-
 <!--filter-->
 <body onLoad="javascript:showhidesearchfoundry()">
     <!--#region search-->
@@ -500,32 +468,32 @@ else
 </body>
 
 
-    <!--table set up-->
-    <table id="jsWoundsTable" class="table table-bordered table-condensed table-hover table-striped display compact" style="width:100%">
-        <thead>
-            <tr>
-                <th scope="col">Id</th>
-                <th scope="col">Name</th>
-                <th scope="col">Stage</th>
-                <th scope="col">Location</th>
-                <th scope="col">Wound Image</th>
-                <th scope="col">Category</th>
-                <th scope="col">Tissue</th>
-                <th scope="col">Version</th>
-                <th scope="col">Remarks</th>
-                <th scope="col">Details</th>
+<!--table set up-->
+<table id="jsWoundsTable" class="table table-bordered table-condensed table-hover table-striped display compact" style="width:100%">
+    <thead>
+        <tr>
+            <th scope="col">Id</th>
+            <th scope="col">Name</th>
+            <th scope="col">Stage</th>
+            <th scope="col">Location</th>
+            <th scope="col">Wound Image</th>
+            <th scope="col">Category</th>
+            <th scope="col">Tissue</th>
+            <th scope="col">Version</th>
+            <th scope="col">Remarks</th>
+            <th scope="col">Details</th>
 
-                @if (User.IsInRole("Admin") || User.IsInRole("Annotator"))
-                {
-                    <th scope="col">Username</th>
-                    <th scope="col">Edit / Delete</th>
-                    <th scope="col">Multi-Delete</th>
-                }
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (WoundRecord w in Model)
+            @if (User.IsInRole("Admin") || User.IsInRole("Annotator"))
             {
+                <th scope="col">Username</th>
+                <th scope="col">Edit / Delete</th>
+                <th scope="col">Multi-Delete</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (WoundRecord w in Model)
+        {
             <tr scope="row">
                 <td>@w.woundid</td>
                 <td>@w.woundname</td>
@@ -555,17 +523,15 @@ else
 
                 }
             </tr>
-            }
-        </tbody>
-    </table>
-    <form asp-controller="Wound"
-          asp-action="MultiDeleteWounds">
+        }
+    </tbody>
+</table>
+<form asp-controller="Wound"
+      asp-action="MultiDeleteWounds">
 
-        Deletion Fields selected :<p id="demo" name="demo" for="demo">No Ids selected.</p>
+    Deletion Fields selected :<p id="demo" name="demo" for="demo">No Ids selected.</p>
 
-       <input id="DBL" name="DBL" for="DBL" class="form-control" hidden/>
+    <input id="DBL" name="DBL" for="DBL" class="form-control" hidden />
 
-        <input  type="submit" class="btn btn-primary" onclick="return confirm('Delete confirmation: The number of wounds deleted CANNOT BE UNDONE and their versions will cease as well!')" value="Innitiate mass Deletion" />
-    </form>
-
-   
+    <input type="submit" class="btn btn-primary" onclick="return confirm('Delete confirmation: The number of wounds deleted CANNOT BE UNDONE and their versions will cease as well!')" value="Innitiate mass Deletion" />
+</form>
