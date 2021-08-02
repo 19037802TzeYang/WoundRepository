@@ -27,7 +27,7 @@ namespace WoundImgRepo.Controllers
             return RedirectToAction("LoginPage", "Account");
         }
 
-        [AllowAnonymous]
+       [AllowAnonymous]
         public IActionResult LoginPage(string returnUrl = null)
         {
             #region RememberMe()
@@ -44,21 +44,46 @@ namespace WoundImgRepo.Controllers
             {
                 checktheuserrole = 3;
             }
+
+            //we now check if the account status is unlocked
+            string name = User.Identity.Name;
+
+            string getstatus = "SELECT * FROM useracc WHERE username ='" + name + "'";
+
+            List<User> List = DBUtl.GetList<User>(getstatus);
+            int status = 0;
+            foreach (User account in List)
+            {
+                status = account.status;
+            }
+
+            if (status != 1)
+            {
+                TempData["ReturnUrl"] = returnUrl;
+                HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                Logoff();
+                return View();
+            }
+
+
             if (checktheuserrole == 0)
             {
                 TempData["ReturnUrl"] = returnUrl;
                 return View();
             }
+
+
             #endregion
 
             else
             {
                 return RedirectToAction("TheWounds", "Wound");
             }
-            
+
         }
 
         // Login
+
 
         [AllowAnonymous]
         [HttpPost]
