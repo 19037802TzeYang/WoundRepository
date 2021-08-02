@@ -201,16 +201,16 @@ namespace WoundImgRepo.Controllers
                 }
 
             }
-            
+
             //------------------------------------------------------------------------------------------------
             //error occurs only if there is no annotation or mask , if that's the case:
             Debug.WriteLine("nopic is" + nopic);
 
-          
-                string getsinglepicid = "SELECT image_id AS imageid FROM wound  WHERE wound_id = {0}"; // gets only the picture id
-                List<WoundRecord> gotoneid = DBUtl.GetList<WoundRecord>(getsinglepicid, id);
 
-                gotoneid.ToArray();
+            string getsinglepicid = "SELECT image_id AS imageid FROM wound  WHERE wound_id = {0}"; // gets only the picture id
+            List<WoundRecord> gotoneid = DBUtl.GetList<WoundRecord>(getsinglepicid, id);
+
+            gotoneid.ToArray();
             if (nopic.Length == 0)
             {
                 foreach (WoundRecord iD in gotoneid)
@@ -243,7 +243,7 @@ namespace WoundImgRepo.Controllers
             Debug.WriteLine(categoryid);
             //---------------------------------------------------------------------------------------
             //Find annotation id of other records first
-            
+
 
             String GetALlAnnotationid = @"SELECT annotation_id AS imageid FROM annotation an
                                                    INNER JOIN image i ON an.annotation_image_id = i.image_id
@@ -252,33 +252,33 @@ namespace WoundImgRepo.Controllers
 
                            WHERE w.Image_id = {0}";
             String allAnnotation = ""; //stores in the annotation id relating to wounds and their corresponding versions
-         
-            Debug.WriteLine("the main picture is in annotation " + mainpictureID + " and also + "+ DBUtl.ExecSQL(GetALlAnnotationid, mainpictureID));
-         
-                Debug.WriteLine("the main picture is" + mainpictureID);
-                //get all records of varations of the wound which has other annotations
-                List<WoundRecord> gotALLannoID = DBUtl.GetList<WoundRecord>(GetALlAnnotationid, mainpictureID);
+
+            Debug.WriteLine("the main picture is in annotation " + mainpictureID + " and also + " + DBUtl.ExecSQL(GetALlAnnotationid, mainpictureID));
+
+            Debug.WriteLine("the main picture is" + mainpictureID);
+            //get all records of varations of the wound which has other annotations
+            List<WoundRecord> gotALLannoID = DBUtl.GetList<WoundRecord>(GetALlAnnotationid, mainpictureID);
 
 
 
-                
-                gotALLannoID.ToArray(); // turn it into an array
-                int countannoadd = 0;
-                foreach (WoundRecord iD in gotALLannoID)
+
+            gotALLannoID.ToArray(); // turn it into an array
+            int countannoadd = 0;
+            foreach (WoundRecord iD in gotALLannoID)
+            {
+                if (countannoadd == 0)
                 {
-                    if (countannoadd == 0)
-                    {
-                        allAnnotation += "DELETE FROM annotation WHERE annotation_id = " + iD.imageid;
-                        countannoadd += 1;
-                    }
-                    else
-                    {
-                        allAnnotation += " OR annotation_id =  " + iD.imageid;
-                    }
-
+                    allAnnotation += "DELETE FROM annotation WHERE annotation_id = " + iD.imageid;
+                    countannoadd += 1;
                 }
-                Debug.WriteLine(String.Format("DELETE FROM annotation WHERE {0}", allAnnotation));
-       
+                else
+                {
+                    allAnnotation += " OR annotation_id =  " + iD.imageid;
+                }
+
+            }
+            Debug.WriteLine(String.Format("DELETE FROM annotation WHERE {0}", allAnnotation));
+
             //-----------------------------------------------------------------------------------
             //Next we have to find all existing record's own version records
             String allRelatedWoundRec = ""; //gets all other wound records
@@ -296,49 +296,49 @@ namespace WoundImgRepo.Controllers
             bool otherRecordsExist = false; //tells the system that other records exist
 
             //check if the table will bring back results of other existing records
-      
+
             List<WoundRecord> gotallOTHERWoundRecNver = DBUtl.GetList<WoundRecord>(RetreveallOTHERWoundRecNver, mainpictureID);
 
             gotallOTHERWoundRecNver.ToArray(); //covert list of records to an array
-                if (gotallOTHERWoundRecNver.Count > 1)
-                {
-                    
+            if (gotallOTHERWoundRecNver.Count > 1)
+            {
 
-                    foreach (WoundRecord iD in gotallOTHERWoundRecNver)
+
+                foreach (WoundRecord iD in gotallOTHERWoundRecNver)
+                {
+                    otherRecordsExist = true;
+                    //this function records all existing wound records
+                    allRelatedWoundRec += " OR wound_id=" + iD.woundid;
+
+                    //This function records all existing wounds
+                    if (addcommas != 1)
                     {
-                        otherRecordsExist = true;
-                        //this function records all existing wound records
-                        allRelatedWoundRec += " OR wound_id=" + iD.woundid;
-
-                        //This function records all existing wounds
-                        if (addcommas != 1)
-                        {
-                            addcommas = 1;
-                            storeothers += "" + iD.woundid;
-                        }
-                        else
-                        {
-                            storeothers += "," + iD.woundid;
-                        }
-
+                        addcommas = 1;
+                        storeothers += "" + iD.woundid;
                     }
-                }
-                //if other records do exist
-                if (otherRecordsExist == true)
-                {
-                    //takes the string of stored records and turn it into a array
-                    string[] otherrecordId = storeothers.Split(',');
-
-                    foreach (string iD in otherrecordId)
-                    {//store an SQL string to delete other pictures
-                        getpicid += picturedelete(iD);
+                    else
+                    {
+                        storeothers += "," + iD.woundid;
                     }
+
                 }
-      
+            }
+            //if other records do exist
+            if (otherRecordsExist == true)
+            {
+                //takes the string of stored records and turn it into a array
+                string[] otherrecordId = storeothers.Split(',');
+
+                foreach (string iD in otherrecordId)
+                {//store an SQL string to delete other pictures
+                    getpicid += picturedelete(iD);
+                }
+            }
+
             //---------------------------------------------------------------------------------------
             //                                    String for annotation                       String for wound                    string for picture deletion
             string deletewoundandannotationSQL = " {3} DELETE FROM wound WHERE wound_id={0} {4}  {1} {2}";
-                                                                                                            //4.String for other records
+            //4.String for other records
             //string for location deletion
             string deleteallpictures = "DELETE FROM image WHERE {0}"; //formats off the images to delete
 
@@ -377,7 +377,7 @@ namespace WoundImgRepo.Controllers
             string nopic = "";
             String mainpictureID = ""; //gets the main picture ID , it can be used to track down other record versions
             int multipleimagescheck = 0;
-           
+
 
             #region Getid()
             //-------------------------------------------------------------------------------------
@@ -1056,7 +1056,7 @@ namespace WoundImgRepo.Controllers
             }
         }
         #endregion
-  
+
         #region DeleteAnnotationMaskImage()
         public IActionResult DeleteAnnotationMaskImage(int woundid, int annotationid)
         {
@@ -1080,7 +1080,7 @@ namespace WoundImgRepo.Controllers
             }
             #endregion
 
-            Debug.WriteLine(""+ annotationid);
+            Debug.WriteLine("" + annotationid);
 
             var getAnnotation = DBUtl.GetList<Annotation>($"SELECT * FROM annotation WHERE annotation_id={annotationid}")[0];
 
@@ -1324,6 +1324,60 @@ namespace WoundImgRepo.Controllers
         {
             _env = environment;
         }
-        #endregion  
+        #endregion
+
+
+        #region filterfoundrymainpage
+        public IActionResult findonmain()
+        {
+            #region checkuserrole
+            int checktheuserrole = 0;
+            if (User.IsInRole("Admin"))
+            {
+                checktheuserrole = 1;
+            }
+            else if (User.IsInRole("Doctor"))
+            {
+                checktheuserrole = 2;
+            }
+            else if (User.IsInRole("Annotator"))
+            {
+                checktheuserrole = 3;
+            }
+            if (checktheuserrole == 0)
+            {
+                return View("~/Views/Account/Forbidden.cshtml");
+            }
+            #endregion
+            IFormCollection form = HttpContext.Request.Form;
+            string searchedsection = form["searchedsection"].ToString();
+            string searchedobj = form["searchedobj"].ToString().Trim();
+            Debug.WriteLine("doin index search with " + searchedsection);
+
+            String listinput = @"SELECT w.wound_id as woundid, w.name as woundname, w.wound_stage as woundstage, w.remarks as woundremarks, 
+                                      wc.name as woundcategoryname, wl.name as woundlocationname, t.name as tissuename,
+                                      v.name as versionname, i.img_file as imagefile, i.image_id as imageid, u.username
+                                      FROM wound w
+                                      INNER JOIN image i ON i.image_id = w.image_id
+                                      INNER JOIN wound_category wc ON wc.wound_category_id = w.wound_category_id
+                                      INNER JOIN wound_location wl ON wl.wound_location_id = w.wound_location_id
+                                      INNER JOIN tissue t ON t.tissue_id = w.tissue_id
+                                      INNER JOIN version v ON v.version_id = w.version_id
+                                        INNER JOIN useracc u ON u.user_id = w.user_id
+                                        WHERE " + searchedsection + " LIKE '%" + searchedobj + "%'";
+
+
+            ViewBag.showhidecheckchecker = 1;
+            Debug.WriteLine(listinput);
+            ViewBag.keyword = searchedobj;
+            ViewBag.selection = searchedsection;
+            List<WoundRecord> list = DBUtl.GetList<WoundRecord>(listinput);
+
+
+
+            list = list.GroupBy(x => x.woundname).Select(y => y.FirstOrDefault())?.ToList();
+            return View("TheWounds", list);
+        }
+        #endregion
     }
 }
