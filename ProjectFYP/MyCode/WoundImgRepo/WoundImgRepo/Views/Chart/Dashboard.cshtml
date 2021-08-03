@@ -400,8 +400,8 @@
                 <div class="card">
                     <div class="card-header">
                         <ul class="nav nav-tabs card-header-tabs">
-                            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Location">Wounds by location</a></li>
-                            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Category">Wounds by category</a></li>
+                            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Location">Wounds by Location</a></li>
+                            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Category">Wounds by Category</a></li>
                             @if (User.IsInRole("Admin"))
                             {
                                 <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Users">Display Users</a></li>
@@ -458,7 +458,7 @@
 
                         <div id="Images" class="tab-pane fade">
                             <div class="card-body">
-                                <h2 class="m-0 font-weight-bold text-primary">Wound by @ViewData["ImageTitle"]</h2>
+                                <h2 class="m-0 font-weight-bold text-primary">Image @ViewData["ImageTitle"]</h2>
 
                                 <canvas id="imagechart" width="600" height="300"></canvas>
 
