@@ -48,6 +48,8 @@ namespace hostrepository.Controllers
             #endregion
 
 
+           
+
             return View("~/Views/Admin/Registry.cshtml");
             
         }
@@ -224,10 +226,18 @@ namespace hostrepository.Controllers
                     return View("~/Views/Admin/Registry.cshtml");
                 }
 
+                IFormCollection form = HttpContext.Request.Form;
+                string Question = form["Qs"].ToString().Trim();
+                string answer = form["ans"].ToString().Trim();
+
+                Debug.Write(Question);
+                Debug.Write(answer);
+                Debug.Write(Question);
+       
                 //check if insert is done
-                string INSERT = @"INSERT INTO useracc( username, email, password, user_role, status) 
-                VALUES ( '{0}', '{1}', HASHBYTES('SHA1', '{2}'), '{3}', 1)";
-                 int rowsAffected = DBUtl.ExecSQL(INSERT, username, email, password, user_role);
+                string INSERT = @"INSERT INTO useracc( username, email, password, user_role, status,question ,answer) 
+                VALUES ( '{0}', '{1}', HASHBYTES('SHA1', '{2}'), '{3}', 1, '{4}' , HASHBYTES('SHA1', '{5}'))";
+                 int rowsAffected = DBUtl.ExecSQL(INSERT, username, email, password, user_role,Question,answer);
 
                 if (rowsAffected == 1)
                 {
@@ -290,12 +300,21 @@ namespace hostrepository.Controllers
         }
         #endregion
 
+        #region Edit user
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public IActionResult EditUser(int editPW, string username, string password, string UserPw2, string email, String user_role , int id)
+        public IActionResult EditUser(int editPW, string username, string password, string UserPw2, string email, String user_role , int id , string editqsORans , string question,string answer )
         {
-            #region checkuserrole()
-            int checktheuserrole = 0;
+
+
+         
+            Debug.WriteLine(question);
+            Debug.WriteLine(answer);
+
+            int checkifallgood = 0; //checks if all relative information is pushed out
+
+                #region checkuserrole()
+                int checktheuserrole = 0;
             if (User.IsInRole("Admin"))
             {
                 checktheuserrole = 1;
@@ -436,10 +455,14 @@ namespace hostrepository.Controllers
                 }
 
             }
+
+            
+
             //---------------------------------------------------------------------------------------------------------------------------
             //triggers if no fault is detected
-            if(atfault == 0)
+            if (atfault == 0)
             {
+
                 int rowsAffected = 0;
                 //---------------------------------------------------------------------------------------------------------------------------
                 //Triggers if user allows password reset
@@ -450,6 +473,7 @@ namespace hostrepository.Controllers
                    rowsAffected = DBUtl.ExecSQL(edituserconfirmed ,username , email , password , user_role , id);
                     TempData["Msg"] = "User updated";
                     TempData["MsgType"] = "success";
+                    checkifallgood = 1;
                 }
                 //---------------------------------------------------------------------------------------------------------------------------
                 //Triggers if user deny password reset
@@ -459,8 +483,10 @@ namespace hostrepository.Controllers
                                                         username = '{0}' ,email = '{1}' ,user_role = '{2}' 
                                                         WHERE user_id = {3}";
                     rowsAffected = DBUtl.ExecSQL(edituserconfirmed, username, email, user_role, id);
+
                     TempData["Msg"] = "User updated";
                     TempData["MsgType"] = "success";
+                    checkifallgood = 1;
                 }
                 if (rowsAffected !=1)
                 {
@@ -488,12 +514,51 @@ namespace hostrepository.Controllers
                 return View();
             }
 
+            //-------------------------------------------------------------------------------------------------------------
+            //check if user would like to edit password after all is good
+            if (atfault == 0)
+            {
+                
+                Debug.WriteLine("activate edit qs N ans"); // acts as a signal that the question editing process is going on
+                //get the user's username and password
+                //-------------------------------------------------------------------------------------------------------------
+                //edit only question
+                if (editqsORans == "1")
+                {
+                    
+                    String edituserconfirmed = @"UPDATE useracc SET 
+                                                        question = '{0}'
+                                                        WHERE user_id = {1}";
+                   int rowsAffected = DBUtl.ExecSQL(edituserconfirmed, question , id);
 
+                }
+                //-------------------------------------------------------------------------------------------------------------
+                //edit only answer
+                if (editqsORans == "2")
+                {
+                    String edituserconfirmed = @"UPDATE useracc SET 
+                                                        answer  = HASHBYTES('SHA1', '{0}')
+                                                        WHERE user_id = {1}";
+                    int rowsAffected = DBUtl.ExecSQL(edituserconfirmed, answer, id);
+                }
+                //-------------------------------------------------------------------------------------------------------------
+                //edit both
+                if (editqsORans == "3")
+                {
+                    String edituserconfirmed = @"UPDATE useracc SET 
+                                                         question = '{0}' ,  answer  = HASHBYTES('SHA1', '{1}')
+                                                        WHERE user_id = {2}";
+                    int rowsAffected = DBUtl.ExecSQL(edituserconfirmed, question, answer, id);
+                }
+                //-------------------------------------------------------------------------------------------------------------
+            }
+            //-------------------------------------------------------------------------------------------------------------
             return RedirectToAction("Userlist");
         }
+        #endregion
 
-
-       [Authorize(Roles = "Admin")]
+        #region Delete
+        [Authorize(Roles = "Admin")]
         public IActionResult Delete(int id)
         {
             #region checkuserrole()
@@ -554,9 +619,9 @@ namespace hostrepository.Controllers
             }
             return RedirectToAction("Userlist");
         }
+        #endregion
 
-
-
+        #region status edit
         public IActionResult Statusedit(int id)
         {
             #region checkuserrole()
@@ -624,6 +689,7 @@ namespace hostrepository.Controllers
 
             return RedirectToAction("Userlist");
         }
+        #endregion
 
         #region add/edit/delete version table
         public IActionResult Version()
