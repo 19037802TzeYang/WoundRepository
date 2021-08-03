@@ -308,11 +308,9 @@ namespace hostrepository.Controllers
         public IActionResult EditUser(int editPW, string username, string password, string UserPw2, string email, String user_role, int id, string editqsORans, string question, string answer)
         {
 
-            question = question.Trim();
-            answer = answer.Trim();
+          
 
-            Debug.WriteLine(question);
-            Debug.WriteLine(answer);
+            
 
             int checkifallgood = 0; //checks if all relative information is pushed out
 
@@ -529,7 +527,7 @@ namespace hostrepository.Controllers
                 //edit only question
                 if (editqsORans == "1")
                 {
-
+ question = question.Trim();
                     String edituserconfirmed = @"UPDATE useracc SET 
                                                         question = '{0}'
                                                         WHERE user_id = {1}";
@@ -539,7 +537,7 @@ namespace hostrepository.Controllers
                 //-------------------------------------------------------------------------------------------------------------
                 //edit only answer
                 if (editqsORans == "2")
-                {
+                { answer = answer.Trim();
                     String edituserconfirmed = @"UPDATE useracc SET 
                                                         answer  = HASHBYTES('SHA1', '{0}')
                                                         WHERE user_id = {1}";
@@ -548,7 +546,8 @@ namespace hostrepository.Controllers
                 //-------------------------------------------------------------------------------------------------------------
                 //edit both
                 if (editqsORans == "3")
-                {
+                {  answer = answer.Trim();
+                    question = question.Trim();
                     String edituserconfirmed = @"UPDATE useracc SET 
                                                          question = '{0}' ,  answer  = HASHBYTES('SHA1', '{1}')
                                                         WHERE user_id = {2}";
