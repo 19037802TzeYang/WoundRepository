@@ -9,15 +9,21 @@ using WoundImgRepo.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
 using System.Diagnostics;
-
+using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace WoundImgRepo.Controllers
 {
-    
+
     public class AccountController : Controller
     {
         public string current_user = "";
 
+
+
+
+
+        #region LogOff
         [Authorize]
         public IActionResult Logoff(string returnUrl = null)
         {
@@ -26,8 +32,10 @@ namespace WoundImgRepo.Controllers
                 return Redirect(returnUrl);
             return RedirectToAction("LoginPage", "Account");
         }
+        #endregion
 
-       [AllowAnonymous]
+        #region Loginpage
+        [AllowAnonymous]
         public IActionResult LoginPage(string returnUrl = null)
         {
             #region RememberMe()
@@ -83,8 +91,9 @@ namespace WoundImgRepo.Controllers
         }
 
         // Login
+        #endregion
 
-
+        #region postlogin
         [AllowAnonymous]
         [HttpPost]
         public IActionResult LoginPage(LogInUser user)
@@ -101,7 +110,7 @@ namespace WoundImgRepo.Controllers
                 status = account.status;
             }
             System.Diagnostics.Debug.WriteLine("user status is" + status);
-            
+
 
 
 
@@ -132,7 +141,7 @@ namespace WoundImgRepo.Controllers
                    }
                    );
 
-                
+
 
                 if (TempData["returnUrl"] != null)
                 {
@@ -141,15 +150,15 @@ namespace WoundImgRepo.Controllers
                         return Redirect(returnUrl);
                 }
 
-               
 
-                
-                
-                    // Update the Last Login Timestamp of the User
-                    string update = "UPDATE useracc SET last_login=GETDATE() WHERE username='{0}' AND password= HASHBYTES('SHA1', '{1}')";
-                    DBUtl.ExecSQL(update, user.Username, user.Password);
-           
-                
+
+
+
+                // Update the Last Login Timestamp of the User
+                string update = "UPDATE useracc SET last_login=GETDATE() WHERE username='{0}' AND password= HASHBYTES('SHA1', '{1}')";
+                DBUtl.ExecSQL(update, user.Username, user.Password);
+
+
                 System.Diagnostics.Debug.WriteLine("login success!");
                 current_user = user.Username;
                 return RedirectToAction("TheWounds", "Wound");
@@ -161,7 +170,7 @@ namespace WoundImgRepo.Controllers
         {
             return View();
         }
-
+        #endregion
 
 
         private bool AuthenticateUser(string usname, string pw,
@@ -193,7 +202,208 @@ namespace WoundImgRepo.Controllers
             }
             return false;
         }
-   
 
+
+
+
+
+
+        //step 1 of recoveirng password : getting the user to key in the name
+        #region forgetmeone
+        public IActionResult forgetmeone()
+        {
+            return View();
+        }
+        #endregion
+
+        //step 2 , check if name is available
+        #region forgetmeonepost
+        [HttpPost]
+        public IActionResult forgetmeone(string Username)
+        {
+            string getid = "SELECT * FROM useracc WHERE username = '{0}'";
+
+            DataTable aide = DBUtl.GetTable(getid, Username);
+            ViewBag.Question = "";
+
+            //if the name is found
+            if (aide.Rows.Count == 1)
+            {
+                List<User> currentuser = DBUtl.GetList<User>(getid, Username);
+                ViewBag.currentuserID = "";
+                ViewBag.question = "";
+                foreach (User Uzer in currentuser)
+                {
+                    TempData["IDcurrentuser"] = Uzer.user_id.ToString();
+
+
+                //gets the question
+                    TempData["question"] = Uzer.question;
+                }
+       
+
+                return RedirectToAction("forgetmetwo");
+
+            }
+            else
+            {//if not
+                ViewData["Msg"] = "user not found , please check again or contact your supervisor";
+                ViewData["MsgType"] = "danger";
+            }
+            return View();
+
+        }
+        #endregion
+
+        //displays area for keying security questions
+        #region forgetmetwo
+        public IActionResult forgetmetwo()
+        {
+       
+            return View();
+        }
+        #endregion
+
+        //now we check the answer with the question
+        #region forgetmetwopost
+
+        [HttpPost]
+        public IActionResult forgetmetwo(String answer , String question , String user_id)
+        {
+            TempData["question"] = question;
+            TempData["IDcurrentuser"] = user_id;
+            
+           
+
+            string check = "select * FROM useracc WHERE user_id = {0} AND question  = '{1}' AND answer = HASHBYTES('SHA1','{2}')";
+            List<User> currentuser = DBUtl.GetList<User>(check, user_id, question , answer);
+            Debug.WriteLine(currentuser.Count);
+            if (currentuser.Count == 1)
+            {
+
+                //bring to the last view (change password)
+              return  RedirectToAction("resetpw");
+            }
+            else
+            {
+                ViewData["Msg"] = "Question answered wrongly , please check again or contact your supervisor";
+                ViewData["MsgType"] = "danger";
+            }
+            return View();
+        }
+        #endregion
+
+
+
+        public IActionResult resetpw()
+        {
+            string check = "select * FROM useracc WHERE user_id = {0}";
+            List<User> getter = DBUtl.GetList<User>(check, TempData["IDcurrentuser"]);
+
+            foreach (User useR in getter)
+            {
+                TempData["namecurrentuser"] = useR.username;
+            }
+
+            return View();
+        }
+
+
+
+        //stores in bad passwords
+        #region badPasswords()
+        private string [] badPasswords = new[] {
+            "111111",
+            "12345",
+            "123456",
+            "1234567",
+            "12345678",
+            "123456789",
+            "abc123",
+            "password",
+            "password1",
+            "qwerty",
+            "Password",
+            "Password1",
+            "QWERTY"
+        };
+        #endregion
+
+        //reset password
+        #region resetpwpost
+        [HttpPost]
+        public IActionResult resetpw(String user_id , String username , String password , String UserPw2)
+        {
+            int error = 0;
+
+            Regex numbercheck = new Regex(@"[0-9]");
+
+            //check if at least 1 character is in numbers
+            MatchCollection matchnum = numbercheck.Matches(password);
+
+            Regex list_of_caps = new Regex(@"[A-Z]");
+
+            //check if at least 1 character is in uppercase
+            MatchCollection matches = list_of_caps.Matches(password);
+
+
+            //password checker for hackable passwords
+            if (badPasswords.Contains(password) || password.Length < 5)
+            {
+                ViewData["Msg"] = "main Password too weak.";
+                ViewData["MsgType"] = "warning";
+                error = 1;
+            }
+
+            // compare passwords
+            else if (password.Equals(UserPw2) != true || UserPw2.Length < 5)
+            {
+                ViewData["Msg"] = "second password : error detected! ";
+                ViewData["MsgType"] = "danger";
+                error = 1;
+            }
+
+            else if (matches.Count == 0)
+            {
+                ViewData["Msg"] = "Password Has no capital";
+                ViewData["MsgType"] = "danger";
+                error = 1;
+            }
+
+            else if (matchnum.Count == 0)
+            {
+                ViewData["Msg"] = "Password Has no numbers";
+                ViewData["MsgType"] = "danger";
+                error = 1;
+            }
+            int rowsAffected = 0;
+
+            if (error !=1)
+            {
+
+                Debug.WriteLine("i will try to pusgh :" + user_id);
+                String edituserconfirmed = @"UPDATE useracc SET 
+                                                         password = HASHBYTES('SHA1', '{0}')
+                                                        WHERE user_id = {1}";
+                rowsAffected = DBUtl.ExecSQL(edituserconfirmed, password, user_id);
+            }
+
+            if(rowsAffected == 1)
+            {
+                return RedirectToAction("LoginPage");
+            }
+            else
+            {
+                ViewData["Msg"] = DBUtl.DB_Message;
+                ViewData["MsgType"] = "danger";
+            }
+
+            return View();
+       
+        }
+        #endregion
+    
+    
     }
+
 }
