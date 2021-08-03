@@ -17,26 +17,28 @@
             @*Username fill in*@
             <div class="form-group row">
 
+
+
             </div>
             <div class="form-group row">
-                <label asp-for="username" class="control-label">Username: </label>
-                <label asp-for="username" for="username" class="sr-only">Username</label>
+                <label asp-for="username" class="control-label" hidden>Username: </label>
+                <label asp-for="username" for="username" class="sr-only" hidden>Username</label>
                 <!--If the user keys in something wrongly , the page usually refreshes. Thus it is important to keep the name of the data at least-->
                 <!--However it is important to display back the name if the data keyed in is empty-->
                 @if (TempData["usernamecurrently"] == "presentnamefirst" || TempData["usernamecurrently"] == "" || TempData["usernamecurrently"] == null)
                 {
-                    <input asp-for="username" id="username" class="form-control" placeholder="Username" autofocus="" value=@TempData["username"] autocomplete="off" disabled>
+                    <input asp-for="username" id="username" class="form-control" placeholder="Username" autofocus="" value=@TempData["username"] autocomplete="off" hidden>
                 }
                 else
                 {
-                    <input asp-for="username" id="username" class="form-control" placeholder="Username" autofocus="" value=@TempData["usernamecurrently"] autocomplete="off" disabled>
+                    <input asp-for="username" id="username" class="form-control" placeholder="Username" autofocus="" value=@TempData["usernamecurrently"] autocomplete="off" hidden>
                 }
 
-                <span asp-validation-for="username" class="text-danger"></span>
+
             </div>
 
             <b>change password ?</b>
-            <p>keyed password details won't be recorded unless permitted</p>
+            <p>keyed details won't be recorded unless permitted</p>
 
             <div>
                 <label>permitted :</label>
@@ -63,7 +65,7 @@
                 <span asp-validation-for="UserPw2" class="text-danger"></span>
             </div>
 
-            @if (TempData["username"].ToString() == User.Identity.Name)
+            @if (TempData["username"] == User.Identity.Name.ToString())
             {@*email*@
             <div class="form-group row">
                 <label asp-for="email" class="control-label">Email: </label>
@@ -77,10 +79,42 @@
             <div class="form-group row">
                 <label asp-for="email" class="control-label">Email: </label>
                 <label asp-for="email" for="email" class="sr-only">Email</label>
-                <input asp-for="email" type="email" id="email" class="form-control" placeholder="Email" autofocus="" value=@TempData["email"] autocomplete="off" >
-                <span asp-validation-for="email" class="text-danger"></span>
+                <input asp-for="email" type="email" id="email" class="form-control" placeholder="Email" autofocus="" value=@TempData["email"] autocomplete="off">
+
             </div>
         }
+
+
+            <b>change question/answer ?</b>
+            <p>keyed details won't be recorded unless permitted</p>
+
+            <div>
+                <label>permitted :</label>
+                <select asp-for="editqsORans" id="editqsORans">
+                    <option value="0">none</option>
+                    <option value="1">edit qs</option>
+                    <option value="2">edit ans</option>
+                    <option value="3">edit qs&ans</option>
+                </select>
+            </div>
+
+            @*change security question*@
+            <div class="form-group row">
+                <label asp-for="question" class="control-label">security question </label>
+                <label asp-for="question"  id="question" class="sr-only">security question </label>
+                <input asp-for="question"  id="question" class="form-control" placeholder="Enter " autofocus="" autocomplete="off">
+
+            </div>
+
+
+
+            @*change security answer*@
+            <div class="form-group row">
+                <label asp-for="answer"  class="control-label">security answer </label>
+                <label asp-for="answer"  id="answer" class="sr-only">security answer </label>
+                <input asp-for="answer"  id="answer" class="form-control" placeholder="Confirm Password" autofocus="" autocomplete="off">
+
+            </div>
 
             <!--selection for roles-->
             <div class="form-group row">
