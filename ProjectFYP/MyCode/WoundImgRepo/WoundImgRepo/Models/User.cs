@@ -53,7 +53,12 @@ namespace WoundImgRepo.Models
         //checking if editing the password is needed (ONLY USED IN EDITUSER)
         public int editPW { get; set; }
 
+        //checking if editing the securityquestion or answer is needed (ONLY USED IN EDITUSER)
+        public int editqsORans { get; set; }
+
+        public String question { get; set; }
+
+        public string answer { get; set; }
+
     }
 }
-
-

@@ -22,8 +22,8 @@ namespace hostrepository.Controllers
 {
     public class AdminController : Controller
     {
-        
-        
+
+
         //display register page
         #region DisplayRegistry()
         [Authorize(Roles = "Admin")]
@@ -34,29 +34,33 @@ namespace hostrepository.Controllers
             if (User.IsInRole("Admin"))
             {
                 checktheuserrole = 1;
-            }else if (User.IsInRole("Doctor"))
+            }
+            else if (User.IsInRole("Doctor"))
             {
                 checktheuserrole = 2;
-            }else if (User.IsInRole("Annotator"))
+            }
+            else if (User.IsInRole("Annotator"))
             {
                 checktheuserrole = 3;
             }
-            if(checktheuserrole == 0)
+            if (checktheuserrole == 0)
             {
                 return View("~/Views/Account/Forbidden.cshtml");
             }
             #endregion
 
 
+
+
             return View("~/Views/Admin/Registry.cshtml");
-            
+
         }
         #endregion
 
         //display list of users
         #region showUserlist()
-       [Authorize(Roles = "Admin")]
-       
+        [Authorize(Roles = "Admin")]
+
         public IActionResult Userlist()
         {
             #region checkuserrole()
@@ -107,7 +111,7 @@ namespace hostrepository.Controllers
 
         //check if the details keyed in are eligable for registration
         #region Registrypost()
-        [Authorize(Roles = "Admin") ]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public ActionResult Registry(string username, string password, string UserPw2, string email, String user_role)
         {
@@ -202,7 +206,7 @@ namespace hostrepository.Controllers
                       WHERE username = '{0}'";
 
                 DataTable matchname = DBUtl.GetTable(namecheck_SQL, username);
-                              
+
                 if (matchname.Rows.Count == 1)
                 {
                     ViewData["Msg"] = "User currently exist , try using another name ";
@@ -224,10 +228,18 @@ namespace hostrepository.Controllers
                     return View("~/Views/Admin/Registry.cshtml");
                 }
 
+                IFormCollection form = HttpContext.Request.Form;
+                string Question = form["Qs"].ToString().Trim();
+                string answer = form["ans"].ToString().Trim();
+
+                Debug.Write(Question);
+                Debug.Write(answer);
+                Debug.Write(Question);
+
                 //check if insert is done
-                string INSERT = @"INSERT INTO useracc( username, email, password, user_role, status) 
-                VALUES ( '{0}', '{1}', HASHBYTES('SHA1', '{2}'), '{3}', 1)";
-                 int rowsAffected = DBUtl.ExecSQL(INSERT, username, email, password, user_role);
+                string INSERT = @"INSERT INTO useracc( username, email, password, user_role, status,question ,answer) 
+                VALUES ( '{0}', '{1}', HASHBYTES('SHA1', '{2}'), '{3}', 1, '{4}' , HASHBYTES('SHA1', '{5}'))";
+                int rowsAffected = DBUtl.ExecSQL(INSERT, username, email, password, user_role, Question, answer);
 
                 if (rowsAffected == 1)
                 {
@@ -275,14 +287,14 @@ namespace hostrepository.Controllers
             String Getuser = "SELECT * FROM useracc WHERE user_id = " + id;
 
             List<User> List = DBUtl.GetList<User>(Getuser);
-            foreach(User account in List)
+            foreach (User account in List)
             {
                 TempData["id"] = account.user_id;
                 TempData["username"] = account.username;
-                TempData["email"]  = account.email;
-                TempData["role"] =   account.user_role;
+                TempData["email"] = account.email;
+                TempData["role"] = account.user_role;
                 TempData["password"] = account.password;
-               
+
 
             }
             TempData["usernamecurrently"] = "presentnamefirst";
@@ -290,10 +302,18 @@ namespace hostrepository.Controllers
         }
         #endregion
 
+        #region Edit user
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public IActionResult EditUser(int editPW, string username, string password, string UserPw2, string email, String user_role , int id)
+        public IActionResult EditUser(int editPW, string username, string password, string UserPw2, string email, String user_role, int id, string editqsORans, string question, string answer)
         {
+
+          
+
+            
+
+            int checkifallgood = 0; //checks if all relative information is pushed out
+
             #region checkuserrole()
             int checktheuserrole = 0;
             if (User.IsInRole("Admin"))
@@ -313,11 +333,11 @@ namespace hostrepository.Controllers
                 return View("~/Views/Account/Forbidden.cshtml");
             }
             #endregion
-            Debug.WriteLine("we are editing on :"+ editPW);
+            Debug.WriteLine("we are editing on :" + editPW);
             //<---------------------------------------------------------------------------------------------------->
             //resources for checking names
             string dupname = "SELECT user_id FROM useracc WHERE username = '{0}' AND user_id != {1}";
-            DataTable matchdupe = DBUtl.GetTable(dupname, username , id);
+            DataTable matchdupe = DBUtl.GetTable(dupname, username, id);
 
             //<---------------------------------------------------------------------------------------------------->
             //fault counter
@@ -329,7 +349,7 @@ namespace hostrepository.Controllers
                @"SELECT user_id FROM useracc 
                       WHERE email = '{0}' AND user_id != {1}";
 
-            DataTable matchemail = DBUtl.GetTable(emailcheck_SQL, email , id);
+            DataTable matchemail = DBUtl.GetTable(emailcheck_SQL, email, id);
 
 
             //---------------------------------------------------------------------------------------------------------------------------
@@ -367,14 +387,14 @@ namespace hostrepository.Controllers
                 if (string.IsNullOrEmpty(password))
                 {
                     password = "";
-                 
+
                 }
                 if (string.IsNullOrEmpty(UserPw2))
                 {
-                   
+
                     UserPw2 = "";
                 }
-                
+
                 //---------------------------------------------------------------------------------------------------------------------------
                 //check if both passwords are empty
                 if (password == "" || UserPw2 == "")
@@ -436,20 +456,26 @@ namespace hostrepository.Controllers
                 }
 
             }
+
+
+
             //---------------------------------------------------------------------------------------------------------------------------
             //triggers if no fault is detected
-            if(atfault == 0)
+            if (atfault == 0)
             {
+
                 int rowsAffected = 0;
                 //---------------------------------------------------------------------------------------------------------------------------
                 //Triggers if user allows password reset
-                if (editPW ==1) {
+                if (editPW == 1)
+                {
                     String edituserconfirmed = @"UPDATE useracc SET 
                                                         username = '{0}' ,email = '{1}' ,password = HASHBYTES('SHA1', '{2}') ,user_role = '{3}' 
                                                         WHERE user_id = {4}";
-                   rowsAffected = DBUtl.ExecSQL(edituserconfirmed ,username , email , password , user_role , id);
+                    rowsAffected = DBUtl.ExecSQL(edituserconfirmed, username, email, password, user_role, id);
                     TempData["Msg"] = "User updated";
                     TempData["MsgType"] = "success";
+                    checkifallgood = 1;
                 }
                 //---------------------------------------------------------------------------------------------------------------------------
                 //Triggers if user deny password reset
@@ -459,10 +485,12 @@ namespace hostrepository.Controllers
                                                         username = '{0}' ,email = '{1}' ,user_role = '{2}' 
                                                         WHERE user_id = {3}";
                     rowsAffected = DBUtl.ExecSQL(edituserconfirmed, username, email, user_role, id);
+
                     TempData["Msg"] = "User updated";
                     TempData["MsgType"] = "success";
+                    checkifallgood = 1;
                 }
-                if (rowsAffected !=1)
+                if (rowsAffected != 1)
                 {
                     TempData["Msg"] = "User Record failed";
                     TempData["MsgType"] = "danger";
@@ -488,12 +516,52 @@ namespace hostrepository.Controllers
                 return View();
             }
 
+            //-------------------------------------------------------------------------------------------------------------
+            //check if user would like to edit password after all is good
+            if (atfault == 0)
+            {
 
+                Debug.WriteLine("activate edit qs N ans"); // acts as a signal that the question editing process is going on
+                //get the user's username and password
+                //-------------------------------------------------------------------------------------------------------------
+                //edit only question
+                if (editqsORans == "1")
+                {
+ question = question.Trim();
+                    String edituserconfirmed = @"UPDATE useracc SET 
+                                                        question = '{0}'
+                                                        WHERE user_id = {1}";
+                    int rowsAffected = DBUtl.ExecSQL(edituserconfirmed, question, id);
+
+                }
+                //-------------------------------------------------------------------------------------------------------------
+                //edit only answer
+                if (editqsORans == "2")
+                { answer = answer.Trim();
+                    String edituserconfirmed = @"UPDATE useracc SET 
+                                                        answer  = HASHBYTES('SHA1', '{0}')
+                                                        WHERE user_id = {1}";
+                    int rowsAffected = DBUtl.ExecSQL(edituserconfirmed, answer, id);
+                }
+                //-------------------------------------------------------------------------------------------------------------
+                //edit both
+                if (editqsORans == "3")
+                {  answer = answer.Trim();
+                    question = question.Trim();
+                    String edituserconfirmed = @"UPDATE useracc SET 
+                                                         question = '{0}' ,  answer  = HASHBYTES('SHA1', '{1}')
+                                                        WHERE user_id = {2}";
+                    int rowsAffected = DBUtl.ExecSQL(edituserconfirmed, question, answer, id);
+                }
+                //-------------------------------------------------------------------------------------------------------------
+            }
+            //-------------------------------------------------------------------------------------------------------------
             return RedirectToAction("Userlist");
         }
+        #endregion
 
-
-       [Authorize(Roles = "Admin")]
+        #region Delete
+        [Authorize(Roles = "Admin")]
         public IActionResult Delete(int id)
         {
             #region checkuserrole()
@@ -516,15 +584,15 @@ namespace hostrepository.Controllers
             }
             #endregion
             int AIDE = 0;
-       
-            String Getuser = "SELECT * FROM useracc WHERE username = '" + User.Identity.Name+"'";
+
+            String Getuser = "SELECT * FROM useracc WHERE username = '" + User.Identity.Name + "'";
             List<User> List = DBUtl.GetList<User>(Getuser);
             foreach (User account in List)
             {
-                 AIDE = account.user_id;
-                
+                AIDE = account.user_id;
+
             }
-          
+
 
             if (id == AIDE)
             {
@@ -534,11 +602,11 @@ namespace hostrepository.Controllers
             }
             else
             {
-                
-                string delete = "DELETE FROM useracc WHERE user_id={0}";
-               
 
-                string formatdelete = String.Format(delete , id);
+                string delete = "DELETE FROM useracc WHERE user_id={0}";
+
+
+                string formatdelete = String.Format(delete, id);
                 Debug.WriteLine(formatdelete);
                 int res = DBUtl.ExecSQL(delete, id);
                 if (res == 1)
@@ -554,9 +622,9 @@ namespace hostrepository.Controllers
             }
             return RedirectToAction("Userlist");
         }
+        #endregion
 
-
-
+        #region status edit
         public IActionResult Statusedit(int id)
         {
             #region checkuserrole()
@@ -605,17 +673,18 @@ namespace hostrepository.Controllers
             {
                 status = account.status;
             }
-            string update="";
+            string update = "";
             //---------------------------------------------------------------------------------------------------------------------------
             //edit status
             if (status == 0)
             {
-                 update = "UPDATE useracc SET status = 1 WHERE user_id = {0}";
+                update = "UPDATE useracc SET status = 1 WHERE user_id = {0}";
                 TempData["Msg"] = "User account activated";
                 TempData["MsgType"] = "success";
-            } else if (status != 0)
+            }
+            else if (status != 0)
             {
-                 update = "UPDATE useracc SET status = 0 WHERE user_id = {0}";
+                update = "UPDATE useracc SET status = 0 WHERE user_id = {0}";
                 TempData["Msg"] = "User account de-activated";
                 TempData["MsgType"] = "success";
             }
@@ -624,6 +693,7 @@ namespace hostrepository.Controllers
 
             return RedirectToAction("Userlist");
         }
+        #endregion
 
         #region add/edit/delete version table
         public IActionResult Version()
@@ -897,7 +967,7 @@ namespace hostrepository.Controllers
             #endregion
             var tissues = DBUtl.GetList<Tissue>($"SELECT * FROM tissue");
             return View(tissues);
-            
+
         }
 
         public IActionResult AddTissue(string name)

@@ -42,6 +42,19 @@
             <span asp-validation-for="email" class="text-danger"></span>
         </div>
 
+        @*Question*@
+        <div class="form-group row">
+            <label for="Qs" class="control-label">Security Question: </label>
+            <label id="Qs" name="Qs" for="Qs" class="sr-only">Email</label>
+            <input id="Qs" name="Qs" for="Qs" class="form-control" placeholder="Question" autofocus="" autocomplete="off">
+        </div>
+
+        @*answer*@
+        <div class="form-group row">
+            <label for="ans" class="control-label">Security Answer: </label>
+            <label id="ans" name="ans" for="ans" class="sr-only">Email</label>
+            <input id="ans" name="ans" for="ans" class="form-control" placeholder="Answer" autofocus="" autocomplete="off">
+        </div>
 
         @*Select list *@
         <div class="form-group row">
@@ -67,7 +80,7 @@
                 </div>
             </div>
         </div>
-     
+
 
         @*print error message*@
         @if (ViewData["Msg"] != null)

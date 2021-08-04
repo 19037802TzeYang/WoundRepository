@@ -96,7 +96,7 @@ namespace WoundImgRepo.Controllers
             //Prepare image data for all types
             displayImageData(1);
             ViewData["ImageChart"] = "pie";
-            ViewData["ImageTitle"] = "Tissues";
+            ViewData["ImageTitle"] = "Type";
             ViewData["ImageShowLegend"] = "true";
             return View();
         }
