@@ -754,6 +754,16 @@ namespace hostrepository.Controllers
                                      FROM version 
                                      WHERE version_id={0}";
             List<WVersion> versionRecordFound = DBUtl.GetList<WVersion>(getVersionSql, id);
+
+            //check wound category name not exist
+            var versions = DBUtl.GetList<WVersion>($"SELECT * FROM version");
+            if (versions.Any(x => x.name.Equals(name, StringComparison.OrdinalIgnoreCase)))
+            {
+                TempData["Msg"] = "Version name already exist. Try giving unique name";
+                TempData["MsgType"] = "warning";
+                return RedirectToAction("Version");
+            }
+
             if (versionRecordFound.Count == 1)
             {
                 if (!ModelState.IsValid)
@@ -878,6 +888,16 @@ namespace hostrepository.Controllers
                                            FROM wound_category 
                                            WHERE wound_category_id={0}";
             List<WoundCategory> woundCategoryRecordFound = DBUtl.GetList<WoundCategory>(getWoundCategorySql, id);
+
+            //check wound category name not exist
+            var woundCategories = DBUtl.GetList<WoundCategory>($"SELECT * FROM wound_category");
+            if (woundCategories.Any(x => x.name.Equals(name, StringComparison.OrdinalIgnoreCase)))
+            {
+                TempData["Msg"] = "Wound Category name already exist. Try giving unique name";
+                TempData["MsgType"] = "warning";
+                return RedirectToAction("WoundCategory");
+            }
+
             if (woundCategoryRecordFound.Count == 1)
             {
                 if (!ModelState.IsValid)
@@ -1002,6 +1022,16 @@ namespace hostrepository.Controllers
                                     FROM tissue 
                                     WHERE tissue_id={0}";
             List<Tissue> tissueRecordFound = DBUtl.GetList<Tissue>(getTissueSql, id);
+
+            //check tissue name not exist
+            var tissue = DBUtl.GetList<Tissue>($"SELECT * FROM tissue");
+            if (tissue.Any(x => x.name.Equals(name, StringComparison.OrdinalIgnoreCase)))
+            {
+                TempData["Msg"] = "Tissue name already exist. Try giving unique name";
+                TempData["MsgType"] = "warning";
+                return RedirectToAction("Tissue");
+            }
+
             if (tissueRecordFound.Count == 1)
             {
                 if (!ModelState.IsValid)
