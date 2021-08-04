@@ -363,7 +363,7 @@ namespace WoundImgRepo.Controllers
             {
                 ViewData["Msg"] = "main Password too weak.";
                 ViewData["MsgType"] = "warning";
-                error = 1;
+                error = 1; return View();
             }
 
             // compare passwords
@@ -371,21 +371,21 @@ namespace WoundImgRepo.Controllers
             {
                 ViewData["Msg"] = "second password : error detected! ";
                 ViewData["MsgType"] = "danger";
-                error = 1;
+                error = 1; return View();
             }
 
             else if (matches.Count == 0)
             {
                 ViewData["Msg"] = "Password Has no capital";
                 ViewData["MsgType"] = "danger";
-                error = 1;
+                error = 1; return View();
             }
 
             else if (matchnum.Count == 0)
             {
                 ViewData["Msg"] = "Password Has no numbers";
                 ViewData["MsgType"] = "danger";
-                error = 1;
+                error = 1; return View();
             }
             int rowsAffected = 0;
 

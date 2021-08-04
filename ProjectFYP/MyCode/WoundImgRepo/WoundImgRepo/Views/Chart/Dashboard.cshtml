@@ -327,8 +327,7 @@
                 </div>
             </div>
 
-            @if (User.IsInRole("Admin"))
-            {
+
                 <div class="col-xl-3 col-md-6 mb-4">
                     <div class="card border-left-primary shadow h-100 py-2">
                         <div class="card-body">
@@ -348,16 +347,15 @@
                         </div>
                     </div>
                 </div>
-            }
-            @if (User.IsInRole("Admin"))
-            {
+            
+
                 <div class="col-xl-3 col-md-6 mb-4">
                     <div class="card border-left-primary shadow h-100 py-2">
                         <div class="card-body">
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
                                     <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                        Total number Annotated Images
+                                        Total number of Annotated Images
                                     </div>
                                     <div class="h5 mb-0 font-weight-bold text-gray-800">
                                         @ViewData["TotalAnnotatedImages"]
@@ -370,9 +368,8 @@
                         </div>
                     </div>
                 </div>
-            }
-            @if (User.IsInRole("Admin"))
-            {
+            
+
                 <div class="col-xl-3 col-md-6 mb-4">
                     <div class="card border-left-primary shadow h-100 py-2">
                         <div class="card-body">
@@ -392,7 +389,7 @@
                         </div>
                     </div>
                 </div>
-            }
+            
         </div>
 
         <div class=" row">
@@ -402,16 +399,15 @@
                         <ul class="nav nav-tabs card-header-tabs">
                             <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Location">Wounds by Location</a></li>
                             <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Category">Wounds by Category</a></li>
+                            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Tissues">Wound by Tissues</a></li>
+                            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Versions">Versions</a></li>
+                            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Images">Images</a></li>
                             @if (User.IsInRole("Admin"))
                             {
                                 <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Users">Display Users</a></li>
                             }
-                            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Versions">Versions</a></li>
-                            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Tissues">Wound by Tissues</a></li>
-                            @if (User.IsInRole("Admin"))
-                            {
-                            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Images">Images</a></li>
-                            }
+
+
                         </ul>
                     </div>
 
