@@ -247,7 +247,7 @@ namespace WoundImgRepo.Controllers
             }
             else
             {//if not
-                ViewData["Msg"] = "user not found , please check again or contact your supervisor";
+                ViewData["Msg"] = "User not found! Please check again or contact your Admin!";
                 ViewData["MsgType"] = "danger";
             }
             return View();
