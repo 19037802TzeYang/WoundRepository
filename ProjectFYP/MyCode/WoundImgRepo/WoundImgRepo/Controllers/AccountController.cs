@@ -329,14 +329,25 @@ namespace WoundImgRepo.Controllers
         };
         #endregion
 
-        //reset password
+       //reset password
         #region resetpwpost
         [HttpPost]
         public IActionResult resetpw(String user_id , String username , String password , String UserPw2)
         {
             int error = 0;
 
+            TempData["IDcurrentuser"] = user_id;
+
+            TempData["namecurrentuser"] = username;
+
             Regex numbercheck = new Regex(@"[0-9]");
+            if(String.IsNullOrEmpty(password) || String.IsNullOrEmpty(UserPw2))
+            {
+                ViewData["Msg"] = "empty password case found! ";
+                ViewData["MsgType"] = "danger";
+                return View();
+            }
+
 
             //check if at least 1 character is in numbers
             MatchCollection matchnum = numbercheck.Matches(password);
@@ -402,7 +413,6 @@ namespace WoundImgRepo.Controllers
        
         }
         #endregion
-    
     
     }
 
