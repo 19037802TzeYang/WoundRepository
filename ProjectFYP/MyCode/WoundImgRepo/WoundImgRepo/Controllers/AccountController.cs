@@ -329,7 +329,7 @@ namespace WoundImgRepo.Controllers
         };
         #endregion
 
-       //reset password
+        //reset password
         #region resetpwpost
         [HttpPost]
         public IActionResult resetpw(String user_id , String username , String password , String UserPw2)
@@ -414,6 +414,8 @@ namespace WoundImgRepo.Controllers
         }
         #endregion
     
+    
     }
 
 }
+
